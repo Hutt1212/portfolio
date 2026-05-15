@@ -54,7 +54,7 @@ export const translations = {
       slogan: "Cùng nhau xây dựng những sản phẩm tuyệt vời.",
       contactTitle: "Liên hệ với tôi",
       available: "Đang sẵn sàng cho các dự án mới",
-      copyright: "© 2024 Nguyễn Minh Huy. Tất cả quyền được bảo lưu."
+      copyright: "© 2026 Nguyễn Minh Huy."
     }
   },
   en: {
@@ -112,7 +112,7 @@ export const translations = {
       slogan: "Let's build something amazing together.",
       contactTitle: "Get in touch",
       available: "Currently available for new projects",
-      copyright: "© 2024 Minh Huy Nguyen. All rights reserved."
+      copyright: "© 2026 Minh Huy Nguyen."
     }
   }
 }
