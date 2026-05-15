@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import Image from "next/image"
 
+import Link from "next/link"
+
 // --- Types ---
 interface Service {
   name: string
@@ -161,7 +163,7 @@ export default function BentoPortfolio() {
 
         {/* ROW 4-5: GRAND PROJECT SHOWCASE (UNAGI.VN) */}
         <BentoCard id="projects" span="md:col-span-4" rows="md:row-span-2" className="relative group/project min-h-[500px] md:min-h-full">
-          <a href={project.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-30"></a>
+          <Link href={`/projects/${project.id}`} className="absolute inset-0 z-30"></Link>
           <Image src={project.image} alt={project.title} fill className="object-cover transition-transform duration-[3s] group-hover/project:scale-110" />
           <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-background via-background/60 md:via-background/40 to-transparent z-10"></div>
 
