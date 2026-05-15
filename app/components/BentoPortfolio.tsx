@@ -165,19 +165,19 @@ export default function BentoPortfolio() {
           <Image src={project.image} alt={project.title} fill className="object-cover transition-transform duration-[3s] group-hover/project:scale-110" />
           <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-background via-background/60 md:via-background/40 to-transparent z-10"></div>
 
-          <div className="absolute inset-0 p-8 md:p-24 flex flex-col justify-center z-20 md:w-3/5">
-            <h2 className="text-3xl md:text-7xl font-black text-foreground mb-4 md:mb-8 tracking-tighter leading-tight">
+          <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center z-20 md:w-2/3">
+            <h2 className="text-3xl md:text-6xl font-black text-foreground mb-4 md:mb-6 tracking-tighter leading-tight">
               {project.title}
             </h2>
 
-            <div className="p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-background/20 backdrop-blur-xl border border-white/5 mb-6 md:mb-12 shadow-2xl relative overflow-hidden">
+            <div className="p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] bg-background/20 backdrop-blur-xl border border-white/5 mb-6 md:mb-8 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-primary/60"></div>
-              <p className="text-sm md:text-xl text-foreground leading-relaxed font-medium">
+              <p className="text-sm md:text-lg text-foreground leading-relaxed font-medium">
                 {project.description}
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-12">
+            <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
               {project.tech.map(tech => (
                 <span key={tech} className="px-4 md:px-5 py-1.5 md:py-2 bg-primary/10 backdrop-blur-md border border-primary/20 rounded-full text-[10px] md:text-xs font-bold text-primary">
                   {tech}
