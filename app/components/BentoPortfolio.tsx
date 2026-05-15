@@ -184,15 +184,6 @@ export default function BentoPortfolio() {
                 </span>
               ))}
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 relative z-40">
-              <button className="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-primary text-primary-foreground font-black rounded-xl md:rounded-2xl hover:scale-105 transition-all shadow-xl shadow-primary/20">
-                Live Website
-              </button>
-              <button className="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-secondary/80 backdrop-blur-md text-foreground font-black rounded-xl md:rounded-2xl border border-white/10">
-                Case Study
-              </button>
-            </div>
           </div>
         </BentoCard>
 
