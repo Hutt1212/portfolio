@@ -15,7 +15,7 @@ export const translations = {
     },
     skills: {
       title: "Năng lực chuyên môn",
-      core: ["React", "Next.js", ".NET 8", "Node.js"],
+      core: ["React", "Next.js", ".NET", "Node.js"],
       secondary: ["TypeScript", "PostgreSQL", "MongoDB", "Redis"],
       others: ["Docker", "AWS", "CI/CD", "Git"]
     },
@@ -35,9 +35,31 @@ export const translations = {
       featured: "Dự án tiêu biểu",
       projects: [
         {
-          title: "Unagi.vn - Tinh hoa ẩm thực Nhật",
-          description: "Nền tảng thương mại điện tử ẩm thực cao cấp, tối ưu hóa trải nghiệm đặt món và quản lý vận hành real-time.",
-          tech: ["Next.js", ".NET 8", "SignalR", "PostgreSQL"],
+          id: "unagi",
+          title: "UNAGI – Hệ sinh thái F&B tích hợp AI",
+          description: "Hệ sinh thái chuyển đổi số toàn diện cho ngành F&B, kết hợp trải nghiệm người dùng cao cấp và AI trong quản trị vận hành.",
+          longDescription: "Unagi không chỉ là một website nhà hàng, mà là một hệ sinh thái chuyển đổi số toàn diện cho ngành F&B. Hệ thống giải quyết bài toán rào cản ngôn ngữ và tối ưu hóa hiệu suất nhân sự thông qua các Agent thông minh, số hóa toàn bộ quy trình từ tiếp cận khách hàng đa kênh đến quản lý vận hành thời gian thực.",
+          vision: "Số hóa toàn bộ quy trình từ tiếp cận khách hàng đa kênh (Omnichannel) đến hỗ trợ khách hàng tự động và quản lý vận hành thời gian thực. Hệ thống giải quyết bài toán rào cản ngôn ngữ và tối ưu hóa hiệu suất nhân sự thông qua các Agent thông minh.",
+          tech: ["Next.js", "React", "SignalR", "AI RAG", "Node.js", "MongoDB", "Redis", "Docker"],
+          highlights: [
+            {
+              title: "Hệ thống Agent Console Thời gian thực",
+              description: "Bảng điều khiển cho nhân viên với quản lý hàng đợi thông minh, xử lý trạng thái kết nối phức tạp bằng SignalR và thông báo đa tầng (Desktop, Audio, Visual)."
+            },
+            {
+              title: "Trợ lý AI Đa ngôn ngữ & Đa phương tiện",
+              description: "AI Agent hiểu ngôn ngữ (Anh, Việt), xử lý hình ảnh (multimodal), trích xuất thông tin hóa đơn và tự động hóa tác vụ như gửi mail/Telegram."
+            },
+            {
+              title: "Thiết kế Responsive & Hiệu năng cao",
+              description: "Áp dụng Bento UI hiện đại, tối ưu hóa hình ảnh và caching đạt điểm PageSpeed > 90, mang lại trải nghiệm mượt mà trên mọi thiết bị."
+            }
+          ],
+          impact: [
+            "Xóa bỏ rào cản ngôn ngữ cho khách quốc tế.",
+            "Tự động hóa 60-70% các yêu cầu thông thường.",
+            "Giảm thời gian phản hồi từ vài phút xuống còn vài giây."
+          ],
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
@@ -55,6 +77,18 @@ export const translations = {
       contactTitle: "Liên hệ với tôi",
       available: "Đang sẵn sàng cho các dự án mới",
       copyright: "© 2026 Nguyễn Minh Huy."
+    },
+    projectActions: {
+      visit: "Truy cập website",
+      github: "Xem mã nguồn",
+      techStack: "Công nghệ sử dụng"
+    },
+    projectDetail: {
+      overview: "Tổng quan",
+      vision: "Tầm nhìn dự án",
+      highlights: "Giải pháp kỹ thuật tiêu biểu",
+      impact: "Kết quả & Giá trị",
+      links: "Liên kết"
     }
   },
   en: {
@@ -73,7 +107,7 @@ export const translations = {
     },
     skills: {
       title: "Technical Stack",
-      core: ["React", "Next.js", ".NET 8", "Node.js"],
+      core: ["React", "Next.js", ".NET", "Node.js"],
       secondary: ["TypeScript", "PostgreSQL", "MongoDB", "Redis"],
       others: ["Docker", "AWS", "CI/CD", "Git"]
     },
@@ -93,9 +127,31 @@ export const translations = {
       featured: "Featured Work",
       projects: [
         {
-          title: "Unagi.vn - Japanese Culinary Excellence",
-          description: "Premium culinary e-commerce platform, optimizing ordering experience and real-time operations.",
-          tech: ["Next.js", ".NET 8", "SignalR", "PostgreSQL"],
+          id: "unagi",
+          title: "UNAGI – AI-Powered F&B Ecosystem",
+          description: "A comprehensive digital transformation ecosystem for the F&B industry, combining premium UX and AI operational power.",
+          longDescription: "Unagi is not just a restaurant website, but a comprehensive digital transformation ecosystem for the F&B industry. The system solves language barriers and optimizes personnel efficiency through intelligent Agents, digitizing the entire process from omnichannel customer acquisition to real-time operations management.",
+          vision: "Digitizing the entire process from Omnichannel customer acquisition to automated customer support and real-time operations management. The system addresses language barriers and optimizes personnel efficiency through intelligent Agents.",
+          tech: ["Next.js", "React", "SignalR", "AI RAG", "Node.js", "MongoDB", "Redis", "Docker"],
+          highlights: [
+            {
+              title: "Real-time Agent Console System",
+              description: "A dashboard for staff with intelligent queue management, handling complex connection states using SignalR and multi-level notifications (Desktop, Audio, Visual)."
+            },
+            {
+              title: "Multilingual & Multimedia AI Assistant",
+              description: "AI Agent capable of understanding languages (EN, VN), multimodal image processing, invoice data extraction, and autonomous tasks like Email/Telegram automation."
+            },
+            {
+              title: "Responsive Design & High Performance",
+              description: "Implementing modern Bento UI, optimizing images and caching to achieve PageSpeed scores > 90, providing a smooth experience across all devices."
+            }
+          ],
+          impact: [
+            "Eliminates language barriers for international customers.",
+            "Automates 60-70% of common requests.",
+            "Reduces response time from minutes to seconds."
+          ],
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
@@ -113,6 +169,17 @@ export const translations = {
       contactTitle: "Get in touch",
       available: "Currently available for new projects",
       copyright: "© 2026 Minh Huy Nguyen."
+    },
+    projectActions: {
+      visit: "Visit Live Site",
+      techStack: "Tech Stack"
+    },
+    projectDetail: {
+      overview: "Overview",
+      vision: "Project Vision",
+      highlights: "Technical Highlights",
+      impact: "Business Impact",
+      links: "Live Links"
     }
   }
 }
