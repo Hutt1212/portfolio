@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion"
 import { useLanguage } from "@/app/hooks/useLanguage"
-import Image from "next/image"
 
 export default function Hero() {
   const { t } = useLanguage()
@@ -15,105 +14,33 @@ export default function Hero() {
 
       <div className="mx-auto max-w-7xl px-6 py-20 lg:flex lg:items-center lg:gap-x-10 lg:px-8 relative z-10">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-lg lg:flex-shrink-0">
-            <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-block px-3 py-1 mb-6 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase"
-          >
-            {t.hero.status}
-          </motion.div>
-          
-          <motion.p
-            className="text-lg font-bold text-primary mb-2"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            {t.hero.greeting}
-          </motion.p>
-          
-          <motion.h1
-            className="text-5xl font-extrabold tracking-tight text-foreground sm:text-7xl mb-6"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <span className="text-gradient block">{t.hero.title}</span>
-          </motion.h1>
-          
-          <motion.p
-            className="text-lg leading-8 text-muted-foreground mb-10"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          >
-            {t.hero.subtitle}
-          </motion.p>
-          
           <motion.div
-            className="flex flex-wrap items-center gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.5 }}
           >
-            <a href="#projects" className="apple-button">
-              {t.hero.viewWork}
-            </a>
-            <a
-              href="#footer"
-              className="text-sm font-semibold leading-6 text-foreground hover:text-primary transition-colors flex items-center gap-2 group"
-            >
-              {t.hero.getInTouch} 
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </a>
+            <div className="flex items-center gap-x-3 mb-6">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <span className="text-sm font-medium text-emerald-500">{t.hero.status}</span>
+            </div>
+            
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
+              {t.hero.title}
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+              {t.hero.subtitle}
+            </p>
+            <div className="mt-10 flex items-center gap-x-6">
+              <a href="#projects" className="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-all">
+                {t.hero.viewWork}
+              </a>
+            </div>
           </motion.div>
         </div>
-        
-        <motion.div
-          className="mx-auto mt-16 lg:mt-0 flex-1"
-          initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1, delay: 0.5, type: "spring" }}
-          whileHover={{ scale: 1.02, rotate: 1 }}
-        >
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/40 to-teal-600/40 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500 opacity-50"></div>
-            <div className="relative glass-dark rounded-3xl p-10 shadow-2xl border border-white/10 overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-20 text-6xl font-bold italic">CODE</div>
-              
-              <div className="aspect-square flex items-center justify-center">
-                <div className="text-center">
-                  <motion.div 
-                    className="relative w-32 h-32 mx-auto mb-6"
-                    animate={{ y: [-10, 10, -10] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <Image 
-                      src="/hero-avatar.png"
-                      alt="AI Developer Avatar"
-                      fill
-                      className="object-contain drop-shadow-[0_0_25px_rgba(16,185,129,0.5)]"
-                    />
-                  </motion.div>
-                  <p className="text-white text-2xl font-bold tracking-tight mb-2">{t.hero.role}</p>
-                  <p className="text-emerald-400 text-sm font-medium mb-6">{t.hero.specialist}</p>
-                  
-                  <div className="grid grid-cols-2 gap-3 text-left">
-                    {t.hero.techList.map((tech: string) => (
-                      <div key={tech} className="flex items-center gap-2 text-xs text-gray-300 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-                        {tech}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   )
 }
-

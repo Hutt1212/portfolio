@@ -1,17 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import Image from "next/image"
 import { useLanguage } from "@/app/hooks/useLanguage"
 
 export default function PortfolioGrid() {
   const { t } = useLanguage()
-  
   const projects = t.portfolio.projects
   
   return (
-    <section className="py-20 bg-background" id="projects">
+    <section className="py-20 bg-background" id="projects-grid">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-16"
@@ -20,12 +18,9 @@ export default function PortfolioGrid() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="section-title">
+          <h2 className="section-title text-4xl md:text-5xl font-black">
             <span className="text-gradient">{t.portfolio.title}</span>
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t.portfolio.description}
-          </p>
         </motion.div>
 
         <div className="flex justify-center">
@@ -43,9 +38,8 @@ export default function PortfolioGrid() {
                   <Image
                     src={project.image || "/placeholder.svg"}
                     alt={project.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="transition-transform duration-700 ease-out group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
                 </div>
@@ -53,7 +47,7 @@ export default function PortfolioGrid() {
                 <div className="p-10 flex flex-col justify-center">
                   <div className="mb-4">
                     <span className="px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-primary/20">
-                      Featured Project
+                      {t.portfolio.featured}
                     </span>
                   </div>
                   <h3 className="text-3xl font-black text-foreground mb-4 group-hover:text-primary transition-colors duration-300 leading-tight">
@@ -64,9 +58,9 @@ export default function PortfolioGrid() {
                   </p>
                   
                   <div className="flex flex-wrap gap-2 mb-8">
-                    {project.tech.split(",").map((tech: string) => (
+                    {project.tech.map((tech: string) => (
                       <span key={tech} className="text-[10px] font-bold px-3 py-1 bg-secondary text-secondary-foreground rounded-lg border border-border uppercase tracking-wider">
-                        {tech.trim()}
+                        {tech}
                       </span>
                     ))}
                   </div>
@@ -88,4 +82,3 @@ export default function PortfolioGrid() {
     </section>
   )
 }
-

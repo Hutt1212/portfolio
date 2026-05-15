@@ -32,7 +32,7 @@ export const translations = {
     },
     portfolio: {
       title: "Dự án tâm đắc",
-      featured: "Featured Work",
+      featured: "Dự án tiêu biểu",
       projects: [
         {
           title: "Unagi.vn - Tinh hoa ẩm thực Nhật",
