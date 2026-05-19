@@ -46,7 +46,7 @@ export default function ProjectDetailPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
         </motion.div>
 
         <div className="absolute inset-0 z-10 flex flex-col justify-end p-6 md:p-20 max-w-7xl mx-auto w-full">
@@ -64,7 +64,10 @@ export default function ProjectDetailPage() {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-8xl font-black tracking-tighter leading-none mb-6"
+            className="text-4xl md:text-8xl font-black tracking-tighter leading-none mb-6 text-foreground"
+            style={{
+              textShadow: "0 4px 20px #16A34A, 0 0 40px #16A34A",
+            }}
           >
             {project.title}
           </motion.h1>
@@ -199,6 +202,16 @@ export default function ProjectDetailPage() {
                 {t.projectActions.visit} <ExternalLink size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
 
+              {project.github && project.github !== "#" && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-5 rounded-2xl bg-card border border-border hover:bg-secondary/40 text-foreground font-black group transition-all hover:scale-[1.02]"
+                >
+                  {t.projectActions.github || "View Source"} <Github size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </a>
+              )}
             </div>
 
             <div className="mt-12 pt-12 border-t border-primary/10">

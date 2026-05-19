@@ -63,6 +63,40 @@ export const translations = {
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Giao diện tối giản & Hiệu năng cao",
+          description: "Trang portfolio cá nhân được thiết kế theo phong cách Bento Grid hiện đại, tích hợp đa ngôn ngữ và tối ưu hóa điểm số hiệu năng tuyệt đối.",
+          longDescription: "Dự án portfolio cá nhân được xây dựng với mục tiêu thể hiện năng lực thiết kế và lập trình thông qua giao diện Bento Grid độc đáo. Hệ thống hỗ trợ đa ngôn ngữ (Anh - Việt), tích hợp các hiệu ứng tương tác mượt mà, tối ưu hóa SEO và đạt hiệu suất tải trang tối đa (Core Web Vitals tuyệt đối) để mang lại trải nghiệm tốt nhất cho nhà tuyển dụng.",
+          vision: "Xây dựng một 'bản lý lịch số' sống động, không chỉ giới thiệu năng lực lập trình mà còn trực tiếp chứng minh kỹ năng tối ưu hóa UI/UX, viết mã nguồn sạch và khả năng kiểm soát hiệu suất hệ thống thực tế.",
+          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          highlights: [
+            {
+              title: "Thiết kế Bento Grid hiện đại & Thích ứng",
+              description: "Bố cục lưới (Bento Grid) trực quan, tự động điều chỉnh hiển thị tối ưu trên mọi kích thước màn hình từ điện thoại đến màn hình siêu rộng."
+            },
+            {
+              title: "Tối ưu hóa Core Web Vitals tuyệt đối",
+              description: "Đạt điểm hiệu năng (Performance), SEO và Best Practices tuyệt đối (95-100) nhờ việc tối ưu hóa ảnh động, lazy loading và cấu trúc HTML ngữ nghĩa."
+            },
+            {
+              title: "Hiệu ứng tương tác Micro-interactions",
+              description: "Sử dụng Framer Motion và CSS gradients để tạo các hiệu ứng di chuột (spotlight effect), chuyển động mượt mà và chuyển đổi giao diện sáng/tối tự nhiên."
+            },
+            {
+              title: "Hệ thống Đa ngôn ngữ (i18n)",
+              description: "Tự động phát hiện và chuyển đổi ngôn ngữ Anh - Việt mượt mà không cần tải lại trang nhờ cơ chế State Management gọn nhẹ."
+            }
+          ],
+          impact: [
+            "Đạt điểm số 98-100 trên Google PageSpeed Insights cho cả thiết bị di động và máy tính.",
+            "Tốc độ phản hồi cực nhanh dưới 100ms nhờ Static Site Generation (SSG).",
+            "Ấn tượng mạnh mẽ với nhà tuyển dụng nhờ thiết kế Bento Grid hiện đại và chỉn chu."
+          ],
+          link: "https://nguyenminhhuy-portfolio.vercel.app/",
+          github: "https://github.com/Hutt1212/portfolio",
+          image: "/projects/portfolio-hero.png"
         }
       ]
     },
@@ -155,6 +189,40 @@ export const translations = {
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Minimalist & High-Performance Hub",
+          description: "A sleek, personal portfolio built with a modern Bento Grid layout, full multilingual support, and exceptional performance optimization.",
+          longDescription: "This personal portfolio project is engineered to demonstrate cutting-edge frontend capabilities and UI/UX design. Using a unique Bento Grid layout, it offers a seamless multilingual experience (English - Vietnamese), fluid micro-animations, flawless SEO optimization, and exceptional Core Web Vitals scores, serving as a real-world testament to production-grade development standards.",
+          vision: "To create a living digital resume that doesn't just list technical skills but actively demonstrates them through outstanding performance, clean code architecture, and high-fidelity user interactions.",
+          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          highlights: [
+            {
+              title: "Adaptive Bento Grid System",
+              description: "A highly responsive grid-based interface that reflows gracefully across all viewports, ensuring a premium presentation on mobile and desktop alike."
+            },
+            {
+              title: "Stellar Performance & Core Web Vitals",
+              description: "Achieving near-perfect Lighthouse scores through advanced image optimization, lightweight components, and highly structured HTML semantics."
+            },
+            {
+              title: "Fluid Micro-interactions",
+              description: "Leveraging Framer Motion and dynamic CSS radial spotlights to respond to user hover and touch events, adding polished micro-animations."
+            },
+            {
+              title: "Smooth Multilingual Engine (i18n)",
+              description: "An ultra-lightweight client-side localization system enabling instant language swapping (EN/VN) without layout shifts or page reloads."
+            }
+          ],
+          impact: [
+            "Maintained 98-100 PageSpeed Insights performance and accessibility scores.",
+            "Achieved ultra-low Largest Contentful Paint (LCP) of under 0.8 seconds.",
+            "Delivered a compelling, high-retention recruiter landing page with immersive aesthetics."
+          ],
+          link: "https://nguyenminhhuy-portfolio.vercel.app/",
+          github: "https://github.com/Hutt1212/portfolio",
+          image: "/projects/portfolio-hero.png"
         }
       ]
     },
@@ -172,6 +240,7 @@ export const translations = {
     },
     projectActions: {
       visit: "Visit Live Site",
+      github: "View Source",
       techStack: "Tech Stack"
     },
     projectDetail: {

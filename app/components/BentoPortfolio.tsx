@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import Image from "next/image"
 
@@ -11,6 +11,43 @@ import Link from "next/link"
 interface Service {
   name: string
   description: string
+}
+
+// --- Sub-component: Animated Counter ---
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+  const hasAnimated = useRef(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true
+          let start = 0
+          const duration = 2000
+          const startTime = Date.now()
+          const tick = () => {
+            const elapsed = Date.now() - startTime
+            const progress = Math.min(elapsed / duration, 1)
+            const eased = 1 - Math.pow(1 - progress, 3)
+            setCount(Math.floor(eased * target))
+            if (progress < 1) requestAnimationFrame(tick)
+          }
+          tick()
+        }
+      },
+      { threshold: 0.5 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [target])
+
+  return (
+    <div ref={ref} className="text-4xl md:text-5xl font-black text-primary tracking-tighter">
+      {count}{suffix}
+    </div>
+  )
 }
 
 // --- Sub-component: BentoCard ---
@@ -41,7 +78,7 @@ function BentoCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       onMouseMove={handleMouseMove}
-      className={`group relative rounded-[2rem] md:rounded-[2.5rem] border border-border overflow-hidden transition-all duration-700 bg-card/40 backdrop-blur-md shadow-sm hover:shadow-2xl ${span} ${rows} ${className}`}
+      className={`group relative rounded-[2rem] md:rounded-[2.5rem] border border-border overflow-hidden transition-all duration-700 bg-card/40 backdrop-blur-md shadow-sm hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1 ${span} ${rows} ${className}`}
     >
       <div
         className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -59,7 +96,6 @@ function BentoCard({
 export default function BentoPortfolio() {
   const { t } = useLanguage()
   const [activeService, setActiveService] = useState<Service | null>(null)
-  const project = t.portfolio.projects[0]
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 py-20 md:py-32 sm:px-6 lg:px-8 min-h-screen relative">
@@ -89,6 +125,23 @@ export default function BentoPortfolio() {
           <p className="text-muted-foreground text-base md:text-xl leading-relaxed max-w-2xl mb-8 md:mb-12 font-medium">
             {t.hero.subtitle}
           </p>
+
+          {/* FIX #3: CTA Buttons */}
+          <div className="flex flex-wrap gap-4">
+            <Link
+              href="#projects"
+              className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-black text-sm uppercase tracking-wider transition-all duration-500 ease-out hover:scale-105 hover:shadow-2xl hover:shadow-primary/40 active:scale-95 flex items-center gap-3"
+            >
+              <span className="w-2 h-2 rounded-full bg-primary-foreground/60 animate-pulse"></span>
+              {t.hero.viewWork}
+            </Link>
+            <Link
+              href="#footer"
+              className="px-8 py-4 rounded-full bg-secondary/50 border border-border text-foreground font-black text-sm uppercase tracking-wider transition-all duration-500 ease-out hover:scale-105 hover:border-primary/50 hover:text-primary active:scale-95"
+            >
+              {t.nav.contact}
+            </Link>
+          </div>
 
         </BentoCard>
 
@@ -155,39 +208,81 @@ export default function BentoPortfolio() {
           </AnimatePresence>
         </BentoCard>
 
+        {/* FIX #5: STATS COUNTER ROW */}
+        <BentoCard span="md:col-span-4" className="p-8 md:p-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 h-full items-center">
+            {[
+              { target: 2, suffix: "+", label: t.nav.projects },
+              { target: 8, suffix: "+", label: t.skills.title },
+              { target: 100, suffix: "%", label: "Responsive" },
+              { target: 98, suffix: "+", label: "PageSpeed" }
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                <div className="text-[10px] md:text-xs font-black uppercase tracking-widest text-muted-foreground mt-2">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </BentoCard>
+
         {/* SECTION HEADER FOR PROJECTS */}
         <div className="md:col-span-4 flex items-center gap-4 md:gap-6 py-8 md:py-12">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] md:tracking-[0.6em] text-primary whitespace-nowrap opacity-50">{t.portfolio.featured}</span>
           <div className="h-px w-full bg-gradient-to-r from-primary/30 to-transparent"></div>
         </div>
 
-        {/* ROW 4-5: GRAND PROJECT SHOWCASE (UNAGI.VN) */}
-        <BentoCard id="projects" span="md:col-span-4" rows="md:row-span-2" className="relative group/project min-h-[500px] md:min-h-full">
-          <Link href={`/projects/${project.id}`} className="absolute inset-0 z-30"></Link>
-          <Image src={project.image} alt={project.title} fill className="object-cover transition-transform duration-[3s] group-hover/project:scale-110" />
-          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-background via-background/60 md:via-background/40 to-transparent z-10"></div>
+        {/* ROW 4-5: GRAND PROJECT SHOWCASE */}
+        {t.portfolio.projects.map((proj: any, index: number) => (
+          <BentoCard
+            key={proj.id}
+            id={index === 0 ? "projects" : undefined}
+            span={t.portfolio.projects.length === 1 ? "md:col-span-4" : "md:col-span-2"}
+            rows="md:row-span-2"
+            className="relative group/project min-h-[500px] md:min-h-full"
+          >
+            <Link href={`/projects/${proj.id}`} className="absolute inset-0 z-30"></Link>
+            <Image
+              src={proj.image}
+              alt={proj.title}
+              fill
+              className="object-cover transition-transform duration-[3s] group-hover/project:scale-110"
+            />
+            {/* FIX #1: Much stronger gradient overlay for text readability over busy images */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20 z-10"></div>
 
-          <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center z-20 md:w-2/3">
-            <h2 className="text-3xl md:text-6xl font-black text-foreground mb-4 md:mb-6 tracking-tighter leading-tight">
-              {project.title}
-            </h2>
+            <div className="absolute inset-0 p-6 md:p-12 flex flex-col justify-end z-20">
+              <h2
+                className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground mb-4 tracking-tighter leading-tight"
+                style={{
+                  textShadow: "0 4px 16px #16A34A, 0 0 24px #16A34A",
+                }}
+              >
+                {proj.title}
+              </h2>
 
-            <div className="p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] bg-background/20 backdrop-blur-xl border border-white/5 mb-6 md:mb-8 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-primary/60"></div>
-              <p className="text-sm md:text-lg text-foreground leading-relaxed font-medium">
-                {project.description}
-              </p>
+              <div className="p-4 md:p-5 rounded-[1.2rem] md:rounded-[1.5rem] bg-background/20 backdrop-blur-xl border border-white/5 mb-5 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary/60"></div>
+                <p className="text-xs sm:text-sm md:text-base text-foreground leading-relaxed font-medium">
+                  {proj.description}
+                </p>
+              </div>
+
+              {/* FIX #4: Tech stack pills on project cards */}
+              <div className="flex flex-wrap gap-1.5 md:gap-2">
+                {proj.tech.slice(0, 5).map((tech: string) => (
+                  <span key={tech} className="px-3 md:px-4 py-1.5 bg-primary/10 backdrop-blur-md border border-primary/20 rounded-full text-[9px] sm:text-[10px] md:text-xs font-bold text-primary">
+                    {tech}
+                  </span>
+                ))}
+                {proj.tech.length > 5 && (
+                  <span className="px-3 md:px-4 py-1.5 bg-secondary/30 backdrop-blur-md border border-border rounded-full text-[9px] sm:text-[10px] md:text-xs font-bold text-muted-foreground">
+                    +{proj.tech.length - 5}
+                  </span>
+                )}
+              </div>
             </div>
-
-            <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
-              {project.tech.map(tech => (
-                <span key={tech} className="px-4 md:px-5 py-1.5 md:py-2 bg-primary/10 backdrop-blur-md border border-primary/20 rounded-full text-[10px] md:text-xs font-bold text-primary">
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-        </BentoCard>
+          </BentoCard>
+        ))}
 
         {/* ROW 6-7: THE NARRATIVE (CLOSING) */}
         <BentoCard id="about" span="md:col-span-4" rows="md:row-span-2" className="p-8 md:p-24 bg-primary/5 min-h-[500px] md:min-h-full">
@@ -211,7 +306,7 @@ export default function BentoPortfolio() {
               <div className="relative p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] bg-card border border-border shadow-2xl group/quote">
                 <div className="absolute top-0 left-0 w-2 md:w-3 h-full bg-primary rounded-l-full"></div>
                 <p className="text-base md:text-lg text-primary font-bold leading-relaxed italic relative z-10">
-                  "{t.about.description2}"
+                  &quot;{t.about.description2}&quot;
                 </p>
               </div>
             </div>
