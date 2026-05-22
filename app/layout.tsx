@@ -1,5 +1,5 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
+import { Inter, Playfair_Display, Cinzel } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
@@ -7,7 +7,9 @@ import { LanguageProvider } from "./context/LanguageContext"
 import CustomCursor from "./components/CustomCursor"
 import type React from "react"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const playfair = Playfair_Display({ subsets: ["latin", "vietnamese"], variable: "--font-serif" })
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" })
 
 export const metadata = {
   title: "Nguyễn Minh Huy | Fullstack Developer",
@@ -21,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
+      <body className={`${inter.variable} ${playfair.variable} ${cinzel.variable} font-sans min-h-screen text-foreground`}>
         <LanguageProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <CustomCursor />
