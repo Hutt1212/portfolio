@@ -4,50 +4,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142.1 76.2% 36.3%; /* Emerald 600 */
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 142.1 20% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 142.1 20% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 142.1 20% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --background: 41 41% 90%;
+    /* Warm parchment cream #f2ebdb */
+    --foreground: 33 20% 14%;
+    /* Charcoal sepia ink #2b251d */
+    --card: 43 38% 97%;
+    /* Lighter parchment block #fbf9f4 */
+    --card-foreground: 33 20% 14%;
+    --popover: 43 38% 97%;
+    --popover-foreground: 33 20% 14%;
+    --primary: 30 53% 35%;
+    /* Vintage copper/bronze magic ink #8b5a2b */
+    --primary-foreground: 43 38% 97%;
+    --secondary: 41 31% 84%;
+    /* Faded parchment #e4dcc9 */
+    --secondary-foreground: 33 20% 14%;
+    --muted: 41 31% 84%;
+    --muted-foreground: 27 18% 37%;
+    /* Faded brown ink #6e5b4c */
+    --accent: 41 35% 87%;
+    --accent-foreground: 33 20% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.5rem;
-    --bg-rgb: 255, 255, 255;
+    --border: 40 28% 76%;
+    /* Burnt paper edge border #d2c6af */
+    --input: 40 28% 76%;
+    --ring: 30 53% 35%;
+    --radius: 0px;
+    /* Sharp corners for authentic newspaper print */
+    --bg-rgb: 242, 235, 219;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 152 69% 51%; /* Emerald 400 */
-    --primary-foreground: 142.1 76.2% 10%;
-    --secondary: 152 20% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 152 20% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 152 20% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 24 20% 6%;
+    /* Midnight paper charred #120f0c */
+    --foreground: 35 24% 83%;
+    /* Aged silver ink #dfd5c6 */
+    --card: 30 15% 9%;
+    /* Dark charred parchment #1c1814 */
+    --card-foreground: 35 24% 83%;
+    --popover: 30 15% 9%;
+    --popover-foreground: 35 24% 83%;
+    --primary: 32 95% 44%;
+    /* Glowing candle gold #d97706 */
+    --primary-foreground: 24 20% 6%;
+    --secondary: 26 23% 13%;
+    /* Dark burnt wood #2a211a */
+    --secondary-foreground: 35 24% 83%;
+    --muted: 26 23% 13%;
+    --muted-foreground: 29 16% 53%;
+    /* Soot grey ink #9a8775 */
+    --accent: 26 23% 13%;
+    --accent-foreground: 35 24% 83%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 152 69% 51%;
-    --bg-rgb: 1, 11, 9;
+    --border: 25 24% 18%;
+    /* Burnt rust border #3a2d24 */
+    --input: 25 24% 18%;
+    --ring: 32 95% 44%;
+    --bg-rgb: 18, 15, 12;
   }
 }
 
@@ -55,87 +70,204 @@
   * {
     @apply border-border;
   }
+
+  html {
+    background-color: hsl(var(--background));
+    transition: background-color 0.3s ease;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     scroll-behavior: smooth;
+    position: relative;
+    background-color: transparent;
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 100%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background-image: url("/projects/background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    pointer-events: none;
+    transition: opacity 0.5s ease, filter 0.5s ease;
+  }
+
+  .dark body::before {
+    opacity: 0.08;
+    /* Lower opacity in dark mode to prevent washing out the dark charred theme */
+    filter: invert(1) brightness(0.4) contrast(1.2);
+    /* Invert and dim to blend perfectly with dark paper */
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 100%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.09'/%3E%3C/svg%3E");
   }
 }
 
-/* Premium Utilities */
-.glass {
-  @apply bg-background/60 backdrop-blur-xl border border-white/10;
+/* Elegant Typography Extensions */
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
 }
 
-.glass-dark {
-  @apply bg-black/40 backdrop-blur-xl border border-white/5;
+.font-cinzel {
+  font-family: var(--font-cinzel), serif;
 }
 
-.glow-primary {
-  @apply shadow-[0_0_20px_rgba(16,185,129,0.3)];
+/* Premium Newspaper Styling Utilities */
+.parchment-block {
+  @apply bg-card border-4 border-double border-border shadow-md transition-all duration-500 relative overflow-hidden;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(92, 64, 51, 0.05);
 }
 
-.text-glow {
-  text-shadow: 0 0 20px rgba(16,185,129,0.5);
+.dark .parchment-block {
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
-.apple-button {
-  @apply px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold transition-all duration-500 ease-out 
-  hover:scale-105 hover:shadow-2xl hover:shadow-primary/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+/* Drop Cap for newspaper column entry */
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-cinzel), serif;
+  font-size: 3.5rem;
+  line-height: 0.85;
+  padding-top: 4px;
+  padding-right: 8px;
+  padding-left: 3px;
+  color: hsl(var(--primary));
+  font-weight: 900;
+  text-shadow: 1px 1px 0px hsl(var(--background)), 2px 2px 0px hsl(var(--border));
 }
 
-.section-title {
-  @apply text-5xl font-extrabold mb-12 text-center tracking-tight;
+/* Double lines in newspaper style */
+.newspaper-rule {
+  border: none;
+  height: 4px;
+  border-top: 3px solid hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--foreground));
+  margin: 1rem 0;
+  opacity: 0.85;
 }
 
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500;
+.newspaper-rule-thin {
+  border: none;
+  height: 1px;
+  background-color: hsl(var(--foreground));
+  margin: 0.75rem 0;
+  opacity: 0.5;
 }
 
-
-.hover-lift {
-  @apply transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20;
+/* Harry Potter Moving Pictures Effect */
+.moving-picture-container {
+  @apply relative overflow-hidden border-2 border-foreground/80;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Background Animations */
-@keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
+.moving-picture {
+  filter: grayscale(1) sepia(0.3) contrast(1.1);
+  transition: all 1s ease-in-out;
+  animation: magical-breathe 25s infinite alternate ease-in-out;
 }
 
-.animate-blob {
-  animation: blob 7s infinite alternate;
+.group:hover .moving-picture,
+.group\/avatar:hover .moving-picture,
+.group\/project:hover .moving-picture {
+  filter: grayscale(0) sepia(0) contrast(1);
+  scale: 1.03;
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+@keyframes magical-breathe {
+  0% {
+    transform: scale(1) translate(0px, 0px) rotate(0deg);
+  }
+
+  25% {
+    transform: scale(1.05) translate(2px, -3px) rotate(0.2deg);
+  }
+
+  50% {
+    transform: scale(1.02) translate(-3px, 1px) rotate(-0.1deg);
+  }
+
+  75% {
+    transform: scale(1.07) translate(1px, 2px) rotate(0.1deg);
+  }
+
+  100% {
+    transform: scale(1) translate(0px, 0px) rotate(0deg);
+  }
 }
 
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-@keyframes shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-
-.animate-shimmer {
-  animation: shimmer 1.5s infinite;
+/* Magical particle dust sparkles */
+.magic-sparkle {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(217, 119, 6, 1) 0%, rgba(217, 119, 6, 0) 70%);
+  border-radius: 50%;
+  z-index: 9999;
+  filter: drop-shadow(0 0 4px rgba(217, 119, 6, 0.8));
 }
 
-/* Custom Scrollbar for Bento Overlays */
+/* Halftone paper print dot overlay */
+.halftone-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0.15;
+  mix-blend-mode: multiply;
+  z-index: 5;
+}
+
+.dark .halftone-overlay {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  opacity: 0.3;
+  mix-blend-mode: screen;
+}
+
+/* Vintage wax seal */
+.wax-seal {
+  background: radial-gradient(circle at 35% 35%, #b91c1c 0%, #7f1d1d 70%, #450a0a 100%);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3), inset -1px -1px 3px rgba(0, 0, 0, 0.4), inset 2px 2px 3px rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-cinzel), serif;
+  font-weight: bold;
+  transform: rotate(-5deg);
+}
+
+.dark .wax-seal {
+  background: radial-gradient(circle at 35% 35%, #dc2626 0%, #991b1b 70%, #7f1d1d 100%);
+}
+
+/* Custom premium scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(92, 64, 51, 0.05);
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.2);
-  border-radius: 10px;
+  background: hsl(var(--border));
+  border: 2px solid hsl(var(--background));
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.4);
+  background: hsl(var(--primary));
 }

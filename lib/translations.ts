@@ -15,9 +15,9 @@ export const translations = {
     },
     skills: {
       title: "Năng lực chuyên môn",
-      core: ["React", "Next.js", ".NET", "Node.js"],
-      secondary: ["TypeScript", "PostgreSQL", "MongoDB", "Redis"],
-      others: ["Docker", "AWS", "CI/CD", "Git"]
+      core: ["C#", "TypeScript", "React", "Next.js", "ASP.NET Core", "Node.js"],
+      secondary: ["NestJS", "Tailwind CSS", "PostgreSQL", "SQL Server", "MongoDB", "Redis"],
+      others: ["Docker", "CI/CD", "Nginx", "Git"]
     },
     services: {
       title: "Chuyên môn kỹ thuật",
@@ -36,29 +36,29 @@ export const translations = {
       projects: [
         {
           id: "unagi",
-          title: "UNAGI – Hệ sinh thái F&B tích hợp AI",
-          description: "Hệ sinh thái chuyển đổi số toàn diện cho ngành F&B, kết hợp trải nghiệm người dùng cao cấp và AI trong quản trị vận hành.",
-          longDescription: "Unagi không chỉ là một website nhà hàng, mà là một hệ sinh thái chuyển đổi số toàn diện cho ngành F&B. Hệ thống giải quyết bài toán rào cản ngôn ngữ và tối ưu hóa hiệu suất nhân sự thông qua các Agent thông minh, số hóa toàn bộ quy trình từ tiếp cận khách hàng đa kênh đến quản lý vận hành thời gian thực.",
-          vision: "Số hóa toàn bộ quy trình từ tiếp cận khách hàng đa kênh (Omnichannel) đến hỗ trợ khách hàng tự động và quản lý vận hành thời gian thực. Hệ thống giải quyết bài toán rào cản ngôn ngữ và tối ưu hóa hiệu suất nhân sự thông qua các Agent thông minh.",
-          tech: ["Next.js", "React", "SignalR", "AI RAG", "Node.js", "MongoDB", "Redis", "Docker"],
+          title: "UNAGI – Website Bán Đồ Ăn Nhật Bản Tích Hợp Chatbot RAG Realtime",
+          description: "Hệ thống website bán đồ ăn Nhật Bản hiện đại, tích hợp khung chat SignalR realtime kết hợp trợ lý ảo thông minh RAG hỗ trợ tư vấn món ăn và đặt hàng tự động.",
+          longDescription: "Dự án phát triển và nâng cấp hệ thống website bán đồ ăn Nhật Bản cao cấp. Điểm nhấn kỹ thuật đặc biệt là việc tích hợp Chatbot AI RAG thông minh vào hệ thống chat realtime có sẵn. Hệ thống sử dụng Semantic Kernel, kết hợp mô hình AI và Vector Database để nhận diện ý định khách hàng. Chatbot có khả năng trả lời tự nhiên, giới thiệu món ăn sinh động dưới dạng Product Card trực quan và tự động định tuyến, chuyển tiếp cuộc hội thoại mượt mà cho nhân viên hỗ trợ khi cần thiết.",
+          vision: "Tối ưu hóa quy trình chăm sóc khách hàng và bán hàng tự động trong ngành F&B. Giảm 70-80% thời gian xử lý các câu hỏi lặp lại của nhân viên, đồng thời nâng cao trải nghiệm mua sắm của thực khách nhờ trợ lý ảo phản hồi tức thì và trực quan.",
+          tech: ["Next.js", "React", ".NET", "SignalR", "MongoDB", "Redis", "Docker"],
           highlights: [
             {
-              title: "Hệ thống Agent Console Thời gian thực",
-              description: "Bảng điều khiển cho nhân viên với quản lý hàng đợi thông minh, xử lý trạng thái kết nối phức tạp bằng SignalR và thông báo đa tầng (Desktop, Audio, Visual)."
+              title: "Khung Chat Realtime Thống Nhất",
+              description: "Tích hợp bot và nhân viên hỗ trợ cùng hoạt động trên một giao diện chat SignalR duy nhất. Phân biệt trực quan người trả lời qua thiết kế avatar."
             },
             {
-              title: "Trợ lý AI Đa ngôn ngữ & Đa phương tiện",
-              description: "AI Agent hiểu ngôn ngữ (Anh, Việt), xử lý hình ảnh (multimodal), trích xuất thông tin hóa đơn và tự động hóa tác vụ như gửi mail/Telegram."
+              title: "Bộ Định Tuyến Thông Minh (Intelligent Routing)",
+              description: "Sử dụng Fast Classifier để phân loại câu hỏi (sản phẩm, thông tin nhà hàng, khuyến mãi, đơn hàng). Tự động chuyển tiếp cho nhân viên khi nhận diện ý định hỗ trợ chuyên sâu hoặc confidence thấp."
             },
             {
-              title: "Thiết kế Responsive & Hiệu năng cao",
-              description: "Áp dụng Bento UI hiện đại, tối ưu hóa hình ảnh và caching đạt điểm PageSpeed > 90, mang lại trải nghiệm mượt mà trên mọi thiết bị."
+              title: "Trợ Lý RAG & Gợi Ý Trực Quan",
+              description: "Sử dụng kĩ thuật RAG để tìm kiếm ngữ cảnh chính xác từ file dữ liệu thực đơn. Trả về câu trả lời tự nhiên kèm theo các Product Card hiển thị món ăn trực tiếp trong khung chat."
             }
           ],
           impact: [
-            "Xóa bỏ rào cản ngôn ngữ cho khách quốc tế.",
-            "Tự động hóa 60-70% các yêu cầu thông thường.",
-            "Giảm thời gian phản hồi từ vài phút xuống còn vài giây."
+            "Tự động hóa phản hồi các câu hỏi thường gặp của khách hàng trong dưới 3 giây.",
+            "Tăng trải nghiệm mua sắm trực tuyến nhờ Product Card trực quan, click được trực tiếp để đặt hàng.",
+            "Tối ưu hóa năng suất vận hành khi nhân viên chỉ cần can thiệp khi có yêu cầu hỗ trợ phức tạp hoặc khiếu nại."
           ],
           link: "https://unagi.vn",
           github: "#",
@@ -141,9 +141,9 @@ export const translations = {
     },
     skills: {
       title: "Technical Stack",
-      core: ["React", "Next.js", ".NET", "Node.js"],
-      secondary: ["TypeScript", "PostgreSQL", "MongoDB", "Redis"],
-      others: ["Docker", "AWS", "CI/CD", "Git"]
+      core: ["C#", "TypeScript", "React", "Next.js", "ASP.NET Core", "Node.js"],
+      secondary: ["NestJS", "Tailwind CSS", "PostgreSQL", "SQL Server", "MongoDB", "Redis"],
+      others: ["Docker", "CI/CD", "Nginx", "Git"]
     },
     services: {
       title: "Technical Expertise",
@@ -162,29 +162,29 @@ export const translations = {
       projects: [
         {
           id: "unagi",
-          title: "UNAGI – AI-Powered F&B Ecosystem",
-          description: "A comprehensive digital transformation ecosystem for the F&B industry, combining premium UX and AI operational power.",
-          longDescription: "Unagi is not just a restaurant website, but a comprehensive digital transformation ecosystem for the F&B industry. The system solves language barriers and optimizes personnel efficiency through intelligent Agents, digitizing the entire process from omnichannel customer acquisition to real-time operations management.",
-          vision: "Digitizing the entire process from Omnichannel customer acquisition to automated customer support and real-time operations management. The system addresses language barriers and optimizes personnel efficiency through intelligent Agents.",
-          tech: ["Next.js", "React", "SignalR", "AI RAG", "Node.js", "MongoDB", "Redis", "Docker"],
+          title: "UNAGI – Japanese Food E-commerce Website with Real-time RAG Chatbot",
+          description: "A modern Japanese food ordering platform integrated with a real-time SignalR chat system and an intelligent RAG-powered virtual assistant for food recommendations and automated ordering support.",
+          longDescription: "This project focuses on building and enhancing a premium Japanese food e-commerce platform. The standout technical highlight is the integration of an intelligent RAG-based AI chatbot into an existing real-time chat system. The system leverages Semantic Kernel, AI models, and a vector database to understand customer intent. The chatbot delivers natural responses, dynamically presents menu items through visually engaging Product Cards, and seamlessly routes conversations to human staff when necessary.",
+          vision: "Optimize customer service and sales automation in the F&B industry. Reduce 70–80% of repetitive customer inquiries while improving the dining and shopping experience through an instant, responsive, and visually interactive virtual assistant.",
+          tech: ["Next.js", "React", ".NET", "SignalR", "MongoDB", "Redis", "Docker"],
           highlights: [
             {
-              title: "Real-time Agent Console System",
-              description: "A dashboard for staff with intelligent queue management, handling complex connection states using SignalR and multi-level notifications (Desktop, Audio, Visual)."
+              title: "Unified Real-time Chat System",
+              description: "Integrates both AI chatbot and human agents within a single SignalR-based chat interface, with clear visual differentiation via avatars."
             },
             {
-              title: "Multilingual & Multimedia AI Assistant",
-              description: "AI Agent capable of understanding languages (EN, VN), multimodal image processing, invoice data extraction, and autonomous tasks like Email/Telegram automation."
+              title: "Intelligent Routing System",
+              description: "Utilizes a fast classifier to categorize user queries (products, restaurant info, promotions, orders). Automatically escalates to human agents for complex requests or low-confidence predictions."
             },
             {
-              title: "Responsive Design & High Performance",
-              description: "Implementing modern Bento UI, optimizing images and caching to achieve PageSpeed scores > 90, providing a smooth experience across all devices."
+              title: "RAG-powered Assistant & Visual Recommendations",
+              description: "Applies RAG techniques to retrieve accurate context from menu data. Generates natural responses accompanied by interactive Product Cards displayed directly within the chat interface."
             }
           ],
           impact: [
-            "Eliminates language barriers for international customers.",
-            "Automates 60-70% of common requests.",
-            "Reduces response time from minutes to seconds."
+            "Automates responses to common customer inquiries in under 3 seconds.",
+            "Enhances online ordering experience through interactive and clickable Product Cards.",
+            "Improves operational efficiency by allowing human agents to focus on complex or sensitive cases only."
           ],
           link: "https://unagi.vn",
           github: "#",

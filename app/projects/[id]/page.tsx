@@ -9,20 +9,21 @@ import { ArrowLeft, ExternalLink, Github, Layers, Zap, Shield, Cpu } from "lucid
 export default function ProjectDetailPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   const project = t.portfolio.projects.find((p: any) => p.id === id)
 
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-4xl font-black mb-4">Project Not Found</h1>
+      <div className="min-h-screen flex items-center justify-center select-none">
+        <div className="text-center p-8 parchment-block max-w-md">
+          <h1 className="text-3xl font-cinzel font-black mb-4 uppercase">{language === "vi" ? "Không tìm thấy hồ sơ" : "Scroll Not Found"}</h1>
+          <p className="font-serif text-muted-foreground mb-6">{language === "vi" ? "Bản tin đặc biệt này không tồn tại trong kho lưu trữ của chúng tôi." : "This special publication does not exist in our archives."}</p>
           <button
             onClick={() => router.push("/")}
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold"
+            className="px-6 py-3 border border-foreground font-cinzel font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 shadow-[2px_2px_0px_rgba(0,0,0,0.15)]"
           >
-            Go Back Home
+            {language === "vi" ? "Trở về Trang chủ" : "Return to Masthead"}
           </button>
         </div>
       </div>
@@ -30,201 +31,235 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Hero Section */}
-      <div className="relative h-[60vh] md:h-[80vh] w-full overflow-hidden">
-        <motion.div
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
-        </motion.div>
+    <div className="min-h-screen pb-24 pt-24">
+      {/* Warm Magic Candle Glows */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[10%] -left-[10%] w-[60%] h-[60%] md:w-[40%] md:h-[40%] bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-[100px] md:blur-[150px] animate-blob"></div>
+        <div className="absolute bottom-[10%] -right-[10%] w-[60%] h-[60%] md:w-[40%] md:h-[40%] bg-orange-600/5 dark:bg-orange-600/10 rounded-full blur-[100px] md:blur-[150px] animate-blob animation-delay-2000"></div>
+      </div>
 
-        <div className="absolute inset-0 z-10 flex flex-col justify-end p-6 md:p-20 max-w-7xl mx-auto w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* ========================================================
+            CASE FILE MASTHEAD & HEADER INFO
+            ======================================================== */}
+        <div className="text-center mb-12 flex flex-col items-center">
+          <div className="flex justify-between w-full text-[9px] md:text-xs font-cinzel uppercase tracking-[0.2em] px-2 py-1 text-muted-foreground border-b border-foreground/30">
+            <span>Special Supplement</span>
+            <span>Investigative Case File: #{project.id.toUpperCase()}</span>
+            <span>1 Sickle</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-black tracking-tight text-foreground my-4 uppercase">
+            {language === "vi" ? "Báo Cáo Chuyên Đề Đặc Biệt" : "Special Investigative Report"}
+          </h2>
+
+          <div className="w-full h-1 bg-foreground relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-4 font-cinzel text-[10px] tracking-[0.3em] text-primary flex items-center gap-1.5">
+              <span>✦</span> {language === "vi" ? "BẢN PHÂN TÍCH CHUYÊN SÂU" : "IN-DEPTH TECHNICAL DISSECTION"} <span>✦</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Back Button scroll style */}
+        <div className="mb-8 flex justify-start">
           <motion.button
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            whileHover={{ x: -5 }}
+            whileHover={{ x: -4 }}
             onClick={() => router.push("/")}
-            className="mb-8 w-fit flex items-center gap-3 px-6 py-3 bg-background/20 backdrop-blur-md border border-white/10 hover:border-primary/50 hover:bg-primary/10 rounded-full text-foreground transition-all duration-300 font-bold uppercase tracking-widest text-[10px]"
+            className="flex items-center gap-2.5 px-5 py-2.5 border border-foreground/50 font-cinzel font-bold hover:bg-secondary/40 text-[10px] uppercase tracking-widest transition-all duration-300 shadow-[1px_1px_0px_rgba(0,0,0,0.1)]"
           >
-            <ArrowLeft size={16} className="text-primary" /> {t.nav.projects}
+            <ArrowLeft size={14} className="text-primary" /> {language === "vi" ? "Quay lại Bản tin chính" : "Return to Front Page"}
           </motion.button>
-
-          <motion.h1
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl md:text-8xl font-black tracking-tighter leading-none mb-6 text-foreground"
-            style={{
-              textShadow: "0 4px 20px #16A34A, 0 0 40px #16A34A",
-            }}
-          >
-            {project.title}
-          </motion.h1>
-
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-3"
-          >
-            {project.tech.map((tech: string) => (
-              <span key={tech} className="px-4 py-2 bg-primary/20 backdrop-blur-md border border-primary/20 rounded-full text-xs font-bold text-primary">
-                {tech}
-              </span>
-            ))}
-          </motion.div>
         </div>
-      </div>
 
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-6 md:px-20 mt-20 grid grid-cols-1 lg:grid-cols-3 gap-16">
-        <div className="lg:col-span-2">
-          <motion.section
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl md:text-4xl font-black mb-8 flex items-center gap-4">
-              <span className="w-12 h-1 bg-primary rounded-full"></span>
-              {t.projectDetail.overview}
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-medium mb-12">
-              {project.longDescription}
-            </p>
+        {/* ========================================================
+            IMAGE GRID: MAGICAL MOVING BANNER
+            ======================================================== */}
+        <div className="relative h-[50vh] md:h-[65vh] w-full moving-picture-container bg-card p-2 mb-16">
+          <div className="relative h-full w-full overflow-hidden">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover moving-picture grayscale-[0.8] contrast-[1.3] brightness-[0.85] group-hover:grayscale-0 group-hover:scale-105"
+              priority
+            />
+            <div className="halftone-overlay"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+          </div>
 
-            {project.vision && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="mb-16 p-8 md:p-12 rounded-[3rem] bg-primary/5 border border-primary/10 relative overflow-hidden group"
-              >
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                  <Zap size={120} />
-                </div>
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-primary uppercase tracking-widest">
-                  {t.projectDetail.vision}
-                </h3>
-                <p className="text-lg text-foreground/80 leading-relaxed italic">
-                  "{project.vision}"
-                </p>
-              </motion.div>
-            )}
+          <div className="absolute bottom-6 left-6 right-6 md:left-12 md:right-12 z-10">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-black tracking-tight leading-none text-foreground uppercase border-b border-foreground/30 pb-3">
+              {project.title}
+            </h1>
 
-            <div className="grid grid-cols-1 gap-8 mb-16">
-              <h3 className="text-2xl font-black flex items-center gap-4">
-                <span className="w-8 h-1 bg-primary/30 rounded-full"></span>
-                {t.projectDetail.highlights}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {(project.highlights || [
-                  { title: "Performance", description: "Optimized for speed and core web vitals." },
-                  { title: "Security", description: "Enterprise-grade security implementations." },
-                  { title: "Scalability", description: "Architected for high-traffic growth." },
-                  { title: "Real-time", description: "Live updates via WebSockets/SignalR." }
-                ]).map((feature: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="p-8 rounded-[2rem] bg-card/40 border border-border backdrop-blur-sm hover:border-primary/50 transition-colors group"
-                  >
-                    <div className="mb-4 p-3 w-fit rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                      {i === 0 ? <Zap size={24} /> : i === 1 ? <Shield size={24} /> : i === 2 ? <Layers size={24} /> : <Cpu size={24} />}
-                    </div>
-                    <h4 className="text-xl font-bold mb-2">{feature.title}</h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description || feature.desc}</p>
-                  </motion.div>
-                ))}
-              </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {project.tech.map((tech: string) => (
+                <span key={tech} className="px-3 py-1 bg-secondary/80 border border-border text-[10px] font-cinzel font-bold text-muted-foreground shadow-[1px_1px_0px_rgba(0,0,0,0.05)]">
+                  {tech}
+                </span>
+              ))}
             </div>
+          </div>
+        </div>
 
-            {project.impact && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="p-8 md:p-12 rounded-[3rem] border border-border bg-card/40"
-              >
-                <h3 className="text-2xl font-black mb-8 flex items-center gap-4">
-                  <span className="w-8 h-1 bg-primary/30 rounded-full"></span>
-                  {t.projectDetail.impact}
+        {/* ========================================================
+            REPORT CONTENT: NEWSPAPER COLUMNS
+            ======================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+
+          {/* Main Story (Left/Middle columns) */}
+          <div className="lg:col-span-2">
+
+            {/* Overview */}
+            <motion.section
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              <h2 className="text-2xl font-cinzel font-black mb-6 flex items-center gap-2 border-b-2 border-foreground pb-1.5 uppercase tracking-widest text-primary">
+                <span>✒</span> {t.projectDetail.overview}
+              </h2>
+
+              <p className="text-base md:text-lg text-muted-foreground font-serif leading-relaxed text-justify drop-cap mb-10">
+                {project.longDescription}
+              </p>
+
+              {/* Vision testimonial seal */}
+              {project.vision && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  className="mb-12 p-8 md:p-10 border-4 border-double border-primary/40 bg-primary/5 relative overflow-hidden"
+                >
+                  <h3 className="text-sm font-cinzel font-black mb-3 text-primary uppercase tracking-widest border-b border-primary/20 pb-1.5">
+                    ◆ {t.projectDetail.vision} ◆
+                  </h3>
+                  <p className="text-base text-foreground font-serif leading-relaxed text-justify italic">
+                    "{project.vision}"
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Technical Highlights / Spell Categories */}
+              <div className="space-y-6 mb-12">
+                <h3 className="text-xl font-cinzel font-black border-b border-foreground/20 pb-1.5 uppercase tracking-widest flex items-center gap-2">
+                  <span>✙</span> {t.projectDetail.highlights}
                 </h3>
-                <div className="space-y-4">
-                  {project.impact.map((item: string, i: number) => (
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {(project.highlights || [
+                    { title: "Performance", description: "Optimized for speed and core web vitals." },
+                    { title: "Security", description: "Enterprise-grade security implementations." },
+                    { title: "Scalability", description: "Architected for high-traffic growth." },
+                    { title: "Real-time", description: "Live updates via WebSockets/SignalR." }
+                  ]).map((feature: any, i: number) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex items-start gap-4"
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 }}
+                      className="p-6 border border-border bg-card shadow-sm hover:border-primary/60 transition-colors group flex flex-col justify-between"
                     >
-                      <div className="mt-1.5 w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
+                      <div>
+                        <div className="mb-3 p-2.5 w-fit border border-foreground/20 bg-secondary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
+                          {i === 0 ? <Zap size={20} /> : i === 1 ? <Shield size={20} /> : i === 2 ? <Layers size={20} /> : <Cpu size={20} />}
+                        </div>
+                        <h4 className="text-lg font-cinzel font-black mb-2 uppercase">{feature.title}</h4>
+                        <p className="text-muted-foreground font-serif text-xs leading-relaxed text-justify">{feature.description || feature.desc}</p>
                       </div>
-                      <p className="text-lg text-foreground/80">{item}</p>
                     </motion.div>
                   ))}
                 </div>
-              </motion.div>
-            )}
-          </motion.section>
-        </div>
+              </div>
 
-        <div className="lg:col-span-1">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="sticky top-32 p-10 rounded-[2.5rem] bg-primary/5 border border-primary/20 backdrop-blur-xl"
-          >
-            <h3 className="text-xl font-black mb-8 uppercase tracking-widest text-primary">{t.projectDetail.links}</h3>
-            <div className="flex flex-col gap-4">
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-5 rounded-2xl bg-primary text-primary-foreground font-black group transition-all hover:scale-[1.02]"
-              >
-                {t.projectActions.visit} <ExternalLink size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </a>
+              {/* Impact / Results */}
+              {project.impact && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="p-8 border-4 border-double border-foreground bg-card"
+                >
+                  <h3 className="text-xl font-cinzel font-black mb-6 uppercase tracking-widest border-b border-foreground pb-2 flex items-center gap-2">
+                    <span>✚</span> {t.projectDetail.impact}
+                  </h3>
 
-              {project.github && project.github !== "#" && (
+                  <div className="space-y-4">
+                    {project.impact.map((item: string, i: number) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -15 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.08 }}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="mt-1.5 w-4 h-4 border border-primary bg-primary/10 flex-shrink-0 flex items-center justify-center rotate-45">
+                          <div className="w-1.5 h-1.5 bg-primary" />
+                        </div>
+                        <p className="text-sm md:text-base text-foreground font-serif leading-relaxed text-justify">{item}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </motion.section>
+          </div>
+
+          {/* Sidebar / Investigative File Index (Right Column) */}
+          <div className="lg:col-span-1">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="sticky top-28 p-8 border-4 border-double border-foreground bg-card shadow-lg"
+            >
+              <h3 className="text-lg font-cinzel font-black mb-6 uppercase tracking-[0.15em] border-b-2 border-foreground pb-2 flex items-center gap-2 text-primary">
+                <span>✦</span> {t.projectDetail.links}
+              </h3>
+
+              <div className="flex flex-col gap-4">
                 <a
-                  href={project.github}
+                  href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-5 rounded-2xl bg-card border border-border hover:bg-secondary/40 text-foreground font-black group transition-all hover:scale-[1.02]"
+                  className="flex items-center justify-between px-5 py-3.5 border-2 border-foreground bg-foreground text-background font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 hover:bg-primary hover:border-primary hover:text-primary-foreground shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
                 >
-                  {t.projectActions.github || "View Source"} <Github size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  {t.projectActions.visit} <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </a>
-              )}
-            </div>
 
-            <div className="mt-12 pt-12 border-t border-primary/10">
-              <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">{t.projectActions.techStack}</h4>
-              <div className="flex flex-wrap gap-2">
-                {project.tech.map((tech: string) => (
-                  <span key={tech} className="text-[10px] font-black px-3 py-1.5 bg-background rounded-lg border border-border">
-                    {tech}
-                  </span>
-                ))}
+                {project.github && project.github !== "#" && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-5 py-3.5 border border-foreground bg-transparent hover:bg-secondary/40 text-foreground font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
+                  >
+                    {t.projectActions.github || "View Source"} <Github size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+                )}
               </div>
-            </div>
-          </motion.div>
+
+              {/* Technologies index scroll */}
+              <div className="mt-8 pt-8 border-t border-foreground/10">
+                <h4 className="text-xs font-cinzel font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                  {t.projectActions.techStack}
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.tech.map((tech: string) => (
+                    <span key={tech} className="text-[10px] font-serif font-bold px-2 py-0.5 bg-background border border-border">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>

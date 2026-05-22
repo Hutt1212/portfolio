@@ -7,15 +7,15 @@ export default function LanguageToggle() {
   const { language, setLanguage } = useLanguage()
 
   return (
-    <div className="relative p-1.5 bg-secondary/40 backdrop-blur-xl rounded-full border border-white/10 flex items-center w-[100px] h-10 shadow-lg overflow-hidden">
+    <div className="relative p-1 bg-secondary/40 flex items-center w-[100px] h-9 shadow-md overflow-hidden border border-foreground/20 rounded-none">
       {/* Dynamic Sliding Capsule */}
       <motion.div
-        className="absolute h-7 rounded-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] z-0"
+        className="absolute h-6 bg-primary shadow-md z-0 rounded-none"
         initial={false}
         animate={{
-          x: language === "en" ? 0 : 44,
-          width: 44,
-          scale: [1, 1.1, 1], // Stretch effect
+          x: language === "en" ? 0 : 46,
+          width: 46,
+          scale: [1, 1.05, 1], // Stretch effect
         }}
         transition={{ 
           type: "spring", 
