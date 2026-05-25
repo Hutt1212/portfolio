@@ -229,7 +229,7 @@ export const translations = {
     about: {
       title: "About Me",
       profession: "Fullstack Developer",
-      description1: "As a Fullstack Developer, I specialize in designing and implementing highly scalable web systems. I prioritize clarity in software architecture, from backend data flows to end-user interfaces.",
+      description1: "As a Fullstack Developer, I focus on designing and implementing highly scalable web systems. I prioritize coherence in software architecture, from the backend data flow to the end-user interface.",
       description2: "In my workflow, I focus on performance optimization, rigorous database design, and security standards. I value practicality, effective teamwork, and code quality to resolve complex technical challenges efficiently."
     },
     footer: {

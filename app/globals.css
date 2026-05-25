@@ -125,6 +125,12 @@
   font-family: var(--font-cinzel), serif;
 }
 
+html[lang="vi"] body {
+  --font-sans: var(--font-be-vietnam);
+  --font-serif: var(--font-lora);
+  --font-cinzel: var(--font-lora);
+}
+
 /* Premium Newspaper Styling Utilities */
 .parchment-block {
   @apply bg-card border-4 border-double border-border shadow-md transition-all duration-500 relative overflow-hidden;

@@ -128,7 +128,7 @@ export default function BentoPortfolio() {
 
       {/* BENTO PORTFOLIO GRID */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full auto-rows-auto md:auto-rows-[300px]">
-        
+
         {/* ROW 1-2: IDENTITY & HERO */}
         <BentoCard span="md:col-span-3" rows="md:row-span-2" className="p-8 md:p-12 flex flex-col justify-between bg-primary/5 min-h-[400px] md:min-h-full">
           <div>
@@ -181,9 +181,6 @@ export default function BentoPortfolio() {
             <span className="font-cinzel text-xs font-black tracking-[0.2em] text-foreground block">
               ◆ {t.name.toUpperCase()} ◆
             </span>
-            <span className="font-serif italic text-[10px] text-muted-foreground block mt-0.5">
-              {language === "vi" ? "Chân dung ma thuật di chuyển" : "Magical Animating Portrait"}
-            </span>
           </div>
         </BentoCard>
 
@@ -217,9 +214,7 @@ export default function BentoPortfolio() {
               </div>
             </div>
           </div>
-          <div className="text-[10px] font-serif italic text-muted-foreground text-right mt-6 border-t border-foreground/10 pt-2">
-            {language === "vi" ? "* Các ký tự cổ được khắc họa" : "* Ancient runes of technology"}
-          </div>
+
         </BentoCard>
 
         {/* ROW 3: SERVICES */}
@@ -255,9 +250,7 @@ export default function BentoPortfolio() {
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="text-[10px] font-serif italic text-muted-foreground mt-4 border-t border-foreground/10 pt-2">
-            {language === "vi" ? "Di chuột qua để khám phá bùa phép" : "Hover to dissect each scroll"}
-          </div>
+
         </BentoCard>
 
         {/* METRICS */}
