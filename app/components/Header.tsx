@@ -59,7 +59,7 @@ export default function Header() {
         />
 
         <nav className="mx-auto flex items-center justify-between px-6 py-3 lg:px-10 h-16 relative" aria-label="Global">
-          
+
           {/* LEFT: masthead logo brand */}
           <div className="flex items-center gap-12">
             <Link href="/" className="group relative">
@@ -71,16 +71,14 @@ export default function Header() {
                 <span className="text-xl font-cinzel font-black tracking-widest text-foreground hover:text-primary transition-colors uppercase">
                   M. Huy
                 </span>
-                <span className="text-xs font-serif italic text-muted-foreground ml-1.5 hidden sm:inline-block">
-                  {language === "vi" ? "◆ Bản tin Công nghệ" : "◆ Daily Dev"}
-                </span>
+
               </motion.div>
             </Link>
           </div>
 
           {/* CENTER: DESKTOP NAVIGATION (Runes link) */}
           <div className="hidden md:flex items-center gap-8">
-            
+
             {/* Projects dropdown library */}
             <div
               className="relative py-4"

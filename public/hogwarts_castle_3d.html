@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematic Hogwarts Castle 3D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: transparent;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.6) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 80%, rgba(2, 6, 23, 0.9) 100%);
+        }
+
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #fbbf24;
+            transition: opacity 1.5s ease;
+        }
+
+        .wand-loader {
+            width: 60px;
+            height: 4px;
+            background: #fde047;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px #fde047, 0 0 40px #fbbf24;
+            animation: castSpell 2s infinite ease-in-out alternate;
+        }
+
+        @keyframes castSpell {
+            0% {
+                transform: scaleX(0.1) rotate(0deg);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scaleX(1.8) rotate(20deg);
+                opacity: 1;
+            }
+        }
+
+        .interactive-btn {
+            pointer-events: auto;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="canvas-container"></div>
+
+
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Modules cho Hậu kỳ (Post-Processing)
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+        let scene, camera, renderer, controls, composer;
+        let particlesMesh, waterMesh;
+        let time = 0;
+        let autoRotate = true;
+
+        const loadingScreen = document.getElementById('loading');
+
+        // --- BẢNG VẬT LIỆU (MATERIALS) ---
+        const stoneMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.9, flatShading: true });
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8, flatShading: true });
+
+        // Vật liệu phát sáng (Emissive) - Yếu tố quan trọng nhất để tạo Glow với Bloom Pass
+        const windowMat = new THREE.MeshStandardMaterial({
+            color: 0xfef08a,
+            emissive: 0xf59e0b,
+            emissiveIntensity: 4 // Cường độ cao để vượt qua ngưỡng Bloom
+        });
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x271c19, roughness: 1.0 });
+
+        function init() {
+            scene = new THREE.Scene();
+
+            // Camera điện ảnh (Góc rộng 45 độ, bắt đầu từ dưới hồ nhìn lên)
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.set(220, 40, 200);
+
+            // Trình kết xuất
+            const container = document.getElementById('canvas-container');
+            renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = false;
+
+            // Tone mapping cho màu sắc rực rỡ và chân thực hơn
+            renderer.toneMapping = THREE.ReinhardToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+
+            // --- CÀI ĐẶT HẬU KỲ (POST-PROCESSING BLOOM) ---
+            // Đã tắt Bloom Pass để giữ được nền trong suốt (alpha: true) cho thẻ iframe.
+            
+            // Xây dựng thế giới
+            setupLighting();
+            createEnvironment();
+            createHogwarts();
+
+            // Điều khiển
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.03;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.3; // Xoay chậm, trang trọng
+            controls.maxPolarAngle = Math.PI / 2 - 0.05;
+            controls.minDistance = 50;
+            controls.maxDistance = 600;
+            controls.target.set(0, 40, 0);
+
+            window.addEventListener('resize', onWindowResize);
+
+            // Ẩn loading mượt mà
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => loadingScreen.style.display = 'none', 1500);
+            }, 2000);
+
+            animate();
+        }
+
+        function setupLighting() {
+            const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+            scene.add(ambientLight);
+
+            // Ánh trăng sáng rực rỡ
+            const moonLight = new THREE.DirectionalLight(0xfffbeb, 3.5);
+            moonLight.position.set(-200, 300, -150);
+            moonLight.castShadow = true;
+            moonLight.shadow.mapSize.width = 4096; // Đổ bóng nét hơn
+            moonLight.shadow.mapSize.height = 4096;
+            moonLight.shadow.camera.near = 10;
+            moonLight.shadow.camera.far = 1000;
+            moonLight.shadow.camera.left = -200;
+            moonLight.shadow.camera.right = 200;
+            moonLight.shadow.camera.top = 200;
+            moonLight.shadow.camera.bottom = -200;
+            moonLight.shadow.bias = -0.0005;
+            scene.add(moonLight);
+
+            // Đèn hắt từ mặt nước lên (phản quang phép thuật)
+            const waterGlow = new THREE.PointLight(0x818cf8, 2, 300);
+            waterGlow.position.set(0, -10, 80);
+            scene.add(waterGlow);
+        }
+
+        function createSkybox() {
+            // Hàng ngàn vì sao
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 3000;
+            const starPos = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount * 3; i += 3) {
+                const r = 600 + Math.random() * 400; // Đặt sao ở rất xa
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(Math.random() * 2 - 1);
+                // Giới hạn sao ở nửa trên bầu trời
+                if (phi > Math.PI / 2) continue;
+
+                starPos[i] = r * Math.sin(phi) * Math.cos(theta);
+                starPos[i + 1] = r * Math.cos(phi);
+                starPos[i + 2] = r * Math.sin(phi) * Math.sin(theta);
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.5, transparent: true, opacity: 0.8 });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+
+            // Mặt trăng khổng lồ toả sáng
+            const moonGroup = new THREE.Group();
+            moonGroup.position.set(-400, 250, -300);
+
+            const moonGeo = new THREE.SphereGeometry(40, 32, 32);
+            const moonMat = new THREE.MeshBasicMaterial({ color: 0xe0f2fe }); // Trắng sáng không bị ảnh hưởng bởi bóng râm
+            const moon = new THREE.Mesh(moonGeo, moonMat);
+            moonGroup.add(moon);
+
+            // Vầng hào quang (Glow Halo) của trăng
+            const haloGeo = new THREE.SphereGeometry(50, 32, 32);
+            const haloMat = new THREE.MeshBasicMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0.1,
+                blending: THREE.AdditiveBlending
+            });
+            const halo = new THREE.Mesh(haloGeo, haloMat);
+            moonGroup.add(halo);
+
+            scene.add(moonGroup);
+        }
+
+        function createEnvironment() {
+            // 2. Vách đá & Hòn đảo đồ sộ
+            const cliffGroup = new THREE.Group();
+
+            // Núi chính
+            const cliffGeometry = new THREE.CylinderGeometry(90, 130, 60, 48, 8);
+            const pos = cliffGeometry.attributes.position;
+
+            for (let i = 0; i < pos.count; i++) {
+                const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+                if (y > -25) {
+                    const noise = (Math.sin(x * 0.1) * Math.cos(z * 0.1) * 8) + (Math.sin(x * 0.4) * 2.5);
+                    const angle = Math.atan2(z, x);
+                    pos.setX(i, x + Math.cos(angle) * noise);
+                    pos.setZ(i, z + Math.sin(angle) * noise);
+                    if (y > 15) pos.setY(i, y + Math.abs(noise) * 0.8);
+                }
+            }
+            cliffGeometry.computeVertexNormals();
+
+            const cliffMaterial = new THREE.MeshStandardMaterial({
+                color: 0x1c1917, // Đá tối màu
+                roughness: 1.0,
+                flatShading: true
+            });
+            const cliff = new THREE.Mesh(cliffGeometry, cliffMaterial);
+            cliff.position.y = -5;
+            cliff.receiveShadow = true;
+            cliff.castShadow = true;
+            cliffGroup.add(cliff);
+
+            // Thảm cỏ
+            const grassGeo = new THREE.CylinderGeometry(89, 90, 5, 48);
+            const grassMat = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 1, flatShading: true });
+            const grass = new THREE.Mesh(grassGeo, grassMat);
+            grass.position.y = 23;
+            grass.receiveShadow = true;
+            cliffGroup.add(grass);
+
+            scene.add(cliffGroup);
+
+            // Rừng thông
+            createPineForest();
+            // Bụi ma thuật glowing
+            createMagicParticles();
+        }
+
+        function createPineForest() {
+            const treeGroup = new THREE.Group();
+            const treeMat = new THREE.MeshStandardMaterial({ color: 0x022c22, flatShading: true }); // Xanh lá rất đậm
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x271c19 });
+
+            for (let i = 0; i < 80; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 70 + Math.random() * 25;
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+
+                const height = 5 + Math.random() * 6;
+                const tree = new THREE.Group();
+
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.7, 3), trunkMat);
+                trunk.position.y = 1.5;
+                trunk.castShadow = true;
+
+                const leaves1 = new THREE.Mesh(new THREE.ConeGeometry(3, height, 5), treeMat);
+                leaves1.position.y = 3 + height / 2;
+                leaves1.castShadow = true;
+
+                const leaves2 = new THREE.Mesh(new THREE.ConeGeometry(2.5, height * 0.8, 5), treeMat);
+                leaves2.position.y = 3 + height / 2 + 2;
+                leaves2.castShadow = true;
+
+                tree.add(trunk); tree.add(leaves1); tree.add(leaves2);
+                tree.position.set(x, 22, z); // Đặt trên thảm cỏ
+                tree.rotation.x = (Math.random() - 0.5) * 0.15;
+                tree.rotation.z = (Math.random() - 0.5) * 0.15;
+
+                treeGroup.add(tree);
+            }
+            scene.add(treeGroup);
+        }
+
+        function createMagicParticles() {
+            const particlesGeo = new THREE.BufferGeometry();
+            const particlesCount = 800;
+            const posArray = new Float32Array(particlesCount * 3);
+            for (let i = 0; i < particlesCount * 3; i += 3) {
+                posArray[i] = (Math.random() - 0.5) * 250;
+                posArray[i + 1] = Math.random() * 120;
+                posArray[i + 2] = (Math.random() - 0.5) * 250;
+            }
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 32; canvas.height = 32;
+            const context = canvas.getContext('2d');
+            const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.2, 'rgba(253, 224, 71, 0.8)'); // Lõi vàng
+            gradient.addColorStop(1, 'rgba(253, 224, 71, 0)');
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, 32, 32);
+            const particleTexture = new THREE.CanvasTexture(canvas);
+
+            const particlesMat = new THREE.PointsMaterial({
+                size: 2.0,
+                map: particleTexture,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                color: 0xffffff,
+                depthWrite: false
+            });
+
+            particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+            scene.add(particlesMesh);
+        }
+
+        // --- CÁC HÀM XÂY DỰNG KIẾN TRÚC CHI TIẾT ---
+        function createHogwarts() {
+            const castleGroup = new THREE.Group();
+            scene.add(castleGroup);
+
+            function createWindow(w, h, d, emit = true) {
+                const winGroup = new THREE.Group();
+                const frameGeo = new THREE.BoxGeometry(w, h, d);
+                const frame = new THREE.Mesh(frameGeo, roofMat);
+
+                const paneGeo = new THREE.BoxGeometry(w * 0.6, h * 0.8, d * 1.1);
+                const pane = new THREE.Mesh(paneGeo, emit ? windowMat : roofMat);
+
+                winGroup.add(frame);
+                winGroup.add(pane);
+
+                if (emit) {
+                    // Không dùng PointLight để giảm giật lag (chỉ dùng emissive material)
+                }
+                return winGroup;
+            }
+
+            // Tháp tinh xảo (có tháp phụ nhỏ mọc quanh mái)
+            function createCinematicTower(x, z, radius, height, roofHeight, turretsCount = 0) {
+                const towerGroup = new THREE.Group();
+                towerGroup.position.set(x, 0, z);
+
+                // Thân tháp chia 2 nấc
+                const bodyBottomGeo = new THREE.CylinderGeometry(radius, radius * 1.1, height * 0.6, 16);
+                const bodyBottom = new THREE.Mesh(bodyBottomGeo, stoneMat);
+                bodyBottom.position.y = height * 0.3;
+                bodyBottom.castShadow = true; bodyBottom.receiveShadow = true;
+
+                const bodyTopGeo = new THREE.CylinderGeometry(radius * 0.9, radius, height * 0.4, 16);
+                const bodyTop = new THREE.Mesh(bodyTopGeo, stoneMat);
+                bodyTop.position.y = height * 0.8;
+                bodyTop.castShadow = true; bodyTop.receiveShadow = true;
+
+                // Đai đá nối 2 nấc
+                const ledge = new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.1, radius * 1.1, 1.5, 16), stoneMat);
+                ledge.position.y = height * 0.6;
+                ledge.castShadow = true;
+
+                // Mái chóp vươn cao
+                const roof = new THREE.Mesh(new THREE.ConeGeometry(radius * 1.2, roofHeight, 16), roofMat);
+                roof.position.y = height + roofHeight / 2;
+                roof.castShadow = true;
+
+                towerGroup.add(bodyBottom); towerGroup.add(bodyTop);
+                towerGroup.add(ledge); towerGroup.add(roof);
+
+                // Các tháp con (Turrets) mọc quanh vành mái
+                if (turretsCount > 0) {
+                    for (let i = 0; i < turretsCount; i++) {
+                        const angle = (i / turretsCount) * Math.PI * 2;
+                        const tRad = radius * 0.3;
+                        const tGroup = new THREE.Group();
+
+                        const tBody = new THREE.Mesh(new THREE.CylinderGeometry(tRad, tRad, height * 0.15, 8), stoneMat);
+                        const tRoof = new THREE.Mesh(new THREE.ConeGeometry(tRad * 1.3, roofHeight * 0.3, 8), roofMat);
+                        tBody.position.y = height - height * 0.075;
+                        tRoof.position.y = height + roofHeight * 0.15;
+
+                        tGroup.add(tBody); tGroup.add(tRoof);
+                        tGroup.position.set(Math.cos(angle) * radius * 1.1, 0, Math.sin(angle) * radius * 1.1);
+                        towerGroup.add(tGroup);
+                    }
+                }
+
+                // Cửa sổ vòng cung 360 độ
+                const rows = Math.floor(height / 15);
+                for (let r = 0; r < rows; r++) {
+                    const yPos = 12 + r * 15;
+                    const rds = r > 0 ? radius * 0.9 : radius;
+                    for (let i = 0; i < 4; i++) { // 4 cửa sổ mỗi tầng
+                        const angle = (i * Math.PI / 2) + (r % 2 * 0.5); // So le
+                        const win = createWindow(2, 4, 1.5);
+                        win.position.set(Math.cos(angle) * rds * 0.9, yPos, Math.sin(angle) * rds * 0.9);
+                        win.lookAt(x + Math.cos(angle) * radius * 2, yPos, z + Math.sin(angle) * radius * 2);
+                        towerGroup.add(win);
+                    }
+                }
+                castleGroup.add(towerGroup);
+            }
+
+            // Đại sảnh đường uy nghi (Great Hall)
+            function createCinematicGreatHall(x, z) {
+                const width = 32, depth = 75, height = 28;
+                const hallGroup = new THREE.Group();
+                hallGroup.position.set(x, 0, z);
+
+                const building = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), stoneMat);
+                building.position.y = height / 2;
+                building.castShadow = true; building.receiveShadow = true;
+                hallGroup.add(building);
+
+                const roof = new THREE.Mesh(new THREE.ConeGeometry(width * 0.85, 20, 4), roofMat);
+                roof.rotation.y = Math.PI / 4;
+                roof.scale.set(1, 1, depth / width);
+                roof.position.y = height + 10;
+                roof.castShadow = true;
+                hallGroup.add(roof);
+
+                // Cửa sổ siêu lớn ở mặt trước (Mặt hướng ra hồ)
+                const frontWindow = createWindow(10, 18, 3);
+                frontWindow.position.set(0, height / 2 + 2, depth / 2);
+                hallGroup.add(frontWindow);
+
+                // Các hàng cửa sổ chữ nhật mỏng và trụ đỡ (Buttresses) dọc 2 bên
+                for (let i = -depth / 2 + 8; i < depth / 2; i += 12) {
+                    const winLeft = createWindow(2, 14, 2);
+                    winLeft.position.set(-width / 2, height / 2 + 2, i);
+                    hallGroup.add(winLeft);
+
+                    const winRight = createWindow(2, 14, 2);
+                    winRight.position.set(width / 2, height / 2 + 2, i);
+                    hallGroup.add(winRight);
+
+                    // Trụ đỡ Gothic
+                    const buttress = new THREE.Mesh(new THREE.BoxGeometry(3, height - 2, 5), stoneMat);
+
+                    const pL = buttress.clone();
+                    pL.position.set(-width / 2 - 1.5, height / 2 - 1, i + 6); // Đặt xen kẽ cửa sổ
+                    pL.castShadow = true; hallGroup.add(pL);
+
+                    const pR = buttress.clone();
+                    pR.position.set(width / 2 + 1.5, height / 2 - 1, i + 6);
+                    pR.castShadow = true; hallGroup.add(pR);
+                }
+                castleGroup.add(hallGroup);
+            }
+
+            // Nhà Thuyền (Boathouse) - Kiến trúc mang tính biểu tượng sát mặt nước
+            function createBoathouse(x, z) {
+                const boatGroup = new THREE.Group();
+                boatGroup.position.set(x, -20, z); // Xuống sát mặt nước
+
+                // Nền đá
+                const base = new THREE.Mesh(new THREE.BoxGeometry(20, 5, 25), stoneMat);
+                base.position.y = 2.5;
+                boatGroup.add(base);
+
+                // Thân nhà
+                const house = new THREE.Mesh(new THREE.BoxGeometry(16, 12, 20), stoneMat);
+                house.position.y = 11;
+                boatGroup.add(house);
+
+                // Mái chóp vòm nhọn
+                const roof = new THREE.Mesh(new THREE.ConeGeometry(12, 15, 4), roofMat);
+                roof.rotation.y = Math.PI / 4;
+                roof.scale.set(1, 1, 20 / 16);
+                roof.position.y = 24.5;
+                boatGroup.add(roof);
+
+                // Đèn cửa sổ nhà thuyền chiếu rọi xuống mặt hồ
+                const win = createWindow(6, 6, 2);
+                win.position.set(0, 10, 10);
+                boatGroup.add(win);
+
+                // Con đường dốc ngoằn ngoèo lên núi (Path to castle)
+                const pathMat = new THREE.MeshStandardMaterial({ color: 0x44403c });
+                for (let i = 0; i < 15; i++) {
+                    const step = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 8), pathMat);
+                    step.position.set(-8 - i * 3, 2.5 + i * 3.5, 12 + Math.sin(i) * 10);
+                    step.rotation.y = Math.sin(i) * 0.5;
+                    step.receiveShadow = true;
+                    boatGroup.add(step);
+
+                    // Thêm vài trụ đuốc soi đường
+                    if (i % 4 === 0) {
+                        const torch = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 4), woodMat);
+                        torch.position.set(-6 - i * 3, 6 + i * 3.5, 12 + Math.sin(i) * 10);
+                        const flame = new THREE.Mesh(new THREE.SphereGeometry(1.2, 8, 8), windowMat);
+                        flame.position.y = 2.5;
+                        torch.add(flame);
+                        boatGroup.add(torch);
+                    }
+                }
+                castleGroup.add(boatGroup);
+            }
+
+            // Cầu vòm đá (Arch Bridge / Viaduct) - Không dùng lỗ khoan (CSG) mà ghép các khối cung
+            function createViaductBridge(x, z, angleY) {
+                const bridgeGroup = new THREE.Group();
+                bridgeGroup.position.set(x, 0, z);
+                bridgeGroup.rotation.y = angleY;
+
+                const length = 70;
+
+                // Mặt đường cầu
+                const road = new THREE.Mesh(new THREE.BoxGeometry(length, 3, 12), stoneMat);
+                road.position.y = 15;
+                road.receiveShadow = true; road.castShadow = true;
+                bridgeGroup.add(road);
+
+                // Tạo các nhịp vòm cung (Arches) bằng TorusGeometry cắt nửa
+                const numArches = 4;
+                const spacing = length / numArches;
+
+                for (let i = 0; i < numArches; i++) {
+                    const archX = -length / 2 + spacing / 2 + (i * spacing);
+
+                    // Trụ cầu
+                    const pillar = new THREE.Mesh(new THREE.BoxGeometry(4, 15, 10), stoneMat);
+                    pillar.position.set(archX - spacing / 2, 7.5, 0);
+                    pillar.castShadow = true;
+                    bridgeGroup.add(pillar);
+
+                    // Vòm cung (Torus cắt 1 nửa = Math.PI)
+                    // Radius = spacing/2, tube = 1.5
+                    const archGeo = new THREE.TorusGeometry((spacing - 4) / 2, 2, 16, 24, Math.PI);
+                    const arch = new THREE.Mesh(archGeo, stoneMat);
+                    arch.position.set(archX, 13.5, 0);
+                    // Torus xoay dọc lại
+                    arch.rotation.y = Math.PI / 2;
+                    arch.castShadow = true;
+                    bridgeGroup.add(arch);
+                }
+
+                // Trụ cuối cùng
+                const endPillar = new THREE.Mesh(new THREE.BoxGeometry(4, 15, 10), stoneMat);
+                endPillar.position.set(length / 2, 7.5, 0);
+                endPillar.castShadow = true;
+                bridgeGroup.add(endPillar);
+
+                // Các đèn trang trí dọc thành cầu
+                for (let i = -length / 2 + 2; i < length / 2; i += 10) {
+                    const torch = new THREE.Mesh(new THREE.BoxGeometry(1, 4, 1), stoneMat);
+                    torch.position.set(i, 18, 5.5);
+                    const flame = new THREE.Mesh(new THREE.SphereGeometry(1.2, 8, 8), windowMat);
+                    flame.position.y = 2.5;
+                    torch.add(flame);
+                    bridgeGroup.add(torch);
+
+                    const torch2 = torch.clone();
+                    torch2.position.set(i, 18, -5.5);
+                    bridgeGroup.add(torch2);
+                }
+
+                castleGroup.add(bridgeGroup);
+            }
+
+            // --- TẬP HỢP TẤT CẢ VÀO SCENE ---
+
+            // 1. Đại sảnh đường ngay mặt tiền
+            createCinematicGreatHall(10, 20);
+
+            // 2. Tháp Grand Staircase (To to, rất nhiều cửa sổ)
+            createCinematicTower(-15, 30, 14, 75, 25, 6);
+
+            // 3. Tháp Thiên Văn (Cao vút tận mây)
+            createCinematicTower(-45, -20, 12, 130, 35, 8);
+            createCinematicTower(-32, -5, 7, 85, 25, 4); // Tháp phụ bao bọc
+
+            // 4. Các tháp hậu phương (Ravenclaw / Gryffindor)
+            createCinematicTower(35, -30, 10, 90, 25, 4);
+            createCinematicTower(50, -10, 8, 70, 20, 4);
+
+            // 5. Cầu Viaduct vắt ngang qua khoảng không
+            createViaductBridge(45, 25, -Math.PI / 6);
+
+            // 6. Nhà thuyền sát mép nước (-x, +z là rìa trước bên trái)
+            createBoathouse(-45, 60);
+
+            // Nâng tòa bộ khối kiến trúc lên mặt vách đá (trừ nhà thuyền)
+            castleGroup.position.y = 25;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.03;
+
+            // Chuyển động hạt ma thuật
+            if (particlesMesh) {
+                particlesMesh.rotation.y -= 0.0005;
+                particlesMesh.rotation.x += 0.0002;
+                particlesMesh.position.y = Math.sin(time * 0.5) * 8;
+            }
+
+            // Nước dập dềnh (Vertex Animation)
+            if (waterMesh) {
+                const positionAttribute = waterMesh.geometry.attributes.position;
+                for (let i = 0; i < positionAttribute.count; i++) {
+                    const u = positionAttribute.getX(i);
+                    const v = positionAttribute.getY(i);
+                    // Tạo sóng gợn lăn tăn cực mịn
+                    const z = Math.sin(u * 0.03 + time * 1.5) * 0.8 + Math.cos(v * 0.03 + time * 1.2) * 0.8;
+                    positionAttribute.setZ(i, z);
+                }
+                positionAttribute.needsUpdate = true;
+            }
+
+            controls.update();
+
+            // SỬ DỤNG RENDERER CƠ BẢN ĐỂ GIỮ NỀN TRONG SUỐT (XOÁ PHÔNG)
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

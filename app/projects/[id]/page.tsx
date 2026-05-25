@@ -45,19 +45,13 @@ export default function ProjectDetailPage() {
             ======================================================== */}
         <div className="text-center mb-12 flex flex-col items-center">
           <div className="flex justify-between w-full text-[9px] md:text-xs font-cinzel uppercase tracking-[0.2em] px-2 py-1 text-muted-foreground border-b border-foreground/30">
-            <span>Special Supplement</span>
-            <span>Investigative Case File: #{project.id.toUpperCase()}</span>
-            <span>1 Sickle</span>
+
           </div>
 
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-black tracking-tight text-foreground my-4 uppercase">
-            {language === "vi" ? "Báo Cáo Chuyên Đề Đặc Biệt" : "Special Investigative Report"}
+            {language === "vi" ? "DỰ ÁN TIÊU BIỂU" : "FEATURED PROJECTS"}
           </h2>
-
           <div className="w-full h-1 bg-foreground relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-4 font-cinzel text-[10px] tracking-[0.3em] text-primary flex items-center gap-1.5">
-              <span>✦</span> {language === "vi" ? "BẢN PHÂN TÍCH CHUYÊN SÂU" : "IN-DEPTH TECHNICAL DISSECTION"} <span>✦</span>
-            </div>
           </div>
         </div>
 
@@ -87,17 +81,18 @@ export default function ProjectDetailPage() {
               priority
             />
             <div className="halftone-overlay"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent mix-blend-multiply" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
           </div>
 
           <div className="absolute bottom-6 left-6 right-6 md:left-12 md:right-12 z-10">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-black tracking-tight leading-none text-foreground uppercase border-b border-foreground/30 pb-3">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-cinzel font-black tracking-tight leading-none uppercase border-b border-white/20 pb-4 text-[#DB7706] drop-shadow-[0_4px_4px_rgba(0,0,0,1)]">
               {project.title}
             </h1>
 
             <div className="flex flex-wrap gap-2 mt-4">
               {project.tech.map((tech: string) => (
-                <span key={tech} className="px-3 py-1 bg-secondary/80 border border-border text-[10px] font-cinzel font-bold text-muted-foreground shadow-[1px_1px_0px_rgba(0,0,0,0.05)]">
+                <span key={tech} className="px-3 py-1 bg-secondary/80 border border-border text-[15px] font-cinzel font-bold text-muted-foreground shadow-[1px_1px_0px_rgba(0,0,0,0.05)]">
                   {tech}
                 </span>
               ))}
@@ -178,13 +173,83 @@ export default function ProjectDetailPage() {
                 </div>
               </div>
 
-              {/* Impact / Results */}
+
+            </motion.section>
+          </div>
+
+          {/* Sidebar / Investigative File Index (Right Column) */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-28 space-y-8">
+              {/* Magical Diorama */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="w-full aspect-square relative"
+              >
+                <iframe
+                  src="/hogwarts_castle_3d.html"
+                  className="absolute inset-0 w-full h-full pointer-events-auto"
+                  frameBorder="0"
+                  allowFullScreen
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="p-8 border-4 border-double border-foreground bg-card shadow-lg"
+              >
+                <h3 className="text-lg font-cinzel font-black mb-6 uppercase tracking-[0.15em] border-b-2 border-foreground pb-2 flex items-center gap-2 text-primary">
+                  <span>✦</span> {t.projectDetail.links}
+                </h3>
+
+                <div className="flex flex-col gap-4">
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-5 py-3.5 border-2 border-foreground bg-foreground text-background font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 hover:bg-primary hover:border-primary hover:text-primary-foreground shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
+                  >
+                    {t.projectActions.visit} <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+
+                  {project.github && project.github !== "#" && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between px-5 py-3.5 border border-foreground bg-transparent hover:bg-secondary/40 text-foreground font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
+                    >
+                      {t.projectActions.github || "View Source"} <Github size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Technologies index scroll */}
+                <div className="mt-8 pt-8 border-t border-foreground/10">
+                  <h4 className="text-xs font-cinzel font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                    {t.projectActions.techStack}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tech.map((tech: string) => (
+                      <span key={tech} className="text-[10px] font-serif font-bold px-2 py-0.5 bg-background border border-border">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Impact / Results Moved to Right Column */}
               {project.impact && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="p-8 border-4 border-double border-foreground bg-card"
+                  className="p-8 border-4 border-double border-foreground bg-card shadow-lg"
                 >
                   <h3 className="text-xl font-cinzel font-black mb-6 uppercase tracking-widest border-b border-foreground pb-2 flex items-center gap-2">
                     <span>✚</span> {t.projectDetail.impact}
@@ -202,63 +267,13 @@ export default function ProjectDetailPage() {
                         <div className="mt-1.5 w-4 h-4 border border-primary bg-primary/10 flex-shrink-0 flex items-center justify-center rotate-45">
                           <div className="w-1.5 h-1.5 bg-primary" />
                         </div>
-                        <p className="text-sm md:text-base text-foreground font-serif leading-relaxed text-justify">{item}</p>
+                        <p className="text-xs md:text-sm text-foreground font-serif leading-relaxed text-justify">{item}</p>
                       </motion.div>
                     ))}
                   </div>
                 </motion.div>
               )}
-            </motion.section>
-          </div>
-
-          {/* Sidebar / Investigative File Index (Right Column) */}
-          <div className="lg:col-span-1">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="sticky top-28 p-8 border-4 border-double border-foreground bg-card shadow-lg"
-            >
-              <h3 className="text-lg font-cinzel font-black mb-6 uppercase tracking-[0.15em] border-b-2 border-foreground pb-2 flex items-center gap-2 text-primary">
-                <span>✦</span> {t.projectDetail.links}
-              </h3>
-
-              <div className="flex flex-col gap-4">
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between px-5 py-3.5 border-2 border-foreground bg-foreground text-background font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 hover:bg-primary hover:border-primary hover:text-primary-foreground shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
-                >
-                  {t.projectActions.visit} <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-
-                {project.github && project.github !== "#" && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-5 py-3.5 border border-foreground bg-transparent hover:bg-secondary/40 text-foreground font-cinzel font-bold text-xs uppercase tracking-widest group transition-all duration-300 shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
-                  >
-                    {t.projectActions.github || "View Source"} <Github size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </a>
-                )}
-              </div>
-
-              {/* Technologies index scroll */}
-              <div className="mt-8 pt-8 border-t border-foreground/10">
-                <h4 className="text-xs font-cinzel font-bold uppercase tracking-widest text-muted-foreground mb-4">
-                  {t.projectActions.techStack}
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {project.tech.map((tech: string) => (
-                    <span key={tech} className="text-[10px] font-serif font-bold px-2 py-0.5 bg-background border border-border">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
