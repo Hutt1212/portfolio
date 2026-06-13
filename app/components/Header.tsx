@@ -121,7 +121,7 @@ export default function Header() {
 
             {/* About Editorial scroll */}
             <Link
-              href="/#about"
+              href="/about"
               className="text-xs font-cinzel font-bold text-foreground/80 hover:text-primary transition-colors uppercase tracking-widest"
             >
               {t.about.title}
@@ -262,7 +262,7 @@ export default function Header() {
 
                   {/* About scroll Link */}
                   <Link
-                    href="/#about"
+                    href="/about"
                     onClick={() => setIsSidebarOpen(false)}
                     className="text-2xl font-cinzel font-bold py-2 border-b border-foreground/10 text-foreground hover:text-primary transition-colors text-left uppercase tracking-wide"
                   >

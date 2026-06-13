@@ -26,7 +26,7 @@ export default function Hero() {
               </span>
               <span className="text-sm font-medium text-emerald-500">{t.hero.status}</span>
             </div>
-            
+
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
               {t.hero.title}
             </h1>
