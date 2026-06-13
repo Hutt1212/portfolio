@@ -5,12 +5,7 @@ import { motion } from "framer-motion"
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pt-24 pb-24 relative overflow-hidden">
-      {/* Magical candle glow effects */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[20%] -left-[10%] w-[50%] h-[50%] bg-amber-500/5 dark:bg-amber-500/10 rounded-full blur-[100px] animate-blob"></div>
-        <div className="absolute bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-orange-600/5 dark:bg-orange-600/10 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-4 pt-24 pb-24 relative overflow-hidden z-10">
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}

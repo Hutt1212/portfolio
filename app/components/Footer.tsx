@@ -3,130 +3,151 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { useLanguage } from "@/app/hooks/useLanguage"
+import Magnetic from "./Magnetic"
+import { ArrowUpRight, Phone, Github, Facebook, Instagram, Mail } from "lucide-react"
+
 export default function Footer() {
   const { t, language } = useLanguage()
 
-  const footerLinks = [
+  const socials = [
     {
-      key: "phone",
-      label: "0357 210 049",
-      href: "tel:0357210049",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-      )
+      key: "github",
+      label: "GitHub",
+      href: "https://github.com/Hutt1212",
+      icon: <Github size={18} />,
     },
     {
       key: "facebook",
       label: "Facebook",
       href: "https://www.facebook.com/minh.huy.604520",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
-      )
+      icon: <Facebook size={18} />,
     },
     {
       key: "instagram",
       label: "Instagram",
       href: "https://www.instagram.com/m_hii204/",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
-      )
+      icon: <Instagram size={18} />,
     },
-    {
-      key: "github",
-      label: "GitHub",
-      href: "https://github.com/Hutt1212",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
-      )
-    }
+  ]
+
+  const navLinks = [
+    { label: language === "vi" ? "Dự Án" : "Projects", href: "/#projects" },
+    { label: language === "vi" ? "Kỹ Năng" : "Skills", href: "/#skills" },
+    { label: language === "vi" ? "Về Tôi" : "About", href: "/about" },
   ]
 
   return (
-    <footer id="footer" className="bg-[#0b0907] dark:bg-[#070605] pt-20 pb-12 border-t-4 border-double border-foreground/30 relative overflow-hidden text-foreground select-none">
+    <footer id="footer" className="relative overflow-hidden bg-foreground text-background select-none">
 
-      {/* Old parchment overlay */}
-      <div className="absolute inset-0 bg-repeat pointer-events-none opacity-[0.03] dark:opacity-[0.06] z-0"
+      {/* Subtle noise texture */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04] z-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+      {/* Big CTA area */}
+      <div className="relative z-10 border-b border-background/10">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 py-24 md:py-32 flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
 
-        {/* Newspaper double rule divider */}
-        <div className="w-full h-1 bg-foreground/20 border-b border-foreground/30 mb-12"></div>
+          <div className="max-w-2xl">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-background/40 text-sm font-medium uppercase tracking-[0.3em] mb-4"
+            >
+              {t.footer.available}
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-outfit font-black tracking-tighter leading-[0.9] uppercase"
+            >
+              {t.footer.slogan}
+            </motion.h2>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex-shrink-0"
+          >
+            <Magnetic>
+              <a
+                href="mailto:huynmhcm@gmail.com"
+                className="group flex items-center gap-4 px-10 py-5 bg-primary text-primary-foreground rounded-full font-bold text-lg uppercase tracking-widest hover:bg-[hsl(var(--accent))] hover:text-foreground transition-all duration-300"
+              >
+                <Mail size={22} />
+                {t.footer.contactTitle}
+                <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </a>
+            </Magnetic>
+          </motion.div>
+        </div>
+      </div>
 
-          {/* Branding Section */}
-          <div className="md:col-span-2">
-            <Link href="/" className="inline-block mb-4">
-              <span className="text-3xl font-cinzel font-black tracking-widest text-primary uppercase">M. Huy Times.</span>
-            </Link>
-            <p className="text-muted-foreground font-serif text-sm max-w-sm leading-relaxed mb-8 text-justify">
-              {t.footer.slogan || "Crafting high-performance web applications with modern architecture and exceptional user experiences."}
-            </p>
-            <div className="flex gap-3">
-              {footerLinks.map((item) => (
-                <Link
-                  key={item.key}
+      {/* Bottom bar */}
+      <div className="relative z-10 max-w-[90rem] mx-auto px-6 lg:px-12 py-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+
+          {/* Brand */}
+          <Link href="/" className="group flex items-center gap-3">
+            <span className="text-2xl font-outfit font-black tracking-tighter text-background group-hover:text-primary transition-colors">
+              M.HUY
+            </span>
+            <span className="text-background/30 text-sm font-medium">— Fullstack Developer</span>
+          </Link>
+
+          {/* Nav links */}
+          <nav className="flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-background/50 hover:text-background text-sm font-medium uppercase tracking-widest transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Socials + phone */}
+          <div className="flex items-center gap-3">
+            <a
+              href="tel:0357210049"
+              className="flex items-center gap-2 text-sm text-background/50 hover:text-background transition-colors mr-2"
+            >
+              <Phone size={14} />
+              0357 210 049
+            </a>
+            {socials.map((item) => (
+              <Magnetic key={item.key}>
+                <a
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 border border-foreground/30 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 shadow-[1px_1px_0px_rgba(0,0,0,0.15)]"
+                  aria-label={item.label}
+                  className="w-10 h-10 rounded-full border border-background/20 flex items-center justify-center text-background/50 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
                 >
                   {item.icon}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-primary font-cinzel font-black mb-6 uppercase tracking-widest text-xs border-b border-foreground/15 pb-1">
-              {t.nav.projects}
-            </h4>
-            <ul className="space-y-3 font-serif">
-              <li>
-                <Link href="#projects" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-primary rotate-45 flex-shrink-0"></span>
-                  {t.portfolio.title}
-                </Link>
-              </li>
-              <li>
-                <Link href="#skills" className="text-muted-foreground hover:text-primary text-sm transition-colors flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-primary rotate-45 flex-shrink-0"></span>
-                  {t.skills.title}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h4 className="text-primary font-cinzel font-black mb-6 uppercase tracking-widest text-xs border-b border-foreground/15 pb-1">
-              {t.footer.contactTitle || "Contact"}
-            </h4>
-            <div className="space-y-4 font-serif">
-              <a href="tel:0357210049" className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors group">
-                <span className="w-8 h-8 border border-foreground/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors shadow-[1px_1px_0px_rgba(0,0,0,0.05)]">
-                  {footerLinks[0].icon}
-                </span>
-                0357 210 049
-              </a>
-              <div className="text-[11px] text-muted-foreground/60 mt-4 italic border-t border-foreground/10 pt-2">
-                {t.footer.available || "Available for new opportunities"}
-              </div>
-            </div>
+                </a>
+              </Magnetic>
+            ))}
           </div>
         </div>
 
-        {/* Double rule footer imprint */}
-        <div className="pt-8 border-t border-foreground/20 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs font-serif text-muted-foreground/60">
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-2">
+          <p className="text-xs text-background/30">
             {t.footer.copyright}
           </p>
-
         </div>
       </div>
     </footer>
