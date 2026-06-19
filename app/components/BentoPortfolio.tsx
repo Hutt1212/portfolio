@@ -7,6 +7,8 @@ import Image from "next/image"
 import Link from "next/link"
 import RevealText from "./RevealText"
 import Magnetic from "./Magnetic"
+import { ProgressiveBlur } from "./ProgressiveBlur"
+import TechIcon from "./TechIcons"
 import { ArrowUpRight, Zap, Code2, Layers, Heart, ArrowRight } from "lucide-react"
 
 // --- Types ---
@@ -53,20 +55,53 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 
 // --- Sub-component: Marquee ---
 function InfiniteMarquee({ items, speed = 20, reverse = false, className = "" }: { items: string[], speed?: number, reverse?: boolean, className?: string }) {
+  // 4 copies is more than enough to cover a 4K screen (15 items * 4 = 60 items)
+  // Each item is around ~120px wide with margins, so total width is ~7200px.
+  const COPIES = 4;
+  const duplicatedItems = Array.from({ length: COPIES }).flatMap(() => items);
+
+  const adjustedSpeed = speed * (COPIES / 4);
+
   return (
-    <div className={`overflow-hidden flex w-full select-none ${className}`}>
-      <motion.div
-        className="flex whitespace-nowrap min-w-full"
-        animate={{ x: reverse ? ["0%", "-50%"] : ["-50%", "0%"] }}
-        transition={{ repeat: Infinity, duration: speed, ease: "linear" }}
+    <div className={`overflow-hidden flex w-full select-none relative items-center ${className}`}>
+      {/* Left Fade Overlay (Optimized: No heavy blur) */}
+      <div className="absolute top-0 bottom-0 left-0 w-16 md:w-40 z-10 pointer-events-none bg-gradient-to-r from-[hsl(var(--emblemo-yellow))] to-transparent" />
+
+      {/* Right Fade Overlay (Optimized: No heavy blur) */}
+      <div className="absolute top-0 bottom-0 right-0 w-16 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-[hsl(var(--emblemo-yellow))] to-transparent" />
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes marquee-left {
+          0% { transform: translate3d(0%, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        @keyframes marquee-right {
+          0% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(0%, 0, 0); }
+        }
+        .animate-marquee-left {
+          animation-name: marquee-left;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+        .animate-marquee-right {
+          animation-name: marquee-right;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+      `}} />
+
+      <div
+        className={`flex whitespace-nowrap w-max items-center py-4 transform-gpu will-change-transform ${reverse ? 'animate-marquee-right' : 'animate-marquee-left'}`}
+        style={{ animationDuration: `${adjustedSpeed}s` }}
       >
-        {/* Double the items to create an infinite loop effect */}
-        {[...items, ...items, ...items, ...items].map((item, i) => (
-          <span key={i} className="mx-4 md:mx-8 text-2xl md:text-5xl font-outfit font-black uppercase tracking-tighter opacity-80 shrink-0">
-            {item} •
+        {duplicatedItems.map((item, i) => (
+          <span key={i} className="mx-6 md:mx-10 opacity-90 shrink-0 inline-flex items-center group/spin">
+            <TechIcon name={item} className="w-8 h-8 md:w-12 md:h-12 text-black transition-transform duration-500 group-hover/spin:animate-[spin_1.5s_linear_infinite]" />
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   )
 }
@@ -137,7 +172,7 @@ export default function BentoPortfolio() {
             </svg>
           </div>
           <div className="relative z-10 max-w-2xl">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-outfit uppercase leading-[0.9] tracking-tighter mb-6">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-outfit uppercase leading-[1.1] md:leading-[0.9] tracking-tighter mb-8">
               <RevealText text={t.hero.title} />
             </h1>
             <p className="text-xl md:text-2xl font-medium opacity-90 max-w-md">
@@ -176,7 +211,7 @@ export default function BentoPortfolio() {
 
         {/* INFINITE MARQUEE STRIP */}
         <BentoCard delay={0.3} span="md:col-span-12" className="bg-[hsl(var(--emblemo-yellow))] text-black !py-8 !px-0 rounded-full my-4 shadow-[0_0_40px_rgba(254,206,7,0.3)]">
-          <InfiniteMarquee items={allSkills} speed={40} reverse={false} />
+          <InfiniteMarquee items={allSkills} speed={20} reverse={false} />
         </BentoCard>
 
         {/* METRICS (2 Columns) */}
@@ -226,8 +261,8 @@ export default function BentoPortfolio() {
           </h2>
         </motion.div>
 
-        {/* SERVICES PILLAR (Left side, sticky-like, 4 cols) */}
-        <BentoCard delay={0.3} span="md:col-span-12 lg:col-span-4" className="bg-secondary/60 backdrop-blur-xl text-foreground flex flex-col justify-start h-full border-[hsl(var(--emblemo-yellow))]/20">
+        {/* SERVICES PILLAR (Left side, sticky on desktop, 4 cols) */}
+        <BentoCard delay={0.3} span="md:col-span-12 lg:col-span-4" className="bg-secondary/60 backdrop-blur-xl text-foreground flex flex-col justify-start h-fit relative lg:sticky lg:top-32 z-20 border-[hsl(var(--emblemo-yellow))]/20 shadow-[0_0_40px_rgba(0,0,0,0.1)]">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-3xl font-outfit font-black uppercase text-foreground">
               {t.services.title}
@@ -235,39 +270,48 @@ export default function BentoPortfolio() {
             <Layers size={28} className="text-[hsl(var(--emblemo-yellow))]" />
           </div>
 
-          <div className="flex flex-col gap-3">
-            {t.services.items.map((service: Service, i: number) => (
-              <div
-                key={service.name}
-                onMouseEnter={() => setActiveService(service)}
-                onMouseLeave={() => setActiveService(null)}
-                className="group/service p-4 rounded-2xl bg-background border border-transparent hover:border-[hsl(var(--accent))] transition-all cursor-crosshair relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-[hsl(var(--accent))]/5 translate-y-full group-hover/service:translate-y-0 transition-transform duration-300 ease-out" />
-                <div className="relative z-10 flex flex-col gap-1">
-                  <div className="flex justify-between items-center text-muted-foreground group-hover/service:text-[hsl(var(--accent))] transition-colors">
-                    <span className="font-outfit font-bold text-lg">0{i + 1}</span>
-                    <ArrowUpRight size={18} className="opacity-0 -translate-x-4 group-hover/service:opacity-100 group-hover/service:translate-x-0 transition-all" />
+          <div className="flex flex-col gap-4">
+            {t.services.items.map((service: Service, i: number) => {
+              const isActive = activeService?.name === service.name;
+              return (
+                <div
+                  key={service.name}
+                  onMouseEnter={() => setActiveService(service)}
+                  onMouseLeave={() => setActiveService(null)}
+                  className={`group/service p-5 rounded-2xl cursor-crosshair transition-all duration-500 border relative overflow-hidden ${
+                    isActive
+                      ? "bg-[hsl(var(--emblemo-yellow))] border-[hsl(var(--emblemo-yellow))] shadow-[0_0_30px_rgba(254,206,7,0.2)]"
+                      : "bg-background border-border hover:border-[hsl(var(--emblemo-yellow))]/50"
+                  }`}
+                >
+                  <div className="relative z-10 flex flex-col gap-2">
+                    <div className={`flex justify-between items-center transition-colors duration-500 ${isActive ? "text-black" : "text-muted-foreground"}`}>
+                      <span className="font-outfit font-black text-xl">0{i + 1}</span>
+                      <ArrowUpRight size={22} className={`transition-all duration-500 ${isActive ? "opacity-100 rotate-45 text-black" : "opacity-0 -translate-x-4 group-hover/service:opacity-100 group-hover/service:translate-x-0"}`} />
+                    </div>
+                    <span className={`font-outfit font-bold text-xl transition-colors duration-500 ${isActive ? "text-black" : "text-foreground"}`}>
+                      {service.name}
+                    </span>
+                    
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <p className="text-black/80 font-medium mt-2 leading-relaxed text-sm">
+                            {service.description}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                  <span className="font-outfit font-bold text-xl text-foreground group-hover/service:text-foreground transition-colors">{service.name}</span>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Service Tooltip Box */}
-          <div className="mt-8 p-6 bg-background rounded-2xl border border-border min-h-[120px] flex items-center justify-center text-center">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={activeService ? activeService.name : "empty"}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-sm text-muted-foreground"
-              >
-                {activeService ? activeService.description : (isVi ? "Di chuột vào một dịch vụ để xem chi tiết." : "Hover over a service to see details.")}
-              </motion.p>
-            </AnimatePresence>
+              );
+            })}
           </div>
         </BentoCard>
 
