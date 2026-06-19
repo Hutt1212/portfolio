@@ -39,7 +39,7 @@ export default function RevealText({ text, className }: { text: string; classNam
 
   return (
     <motion.div
-      className={`flex flex-wrap ${className}`}
+      className={`inline-block ${className || ""}`}
       variants={container}
       initial="hidden"
       whileInView="visible"

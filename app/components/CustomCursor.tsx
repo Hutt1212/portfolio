@@ -35,7 +35,7 @@ export default function CustomCursor() {
     <>
       {/* Inner Dot (Instant Follow) */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full mix-blend-difference bg-white"
+        className="hidden md:block fixed top-0 left-0 pointer-events-none z-[9999] rounded-full mix-blend-difference bg-white"
         animate={{
           x: mousePosition.x - (isHovered ? 6 : 4),
           y: mousePosition.y - (isHovered ? 6 : 4),
@@ -47,7 +47,7 @@ export default function CustomCursor() {
 
       {/* Outer Ring (Smooth Lag) */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998] rounded-full border border-primary/50 mix-blend-difference"
+        className="hidden md:block fixed top-0 left-0 pointer-events-none z-[9998] rounded-full border border-primary/50 mix-blend-difference"
         animate={{
           x: mousePosition.x - (isHovered ? 24 : 16),
           y: mousePosition.y - (isHovered ? 24 : 16),
