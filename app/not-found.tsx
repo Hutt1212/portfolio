@@ -2,46 +2,56 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { ArrowUpRight } from "lucide-react"
+import { useLanguage } from "@/app/hooks/useLanguage"
+
+const EASE = [0.16, 1, 0.3, 1] as const
 
 export default function NotFound() {
+  const { language } = useLanguage()
+  const isVi = language === "vi"
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pt-24 pb-24 relative overflow-hidden z-10">
-
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full text-center p-8 parchment-block relative"
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-[110rem] flex-col justify-center px-4 pb-20 pt-28 sm:px-6 lg:px-10">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
       >
-        {/* Newspaper Issue Details Header */}
-        <div className="flex justify-between w-full text-[9px] font-cinzel uppercase tracking-[0.2em] px-2 py-1 text-muted-foreground border-b border-foreground/30 mb-6">
-          <span>Daily Prophet Special Bulletin</span>
-          <span>404 - Lost Scroll</span>
+        <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
+          <span className="h-2.5 w-2.5 bg-flare" />
+          <span className="t-tag">Error 404</span>
+          <span className="t-tag text-muted-foreground">
+            / {isVi ? "Không tìm thấy trang" : "Page not found"}
+          </span>
         </div>
 
-        {/* Big gothic title */}
-        <h1 className="text-4xl md:text-5xl font-cinzel font-black mb-4 uppercase tracking-tight text-foreground">
-          Scroll Lost
+        <h1 className="font-display t-poster mt-5 md:mt-8">
+          <span className="block">404</span>
+          <span className="t-outline block">{isVi ? "Lạc rồi" : "Lost"}</span>
         </h1>
-        
-        <div className="w-full h-1 bg-foreground/30 relative mb-6">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 font-cinzel text-[9px] tracking-[0.25em] text-primary">
-            ✦ DEPT. OF MYSTERIES ✦
+
+        <div className="mt-8 grid grid-cols-12 gap-4 md:mt-12 md:gap-6">
+          <div className="slab col-span-12 bg-card p-5 md:col-span-7 md:p-8">
+            <p className="text-base leading-relaxed text-muted-foreground md:text-xl">
+              {isVi
+                ? "Trang này đã đi lạc. Liên kết có thể đã hỏng hoặc nội dung đã được chuyển sang nơi khác."
+                : "This page took a wrong turn. The link may be broken, or the content may have moved somewhere else."}
+            </p>
           </div>
+
+          <Link
+            href="/"
+            className="slab press shadow-hard group col-span-12 flex items-center justify-between gap-4 bg-volt p-5 text-volt-foreground md:col-span-5 md:p-8"
+          >
+            <span className="font-display t-big">{isVi ? "Về trang chủ" : "Back home"}</span>
+            <ArrowUpRight
+              size={34}
+              strokeWidth={2.5}
+              className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+            />
+          </Link>
         </div>
-
-        {/* Flavour text */}
-        <p className="font-serif text-muted-foreground mb-8 text-sm md:text-base leading-relaxed text-justify italic">
-          "The specific scroll or edition you are seeking seems to have been misplaced in the restricted section of the library, or swept away by a rogue Scourgify spell. Rest assured, our owls are searching the archives."
-        </p>
-
-        {/* Action Button */}
-        <Link
-          href="/"
-          className="inline-block px-6 py-3 border-2 border-foreground bg-foreground text-background font-cinzel font-bold text-xs uppercase tracking-widest hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-300 shadow-[2px_2px_0px_rgba(0,0,0,0.15)] hover:shadow-none"
-        >
-          Return to Front Page
-        </Link>
       </motion.div>
     </div>
   )

@@ -1,61 +1,56 @@
 "use client"
 
-import { useLanguage } from "@/app/hooks/useLanguage"
 import { motion } from "framer-motion"
+import { useLanguage } from "@/app/hooks/useLanguage"
+import type { Language } from "@/app/context/LanguageContext"
+
+const OPTIONS: { code: Language; label: string }[] = [
+  { code: "en", label: "EN" },
+  { code: "vi", label: "VI" },
+]
 
 export default function LanguageToggle() {
   const { language, setLanguage } = useLanguage()
+  const index = Math.max(
+    0,
+    OPTIONS.findIndex((option) => option.code === language)
+  )
 
   return (
-    <div className="relative p-1 bg-secondary/40 flex items-center w-[100px] h-9 shadow-md overflow-hidden border border-foreground/20 rounded-none">
-      {/* Dynamic Sliding Capsule */}
-      <motion.div
-        className="absolute h-6 bg-primary shadow-md z-0 rounded-none"
+    <div
+      role="group"
+      aria-label="Language"
+      className="press shadow-hard relative flex h-10 items-stretch overflow-hidden border-2 border-foreground bg-card md:h-11 md:border-[3px]"
+    >
+      {/* Volt block slides between the two halves instead of the label boxes
+          swapping fill — the swap read as a flicker next to the neighbouring
+          buttons, which all animate. */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-1/2 bg-volt"
         initial={false}
-        animate={{
-          x: language === "en" ? 0 : 46,
-          width: 46,
-          scale: [1, 1.05, 1], // Stretch effect
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 400, 
-          damping: 25,
-          scale: { duration: 0.2 }
-        }}
+        animate={{ x: `${index * 100}%` }}
+        transition={{ type: "spring", stiffness: 500, damping: 36, mass: 0.6 }}
       />
 
-      <button
-        onClick={() => setLanguage("en")}
-        className="relative z-10 flex-1 flex items-center justify-center h-full outline-none"
-      >
-        <motion.span
-          animate={{
-            scale: language === "en" ? 1.1 : 0.85,
-            opacity: language === "en" ? 1 : 0.4,
-            color: language === "en" ? "#ffffff" : "var(--muted-foreground)"
-          }}
-          className="text-[11px] font-black tracking-widest uppercase"
-        >
-          EN
-        </motion.span>
-      </button>
-
-      <button
-        onClick={() => setLanguage("vi")}
-        className="relative z-10 flex-1 flex items-center justify-center h-full outline-none"
-      >
-        <motion.span
-          animate={{
-            scale: language === "vi" ? 1.1 : 0.85,
-            opacity: language === "vi" ? 1 : 0.4,
-            color: language === "vi" ? "#ffffff" : "var(--muted-foreground)"
-          }}
-          className="text-[11px] font-black tracking-widest uppercase"
-        >
-          VN
-        </motion.span>
-      </button>
+      {OPTIONS.map((option) => {
+        const active = language === option.code
+        return (
+          <button
+            key={option.code}
+            type="button"
+            onClick={() => setLanguage(option.code)}
+            aria-pressed={active}
+            className={`relative z-10 flex w-9 items-center justify-center font-mono text-[11px] font-bold uppercase tracking-[0.16em] transition-colors duration-200 md:w-10 ${
+              active ? "text-volt-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {/* Letter-spacing also applies after the final glyph, which shoves
+                a 2-letter label off-centre in a square. Cancel it back out. */}
+            <span className="-mr-[0.16em]">{option.label}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
