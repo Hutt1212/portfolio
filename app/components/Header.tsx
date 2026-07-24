@@ -1,293 +1,216 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { MoonIcon, SunIcon } from "@heroicons/react/24/outline"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion"
+import { Menu, X, Moon, Sun, ArrowUpRight } from "lucide-react"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import LanguageToggle from "./LanguageToggle"
 
+const EASE = [0.16, 1, 0.3, 1] as const
+
 export default function Header() {
   const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const { scrollY } = useScroll()
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { theme, setTheme, resolvedTheme } = useTheme()
   const { t, language } = useLanguage()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false)
-  const [isHeaderDropdownOpen, setIsHeaderDropdownOpen] = useState(false)
 
-  // Rolled scroll bar transformation on scroll
-  const headerWidth = useTransform(scrollY, [0, 50], ["100%", "92%"])
-  const headerBg = useTransform(
-    scrollY,
-    [0, 50],
-    ["rgba(var(--bg-rgb), 0)", "rgba(var(--bg-rgb), 0.95)"]
-  )
-  const headerBorder = useTransform(
-    scrollY,
-    [0, 50],
-    ["rgba(92, 64, 51, 0)", "rgba(92, 64, 51, 0.3)"]
-  )
+  const { scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 40, mass: 0.4 })
 
   useEffect(() => setMounted(true), [])
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  // Lock the page while the fullscreen menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : ""
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [menuOpen])
+
+  const links = [
+    { label: t.street.labels.work, href: "/#work", index: "01" },
+    { label: t.street.labels.expertise, href: "/#expertise", index: "02" },
+    { label: t.skills.title, href: "/#skills", index: "03" },
+    { label: t.about.title, href: "/about", index: "04" },
+  ]
+
+  const isDark = resolvedTheme === "dark"
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none p-4">
-      <motion.header
-        style={{
-          width: headerWidth,
-          backgroundColor: headerBg,
-          borderColor: headerBorder,
-        }}
-        className="pointer-events-auto border-2 border-transparent bg-transparent shadow-md transition-all duration-300 overflow-visible relative rounded-none border-double"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {/* Ancient top border line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
-
-        {/* Scroll Progress Line (magical gold) */}
-        <motion.div
-          className="absolute bottom-0 left-0 h-[2px] bg-primary z-20"
-          style={{
-            scaleX: useTransform(scrollY, [0, 1000], [0, 1]),
-            transformOrigin: "left"
-          }}
-        />
-
-        <nav className="mx-auto flex items-center justify-between px-6 py-3 lg:px-10 h-16 relative" aria-label="Global">
-
-          {/* LEFT: masthead logo brand */}
-          <div className="flex items-center gap-12">
-            <Link href="/" className="group relative">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="relative"
+    <>
+      <header className="fixed inset-x-0 top-0 z-[100]">
+        <div
+          className={`border-b-2 transition-colors duration-300 md:border-b-[3px] ${
+            scrolled
+              ? "border-foreground bg-background/90 backdrop-blur-md"
+              : "border-transparent bg-transparent"
+          }`}
+        >
+          <nav
+            aria-label="Main"
+            className="mx-auto flex w-full max-w-[110rem] items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-10"
+          >
+            {/* Wordmark */}
+            <Link href="/" className="shrink-0" aria-label={t.name}>
+              <motion.span
+                whileTap={{ scale: 0.94 }}
+                className="font-display flex items-center border-2 border-foreground bg-foreground px-2.5 py-1 text-xl text-background md:border-[3px] md:px-3.5 md:py-1.5 md:text-2xl"
               >
-                <span className="text-xl font-cinzel font-black tracking-widest text-foreground hover:text-primary transition-colors uppercase">
-                  M. Huy
-                </span>
-
-              </motion.div>
+                M.HUY
+                <span className="ml-1.5 h-1.5 w-1.5 bg-volt" />
+              </motion.span>
             </Link>
-          </div>
 
-          {/* CENTER: DESKTOP NAVIGATION (Runes link) */}
-          <div className="hidden md:flex items-center gap-8">
-
-            {/* Projects dropdown library */}
-            <div
-              className="relative py-4"
-              onMouseEnter={() => setIsHeaderDropdownOpen(true)}
-              onMouseLeave={() => setIsHeaderDropdownOpen(false)}
-            >
-              <button
-                className="flex items-center gap-1.5 text-xs font-cinzel font-bold text-foreground/80 hover:text-primary transition-colors cursor-pointer uppercase tracking-widest"
-              >
-                <span>{t.nav.projects}</span>
-                <ChevronDown size={12} className="text-muted-foreground group-hover:text-primary" />
-              </button>
-
-              <AnimatePresence>
-                {isHeaderDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-64 bg-card border-2 border-foreground/30 shadow-2xl p-2 z-50 flex flex-col gap-1 rounded-none"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E")`
-                    }}
-                  >
-                    {t.portfolio.projects.map((proj: any) => (
-                      <Link
-                        key={proj.id}
-                        href={`/projects/${proj.id}`}
-                        className="py-2.5 px-4 hover:bg-secondary/40 text-sm font-cinzel font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-2 border border-transparent hover:border-foreground/10"
-                      >
-                        <span className="w-1.5 h-1.5 bg-primary/60 rotate-45 flex-shrink-0"></span>
-                        <span className="truncate">{proj.title.split("–")[0].trim()}</span>
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            {/* Desktop nav */}
+            <div className="hidden items-center gap-1 lg:flex">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="group relative flex items-center gap-2 border-2 border-transparent px-3 py-2 transition-colors duration-200 hover:border-foreground hover:bg-volt hover:text-volt-foreground"
+                >
+                  <span className="t-tag opacity-50 group-hover:opacity-100">{link.index}</span>
+                  <span className="font-display text-lg uppercase leading-none">{link.label}</span>
+                </Link>
+              ))}
             </div>
 
-            {/* About Editorial scroll */}
-            <Link
-              href="/about"
-              className="text-xs font-cinzel font-bold text-foreground/80 hover:text-primary transition-colors uppercase tracking-widest"
-            >
-              {t.about.title}
-            </Link>
-          </div>
+            {/* Controls */}
+            <div className="flex shrink-0 items-center gap-2">
+              <LanguageToggle />
 
-          {/* RIGHT: TOGGLES & SIDEBAR TRIGGER */}
-          <div className="flex items-center gap-4">
-            {mounted && (
-              <div className="flex items-center gap-3">
-                <div className="p-0.5 bg-secondary/35 border border-foreground/15 hover:border-primary/30 transition-colors">
-                  <LanguageToggle />
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.05, rotate: 10 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="w-9 h-9 bg-primary/10 text-primary border border-primary/25 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-[1px_1px_0px_rgba(0,0,0,0.1)] rounded-none"
+              {mounted && (
+                <button
+                  type="button"
+                  onClick={() => setTheme(isDark ? "light" : "dark")}
+                  aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+                  className="press shadow-hard grid h-10 w-10 place-items-center border-2 border-foreground bg-card md:h-11 md:w-11 md:border-[3px]"
                 >
-                  {theme === "dark" ? (
-                    <SunIcon className="h-4.5 w-4.5" />
-                  ) : (
-                    <MoonIcon className="h-4.5 w-4.5" />
-                  )}
-                </motion.button>
+                  {isDark ? <Sun size={18} strokeWidth={2.5} /> : <Moon size={18} strokeWidth={2.5} />}
+                </button>
+              )}
 
-                {/* Sidebar Drawer Hamburger */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="w-9 h-9 bg-primary/10 text-primary border border-primary/25 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 md:hidden shadow-[1px_1px_0px_rgba(0,0,0,0.1)] rounded-none"
-                >
-                  <Menu className="h-4.5 w-4.5" />
-                </motion.button>
-              </div>
-            )}
-          </div>
-        </nav>
-      </motion.header>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                aria-label={language === "vi" ? "Mở menu" : "Open menu"}
+                /* Desktop already shows the full nav inline — no hamburger there. */
+                className="press shadow-hard-volt grid h-10 w-10 place-items-center border-2 border-foreground bg-foreground text-background md:h-11 md:w-11 md:border-[3px] lg:hidden"
+              >
+                <Menu size={18} strokeWidth={2.5} />
+              </button>
+            </div>
+          </nav>
+        </div>
 
-      {/* ========================================================
-          PARCHMENT SIDEBAR DRAWER (WIZARD DRAWER)
-          ======================================================== */}
+        {/* Scroll progress */}
+        <motion.div
+          style={{ scaleX: progress }}
+          className="h-1 origin-left bg-volt md:h-1.5"
+        />
+      </header>
+
+      {/* ── Fullscreen menu ─────────────────────────────────────── */}
       <AnimatePresence>
-        {isSidebarOpen && (
-          <>
-            {/* Backdrop Dimmer */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] pointer-events-auto"
-            />
+        {menuOpen && (
+          <motion.div
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{ clipPath: "inset(0 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="fixed inset-0 z-[130] flex flex-col bg-background"
+          >
+            <div className="bg-grid pointer-events-none absolute inset-0 opacity-70" />
 
-            {/* Sidebar Body scroll texture */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 220 }}
-              className="fixed right-0 top-0 bottom-0 w-full sm:w-[380px] bg-card border-l-4 border-foreground z-[120] pointer-events-auto p-8 flex flex-col justify-between shadow-2xl rounded-none"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E")`
-              }}
-            >
-              <div>
-                {/* Header inside Sidebar */}
-                <div className="flex items-center justify-between mb-12 border-b-2 border-foreground pb-4">
-                  <span className="text-lg font-cinzel font-black text-primary uppercase tracking-widest">Case Indices</span>
-                  <motion.button
-                    whileHover={{ rotate: 90, scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="w-9 h-9 border border-foreground flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            {/* Menu bar */}
+            <div className="relative flex items-center justify-between gap-3 border-b-2 border-foreground px-4 py-3 sm:px-6 md:border-b-[3px] lg:px-10">
+              <span className="font-display border-2 border-foreground bg-volt px-2.5 py-1 text-xl text-volt-foreground md:border-[3px] md:px-3.5 md:py-1.5 md:text-2xl">
+                {t.street.labels.index}
+              </span>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                aria-label={language === "vi" ? "Đóng menu" : "Close menu"}
+                className="press shadow-hard-volt grid h-10 w-10 place-items-center border-2 border-foreground bg-foreground text-background md:h-11 md:w-11 md:border-[3px]"
+              >
+                <X size={18} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Links */}
+            <div className="no-scrollbar relative flex-1 overflow-y-auto overscroll-contain">
+              <div className="mx-auto w-full max-w-[110rem] px-4 py-6 sm:px-6 lg:px-10">
+                {links.map((link, i) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: EASE, delay: 0.15 + i * 0.06 }}
                   >
-                    <X size={18} />
-                  </motion.button>
-                </div>
-
-                {/* Sidebar Navigation links */}
-                <div className="flex flex-col gap-6">
-                  {/* Collapsible Dropdown Projects in sidebar */}
-                  <div className="flex flex-col">
-                    <button
-                      onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
-                      className="flex items-center justify-between text-2xl font-cinzel font-bold py-2 border-b border-foreground/10 text-foreground hover:text-primary transition-colors group w-full text-left uppercase tracking-wide"
+                    <Link
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="group flex items-center gap-4 border-b-2 border-foreground py-4 transition-colors duration-300 hover:bg-volt hover:text-volt-foreground md:gap-8 md:py-7"
                     >
-                      <span>{t.nav.projects}</span>
-                      <motion.div
-                        animate={{ rotate: isProjectsDropdownOpen ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-muted-foreground group-hover:text-primary"
+                      <span className="t-tag shrink-0 opacity-50">{link.index}</span>
+                      <span className="font-display t-huge min-w-0 flex-1">
+                        {link.label}
+                      </span>
+                      <ArrowUpRight
+                        className="h-7 w-7 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 md:h-12 md:w-12"
+                        strokeWidth={2.5}
+                      />
+                    </Link>
+                  </motion.div>
+                ))}
+
+                {/* Project shortcuts */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}
+                  className="mt-8 md:mt-12"
+                >
+                  <span className="t-tag text-muted-foreground">{t.street.allProjects}</span>
+                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-5 md:gap-4">
+                    {t.portfolio.projects.map((project: any) => (
+                      <Link
+                        key={project.id}
+                        href={`/projects/${project.id}`}
+                        onClick={() => setMenuOpen(false)}
+                        className="slab press shadow-hard flex items-center justify-between gap-4 bg-card p-4 md:p-5"
                       >
-                        <ChevronDown size={20} />
-                      </motion.div>
-                    </button>
-
-                    {/* Collapse list */}
-                    <AnimatePresence>
-                      {isProjectsDropdownOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="overflow-hidden pl-4 border-l-2 border-primary/30 flex flex-col gap-2 mt-2"
-                        >
-                          {t.portfolio.projects.map((proj: any) => (
-                            <Link
-                              key={proj.id}
-                              href={`/projects/${proj.id}`}
-                              onClick={() => {
-                                setIsSidebarOpen(false)
-                                setIsProjectsDropdownOpen(false)
-                              }}
-                              className="py-2 px-3 hover:bg-secondary/40 text-xs font-cinzel font-bold text-muted-foreground hover:text-primary transition-all flex items-center gap-2 border border-transparent hover:border-foreground/10"
-                            >
-                              <span className="w-1.5 h-1.5 bg-primary/60 rotate-45 flex-shrink-0"></span>
-                              <span className="line-clamp-1">{proj.title.split("–")[0].trim()}</span>
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                        <span className="font-display t-mid min-w-0 truncate-safe">
+                          {project.title.split("–")[0].trim()}
+                        </span>
+                        <ArrowUpRight size={22} strokeWidth={2.5} className="shrink-0" />
+                      </Link>
+                    ))}
                   </div>
-
-                  {/* Skills scroll Link */}
-                  <Link
-                    href="/#skills"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="text-2xl font-cinzel font-bold py-2 border-b border-foreground/10 text-foreground hover:text-primary transition-colors text-left uppercase tracking-wide"
-                  >
-                    {t.skills.title}
-                  </Link>
-
-                  {/* About scroll Link */}
-                  <Link
-                    href="/about"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="text-2xl font-cinzel font-bold py-2 border-b border-foreground/10 text-foreground hover:text-primary transition-colors text-left uppercase tracking-wide"
-                  >
-                    {t.about.title}
-                  </Link>
-
-                  {/* Services scroll Link */}
-                  <Link
-                    href="/#skills"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="text-2xl font-cinzel font-bold py-2 border-b border-foreground/10 text-foreground hover:text-primary transition-colors text-left uppercase tracking-wide"
-                  >
-                    {t.services.title}
-                  </Link>
-                </div>
+                </motion.div>
               </div>
+            </div>
 
-              {/* Bottom Copyright imprint */}
-              <div className="pt-8 border-t border-foreground/20 text-[9px] font-cinzel font-bold text-muted-foreground uppercase tracking-widest text-center">
-                {t.footer.copyright}
-              </div>
-            </motion.div>
-          </>
+            {/* Menu footer */}
+            <div className="relative flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t-2 border-foreground px-4 py-3 sm:px-6 md:border-t-[3px] lg:px-10">
+              <span className="t-tag text-muted-foreground">{t.footer.copyright}</span>
+              <a href="mailto:nguyenminhhuy01234@gmail.com" className="t-tag underline underline-offset-4">
+                nguyenminhhuy01234@gmail.com
+              </a>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   )
 }

@@ -1,192 +1,258 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { useLanguage } from "@/app/hooks/useLanguage"
 import Image from "next/image"
-import { ArrowLeft, ExternalLink, Github, Zap, Shield, Layers, Cpu, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
+import { useParams } from "next/navigation"
+import { motion } from "framer-motion"
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CheckCircle2,
+  Cpu,
+  ExternalLink,
+  Github,
+  Layers,
+  Shield,
+  Zap,
+} from "lucide-react"
+import { useLanguage } from "@/app/hooks/useLanguage"
+import Rise from "@/app/components/street/Rise"
+import Ticker from "@/app/components/street/Ticker"
+
+const EASE = [0.16, 1, 0.3, 1] as const
+const HIGHLIGHT_ICONS = [Zap, Shield, Layers, Cpu]
 
 export default function ProjectDetailPage() {
   const { id } = useParams()
-  const router = useRouter()
   const { t, language } = useLanguage()
 
   const project = t.portfolio.projects.find((p: any) => p.id === id)
 
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative z-10">
-        <div className="text-center p-8 bento-card max-w-md mx-4">
-          <h1 className="text-3xl font-outfit font-bold mb-4">{language === "vi" ? "Không tìm thấy dự án" : "Project Not Found"}</h1>
-          <p className="text-muted-foreground mb-8">
-            {language === "vi" ? "Dự án bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ." : "The project you are looking for does not exist or has been removed."}
+      <div className="mx-auto flex min-h-screen w-full max-w-[110rem] items-center justify-center px-4 py-32 sm:px-6 lg:px-10">
+        <div className="slab shadow-hard-lg max-w-lg bg-card p-6 md:p-10">
+          <span className="t-tag text-flare">404</span>
+          <h1 className="font-display t-big mt-3">
+            {language === "vi" ? "Không tìm thấy dự án" : "Project not found"}
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            {language === "vi"
+              ? "Dự án bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ."
+              : "The project you are looking for does not exist or has been removed."}
           </p>
           <Link
             href="/"
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium transition-transform hover:scale-105 active:scale-95 inline-block"
+            className="slab press shadow-hard mt-8 flex items-center justify-between gap-4 bg-foreground p-4 text-background md:p-5"
           >
-            {language === "vi" ? "Trở về Trang chủ" : "Return to Home"}
+            <span className="font-display t-mid">
+              {language === "vi" ? "Về trang chủ" : "Back home"}
+            </span>
+            <ArrowUpRight size={24} strokeWidth={2.5} />
           </Link>
         </div>
       </div>
     )
   }
 
+  const [headline, ...rest] = project.title.split("–")
+  const subline = rest.join("–").trim()
+
   return (
-    <div className="min-h-screen pb-24 pt-24 relative z-10">
-      <div className="max-w-[75rem] mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Back Button */}
-        <div className="mb-12">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
+    <div className="relative">
+      <div className="mx-auto w-full max-w-[110rem] px-4 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pt-32">
+        {/* Breadcrumb */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
+          <Link
+            href="/#work"
+            className="t-tag group flex items-center gap-2 transition-colors hover:text-flare"
           >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-            {language === "vi" ? "Quay lại" : "Back to projects"}
-          </button>
+            <ArrowLeft
+              size={14}
+              strokeWidth={3}
+              className="transition-transform group-hover:-translate-x-1"
+            />
+            {language === "vi" ? "Quay lại dự án" : "Back to work"}
+          </Link>
+          <span className="t-tag text-muted-foreground">/ {t.street.labels.work}</span>
         </div>
 
-        {/* Hero Section */}
-        <div className="mb-12 md:mb-16">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-outfit font-black tracking-tighter text-foreground mb-6 leading-tight"
-          >
-            {project.title}
-          </motion.h1>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-wrap gap-2"
-          >
+        {/* Title block */}
+        <Rise y={30} duration={0.7} className="mt-6 md:mt-10">
+          <h1 className="font-display t-mega">{headline.trim()}</h1>
+          {subline && (
+            <p className="mt-4 max-w-3xl text-base font-semibold uppercase leading-snug tracking-wide text-muted-foreground md:mt-6 md:text-xl">
+              {subline}
+            </p>
+          )}
+
+          <div className="mt-6 flex flex-wrap gap-2 md:mt-8">
             {project.tech.map((tech: string) => (
-              <span key={tech} className="px-4 py-2 bg-secondary/60 backdrop-blur-xl rounded-full text-sm font-medium text-secondary-foreground border border-border">
+              <span
+                key={tech}
+                className="t-tag border-2 border-foreground bg-card px-2.5 py-1.5 md:px-3 md:py-2"
+              >
                 {tech}
               </span>
             ))}
-          </motion.div>
-        </div>
+          </div>
+        </Rise>
 
-        {/* Large Hero Image */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="relative w-full aspect-video md:aspect-[21/9] image-container bg-secondary mb-16 shadow-2xl"
+        {/* Cover */}
+        <Rise
+          delay={0.15}
+          duration={0.7}
+          className="slab shadow-hard-lg relative mt-8 aspect-[16/10] w-full overflow-hidden bg-secondary md:mt-12 md:aspect-[21/9]"
         >
           <Image
             src={project.image}
             alt={project.title}
             fill
-            className="object-cover"
             priority
+            sizes="100vw"
+            className="object-cover"
           />
-        </motion.div>
+        </Rise>
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-          
-          {/* Main Story (Left Column - 8 cols) */}
-          <div className="lg:col-span-8 space-y-16">
-            
+        {/* Body */}
+        <div className="mt-10 grid grid-cols-12 gap-4 md:mt-16 md:gap-6">
+          {/* Main column */}
+          <div className="col-span-12 flex flex-col gap-6 md:gap-10 lg:col-span-8">
             <section>
-              <h2 className="text-2xl font-outfit font-bold mb-6 flex items-center gap-2 text-foreground">
-                {t.projectDetail.overview}
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
+                <span className="h-2.5 w-2.5 bg-volt" />
+                <span className="t-tag">{t.projectDetail.overview}</span>
+              </div>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:mt-7 md:text-xl md:leading-relaxed">
                 {project.longDescription}
               </p>
             </section>
 
             {project.vision && (
-              <section className="p-8 bg-primary/5 border border-primary/20 rounded-[var(--radius)]">
-                <h3 className="text-lg font-outfit font-bold mb-4 text-primary">
-                  {t.projectDetail.vision}
-                </h3>
-                <p className="text-lg font-medium italic text-foreground leading-relaxed">
-                  "{project.vision}"
+              <section className="slab shadow-hard bg-volt text-volt-foreground p-5 md:p-8">
+                <span className="t-tag block opacity-70">{t.projectDetail.vision}</span>
+                <p className="mt-3 text-lg font-medium leading-snug md:mt-5 md:text-2xl md:leading-[1.3]">
+                  {project.vision}
                 </p>
               </section>
             )}
 
             <section>
-              <h2 className="text-2xl font-outfit font-bold mb-8 flex items-center gap-2">
-                {t.projectDetail.highlights}
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {(project.highlights || [
-                  { title: "Performance", description: "Optimized for speed and core web vitals." },
-                  { title: "Security", description: "Enterprise-grade security implementations." },
-                  { title: "Scalability", description: "Architected for high-traffic growth." },
-                  { title: "Real-time", description: "Live updates via WebSockets/SignalR." }
-                ]).map((feature: any, i: number) => (
-                  <div key={i} className="bento-card p-6 border-none bg-secondary/30">
-                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center text-primary mb-4 shadow-sm border border-border">
-                      {i === 0 ? <Zap size={20} /> : i === 1 ? <Shield size={20} /> : i === 2 ? <Layers size={20} /> : <Cpu size={20} />}
-                    </div>
-                    <h4 className="text-lg font-outfit font-bold mb-2">{feature.title}</h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description || feature.desc}</p>
-                  </div>
-                ))}
+              <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
+                <span className="h-2.5 w-2.5 bg-flare" />
+                <span className="t-tag">{t.projectDetail.highlights}</span>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 gap-3 md:mt-7 md:gap-5 sm:grid-cols-2">
+                {(project.highlights || []).map((feature: any, i: number) => {
+                  const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length]
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
+                      className="slab shadow-hard flex flex-col gap-4 bg-card p-5 md:p-7"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="grid h-11 w-11 place-items-center border-2 border-foreground bg-background">
+                          <Icon size={20} strokeWidth={2.5} />
+                        </span>
+                        <span className="t-tag text-muted-foreground">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3 className="font-display t-mid">{feature.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+                        {feature.description || feature.desc}
+                      </p>
+                    </motion.div>
+                  )
+                })}
               </div>
             </section>
-
           </div>
 
-          {/* Sidebar Metadata (Right Column - 4 cols) */}
-          <div className="lg:col-span-4 sticky top-28 space-y-8">
-            
-            <div className="bento-card p-6">
-              <h3 className="text-lg font-outfit font-bold mb-6">
-                {t.projectDetail.links}
-              </h3>
-              
-              <div className="flex flex-col gap-4">
+          {/* Sidebar */}
+          <div className="col-span-12 flex flex-col gap-4 md:gap-6 lg:col-span-4">
+            <div className="flex flex-col gap-3 md:gap-4 lg:sticky lg:top-28">
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="slab press shadow-hard group flex items-center justify-between gap-4 bg-foreground p-5 text-background md:p-7"
+              >
+                <span className="font-display t-mid">{t.projectActions.visit}</span>
+                <ExternalLink size={24} strokeWidth={2.5} className="shrink-0" />
+              </a>
+
+              {project.github && project.github !== "#" && (
                 <a
-                  href={project.link}
+                  href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-primary text-primary-foreground rounded-full font-medium transition-transform hover:scale-105 active:scale-95"
+                  className="slab press shadow-hard group flex items-center justify-between gap-4 bg-card p-5 md:p-7"
                 >
-                  {t.projectActions.visit} <ExternalLink size={18} />
+                  <span className="font-display t-mid">{t.projectActions.github}</span>
+                  <Github size={24} strokeWidth={2.5} className="shrink-0" />
                 </a>
+              )}
 
-                {project.github && project.github !== "#" && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full font-medium transition-transform hover:scale-105 active:scale-95"
-                  >
-                    {t.projectActions.github || "View Source"} <Github size={18} />
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {project.impact && (
-              <div className="bento-card p-6">
-                <h3 className="text-lg font-outfit font-bold mb-6">
-                  {t.projectDetail.impact}
-                </h3>
-                <div className="space-y-4">
-                  {project.impact.map((item: string, i: number) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle2 size={20} className="text-primary flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-foreground leading-relaxed">{item}</p>
-                    </div>
-                  ))}
+              {project.impact && (
+                <div className="slab bg-card p-5 md:p-7">
+                  <span className="t-tag block text-muted-foreground">
+                    {t.projectDetail.impact}
+                  </span>
+                  <ul className="mt-4 flex flex-col gap-4 md:mt-6">
+                    {project.impact.map((item: string, i: number) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <CheckCircle2
+                          size={20}
+                          strokeWidth={2.5}
+                          className="mt-0.5 shrink-0 text-flare"
+                        />
+                        <span className="text-sm leading-relaxed md:text-base">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-            )}
-
+              )}
+            </div>
           </div>
-
         </div>
+
+        {/* Other projects */}
+        <div className="mt-14 md:mt-24">
+          <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
+            <span className="h-2.5 w-2.5 bg-cobalt" />
+            <span className="t-tag">{t.street.allProjects}</span>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5">
+            {t.portfolio.projects
+              .filter((p: any) => p.id !== project.id)
+              .map((other: any) => (
+                <Link
+                  key={other.id}
+                  href={`/projects/${other.id}`}
+                  className="slab press shadow-hard group flex items-center justify-between gap-4 bg-card p-5 md:p-7"
+                >
+                  <span className="font-display t-mid min-w-0 truncate-safe">
+                    {other.title.split("–")[0].trim()}
+                  </span>
+                  <ArrowUpRight
+                    size={26}
+                    strokeWidth={2.5}
+                    className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                  />
+                </Link>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="tilt-r -ml-[2%] mt-14 w-[104%] md:mt-24">
+        <Ticker items={project.tech} variant="volt" speed={30} />
       </div>
     </div>
   )

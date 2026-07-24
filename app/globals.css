@@ -2,62 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   STREET SYSTEM — design tokens
+   Light = "paper" (risograph poster), Dark = "asphalt" (night wall)
+   ============================================================ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 97%;
-    --card-foreground: 240 10% 3.9%;
+    --background: 45 22% 95%; /* warm paper */
+    --foreground: 0 0% 7%; /* ink */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    
-    /* Emblemo Tokens */
-    --primary: 221 95% 51%; /* #0D59F9 - Electric Blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 76 71% 50%; /* #A8DB27 - Lime Green */
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 221 95% 51%;
-    --radius: 1.5rem; /* 24px */
-    --spotlight-color: rgba(13, 89, 249, 0.08);
-    --emblemo-yellow: 48 98% 51%; /* #FECE07 */
-    --emblemo-pink: 346 100% 72%; /* #FF7094 */
-    --bg-rgb: 255, 255, 255;
+    --popover-foreground: 0 0% 7%;
+
+    /* Street accents */
+    --volt: 73 100% 55%; /* #C7FF1A acid lime */
+    --volt-foreground: 0 0% 7%;
+    --flare: 10 100% 57%; /* #FF3B24 hot red */
+    --flare-foreground: 0 0% 7%; /* ink on red — white would fail AA here */
+    --cobalt: 232 100% 58%; /* #2B45FF electric blue */
+    --cobalt-foreground: 45 22% 95%;
+
+    --primary: 0 0% 7%;
+    --primary-foreground: 45 22% 95%;
+    --secondary: 45 16% 90%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 45 14% 88%;
+    /* Darkened from 38%: the aurora backdrop tints the page behind body copy,
+       and 38% dropped under 4.5:1 on the strongest blooms. */
+    --muted-foreground: 0 0% 30%;
+    --accent: 73 100% 55%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 10 100% 57%;
+    --destructive-foreground: 45 22% 95%;
+
+    --border: 0 0% 7%;
+    --input: 0 0% 7%;
+    --ring: 73 100% 55%;
+    --radius: 0px;
+
+    /* Hard offset shadow colour + grid rule colour */
+    --stroke: 0 0% 7%;
+    --rule: 0 0% 7% / 0.08;
+    --grain-opacity: 0.05;
+    /* Aurora blooms render near-opaque, then a veil of the page background
+       pulls the whole field back. Because the blooms saturate, stacking them
+       barely compounds — so the veil alone bounds the worst case. Both values
+       are contrast-budgeted; see the .aurora block. */
+    --aurora-alpha: 0.9;
+    --aurora-veil: 0.68;
   }
 
   .dark {
-    --background: 240 10% 7%; /* 17 17 1C */
-    --foreground: 0 0% 98%;
-    --card: 240 7% 12%; /* 21 21 26 */
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 7%;
-    --popover-foreground: 0 0% 98%;
-    
-    /* Emblemo Tokens */
-    --primary: 221 95% 51%; /* #0D59F9 */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 76 71% 50%; /* #A8DB27 */
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 221 95% 51%;
-    --spotlight-color: rgba(13, 89, 249, 0.15);
-    --emblemo-yellow: 48 98% 51%; /* #FECE07 */
-    --emblemo-pink: 346 100% 72%; /* #FF7094 */
-    --bg-rgb: 17, 17, 28;
+    --background: 0 0% 7%; /* asphalt */
+    --foreground: 45 22% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 45 22% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 45 22% 95%;
+
+    --volt: 73 100% 55%;
+    --volt-foreground: 0 0% 7%;
+    --flare: 10 100% 60%;
+    --flare-foreground: 0 0% 7%;
+    --cobalt: 232 100% 65%;
+    --cobalt-foreground: 0 0% 7%;
+
+    --primary: 45 22% 95%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 45 22% 95%;
+    --muted: 0 0% 16%;
+    /* Lightened from 66% for the same reason as light mode. */
+    --muted-foreground: 45 8% 80%;
+    --accent: 73 100% 55%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 10 100% 60%;
+    --destructive-foreground: 0 0% 7%;
+
+    --border: 45 22% 95%;
+    --input: 45 22% 95%;
+    --ring: 73 100% 55%;
+
+    --stroke: 45 22% 95%;
+    --rule: 45 22% 95% / 0.1;
+    --grain-opacity: 0.07;
+    --aurora-alpha: 0.85;
+    --aurora-veil: 0.64;
   }
 }
 
@@ -68,83 +100,613 @@
 
   html {
     background-color: hsl(var(--background));
-    transition: background-color 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Rotated bands and oversized type must never create a sideways scroll.
+     `clip` (not `hidden`) so position:sticky keeps working inside. */
+  html,
+  body {
+    overflow-x: clip;
   }
 
   body {
-    @apply text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    scroll-behavior: smooth;
-    position: relative;
-    background-color: hsl(var(--background));
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-    background-attachment: fixed;
   }
 
-  .dark body {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+  ::selection {
+    background: hsl(var(--volt));
+    color: hsl(var(--volt-foreground));
+  }
+
+  /* Anchor targets clear the fixed header */
+  [id] {
+    scroll-margin-top: 7rem;
+  }
+
+  /* Shared page gutter, also consumed by full-bleed rails */
+  :root {
+    --gutter: 1rem;
+    --shell: 110rem;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --gutter: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --gutter: 2.5rem;
+    }
   }
 }
 
-/* Typography Utilities */
+/* ============================================================
+   TYPOGRAPHY — poster scale, fluid on every device
+   ============================================================ */
+
+.font-display {
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+.font-tag {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Legacy alias kept so any older markup still renders on-brand */
 .font-outfit {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 800;
 }
 
-/* Base Bento Card */
-.bento-card {
-  @apply border border-border transition-all duration-500 relative overflow-hidden;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.05);
+/* ------------------------------------------------------------------
+   VIETNAMESE DIACRITIC SAFETY — measured, not guessed.
+
+   Anton (display):   marks reach 1.128em above baseline, ink to -0.204em
+   JetBrains (tag):   marks reach 0.945em above baseline
+   Archivo  (body):   marks reach 0.873em above baseline
+
+   At line-height 1.15 an Anton line box covers baseline+1.0em, so marks sit
+   just clear of the line above and never touch its letterforms. Anything
+   tighter clips "Ậ / Ế / Ữ" or collides them with the previous line — this is
+   why the type does NOT use the sub-1.0 leading a Latin-only poster could.
+
+   Clipping containers (overflow:hidden, truncate) still need the padding
+   compensation in .line-mask / .truncate-safe below.
+   ------------------------------------------------------------------ */
+
+/* Anton's marks are drawn OUTSIDE the line box — 0.129em above it and 0.052em
+   below at leading 1.15. That overshoot scales with font-size, so a fixed rem
+   margin can never clear it: at the 19rem hero cap the tilde on Ễ rises 39px
+   while `mt-8` only reserves 32px, and it collides with the rule above.
+   Reserving the overshoot in em here fixes every size at once.
+   (.line-mask's padding/margin pair cancels out, so it does not shift this.) */
+.t-poster,
+.t-mega,
+.t-huge,
+.t-big {
+  padding-top: 0.14em;
+  padding-bottom: 0.07em;
 }
 
-.dark .bento-card {
-  box-shadow: 0 4px 30px -15px rgba(0, 0, 0, 0.5);
+/* Edge-to-edge hero type. Tuned so the longest word still leaves side margin
+   from 320px phones up to ultrawide. */
+.t-poster {
+  font-size: clamp(2.9rem, 17vw, 19rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
 }
 
-/* Subtle image container for project highlights */
-.image-container {
-  @apply relative overflow-hidden;
-  border-radius: calc(var(--radius) - 8px);
+.t-mega {
+  font-size: clamp(2.75rem, 13.5vw, 13rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
-.image-scale-hover {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+.t-huge {
+  font-size: clamp(2.25rem, 8vw, 6.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
-.group:hover .image-scale-hover,
-.group\/project:hover .image-scale-hover {
-  transform: scale(1.03);
+.t-big {
+  font-size: clamp(1.75rem, 4.8vw, 3.5rem);
+  line-height: 1.15;
+  text-transform: uppercase;
 }
 
-/* Glassmorphism accents */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.t-mid {
+  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.dark .glass {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.t-tag {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.625rem, 1.1vw, 0.75rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-/* Custom premium scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+/* Reveal mask for sliding text.
+   The padding/negative-margin pair widens the clip box beyond the glyph box so
+   diacritics and the text-stroke are never shaved off, while leaving layout
+   position untouched. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-top: 0.26em;
+  margin-top: -0.26em;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+/* Tailwind's `truncate` also clips vertically. Use this instead wherever the
+   text can contain Vietnamese marks, or the tops of Ồ/Ế get shaved. */
+.truncate-safe {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-top: 0.26em;
+  margin-top: -0.26em;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 4px;
+/* Outlined poster type */
+.t-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px hsl(var(--stroke));
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
+@media (min-width: 768px) {
+  .t-outline {
+    -webkit-text-stroke-width: 3px;
+  }
 }
 
+/* Safari/Firefox fallback where text-stroke is unsupported */
+@supports not (-webkit-text-stroke: 1px black) {
+  .t-outline {
+    color: hsl(var(--foreground));
+    opacity: 0.25;
+  }
+}
+
+/* ============================================================
+   SURFACES — hard borders, offset shadows, press interaction
+   ============================================================ */
+
+/* Note: .slab deliberately sets no background. These rules live after Tailwind's
+   utilities layer, so a background here would beat any `bg-*` class on the same
+   element — every slab picks its own fill in markup instead. */
+.slab {
+  position: relative;
+  border: 2px solid hsl(var(--stroke));
+}
+
+@media (min-width: 768px) {
+  .slab {
+    border-width: 3px;
+  }
+}
+
+.shadow-hard {
+  box-shadow: 5px 5px 0 0 hsl(var(--stroke));
+}
+
+.shadow-hard-lg {
+  box-shadow: 8px 8px 0 0 hsl(var(--stroke));
+}
+
+.shadow-hard-volt {
+  box-shadow: 5px 5px 0 0 hsl(var(--volt));
+}
+
+.shadow-hard-flare {
+  box-shadow: 5px 5px 0 0 hsl(var(--flare));
+}
+
+/* For elements sitting on an inverted (foreground-coloured) surface */
+.shadow-hard-invert {
+  box-shadow: 5px 5px 0 0 hsl(var(--background));
+}
+
+@media (min-width: 768px) {
+  .shadow-hard {
+    box-shadow: 7px 7px 0 0 hsl(var(--stroke));
+  }
+  .shadow-hard-lg {
+    box-shadow: 12px 12px 0 0 hsl(var(--stroke));
+  }
+  .shadow-hard-volt {
+    box-shadow: 7px 7px 0 0 hsl(var(--volt));
+  }
+  .shadow-hard-flare {
+    box-shadow: 7px 7px 0 0 hsl(var(--flare));
+  }
+  .shadow-hard-invert {
+    box-shadow: 7px 7px 0 0 hsl(var(--background));
+  }
+}
+
+/* Click-into-the-page interaction used by every button/card */
+.press {
+  transition: transform 0.16s cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 0.16s cubic-bezier(0.2, 0, 0, 1),
+    background-color 0.2s ease, color 0.2s ease;
+}
+
+/* The element moves into its own shadow. Works for every shadow variant, so no
+   per-colour hover rules are needed. */
+@media (hover: hover) {
+  .press:hover {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+}
+
+.press:active {
+  transform: translate(5px, 5px);
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  .press:active {
+    transform: translate(7px, 7px);
+  }
+}
+
+/* Sticker rotations — uses the standalone `rotate` property so it composes with
+   Tailwind's transform utilities and the .press hover translate. */
+.tilt-l {
+  rotate: -2.5deg;
+}
+.tilt-r {
+  rotate: 2.5deg;
+}
+.tilt-l-hard {
+  rotate: -6deg;
+}
+.tilt-r-hard {
+  rotate: 6deg;
+}
+
+/* ============================================================
+   TEXTURE — grid paper, grain, halftone, caution stripes
+   ============================================================ */
+
+.bg-grid {
+  background-image: linear-gradient(to right, hsl(var(--rule)) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--rule)) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@media (min-width: 768px) {
+  .bg-grid {
+    background-size: 72px 72px;
+  }
+}
+
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+}
+
+.bg-halftone {
+  background-image: radial-gradient(hsl(var(--stroke)) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.bg-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    hsl(var(--stroke)) 0 8px,
+    transparent 8px 16px
+  );
+}
+
+/* ============================================================
+   AURORA — drifting risograph colour field behind the whole site
+
+   Only `translate` and `scale` animate. The blur radius is static, so each
+   bloom is rasterised once and then merely re-composited — that is what keeps
+   a full-viewport 110px blur affordable on a phone.
+
+   Contrast: body copy sits directly on this backdrop in the hero and the
+   section intros. Rather than cap each bloom (which fails as soon as several
+   overlap), the blooms run near-opaque and `.aurora-veil` washes the whole
+   field back toward the page colour. Saturated blooms don't compound when
+   stacked, so one veil bounds every combination — verified for all 63 subsets
+   of the six blooms in both themes, worst case 4.7:1 (light) / 4.8:1 (dark).
+   Changing --aurora-alpha or --aurora-veil re-opens that budget.
+   ============================================================ */
+
+.aurora-veil {
+  position: absolute;
+  inset: 0;
+  background-color: hsl(var(--background));
+  opacity: var(--aurora-veil);
+}
+
+.aurora {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgb(var(--blob) / var(--aurora-alpha)) 0%,
+    rgb(var(--blob) / 0) 70%
+  );
+}
+
+@media (min-width: 768px) {
+  .aurora-blob {
+    filter: blur(110px);
+  }
+}
+
+/* Ink colours — one per bloom */
+.aurora-1 {
+  --blob: 199 255 26; /* lime */
+  top: -8%;
+  left: -6%;
+  width: 62vmax;
+  height: 62vmax;
+}
+.aurora-2 {
+  --blob: 43 69 255; /* cobalt */
+  top: 2%;
+  right: -12%;
+  width: 56vmax;
+  height: 56vmax;
+}
+.aurora-3 {
+  --blob: 255 45 149; /* magenta */
+  top: 30%;
+  left: 14%;
+  width: 48vmax;
+  height: 48vmax;
+}
+.aurora-4 {
+  --blob: 0 229 255; /* cyan */
+  top: 46%;
+  right: 2%;
+  width: 52vmax;
+  height: 52vmax;
+}
+.aurora-5 {
+  --blob: 124 58 237; /* violet */
+  bottom: -14%;
+  left: -4%;
+  width: 58vmax;
+  height: 58vmax;
+}
+.aurora-6 {
+  --blob: 255 59 36; /* flare */
+  bottom: -6%;
+  right: 10%;
+  width: 46vmax;
+  height: 46vmax;
+}
+
+/* Each blob returns exactly to its start at 100%, so the reduced-motion
+   override (which jumps to the last frame) lands on the designed layout. */
+@keyframes aurora-a {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  50% {
+    translate: 7vw 5vh;
+    scale: 1.18;
+  }
+}
+
+@keyframes aurora-b {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1.1;
+  }
+  50% {
+    translate: -8vw 7vh;
+    scale: 0.92;
+  }
+}
+
+@keyframes aurora-c {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 0.95;
+  }
+  50% {
+    translate: 5vw -8vh;
+    scale: 1.2;
+  }
+}
+
+.aurora-1 {
+  animation: aurora-a 26s ease-in-out infinite;
+}
+.aurora-2 {
+  animation: aurora-b 34s ease-in-out infinite;
+}
+.aurora-3 {
+  animation: aurora-c 30s ease-in-out infinite;
+}
+.aurora-4 {
+  animation: aurora-b 38s ease-in-out infinite reverse;
+}
+.aurora-5 {
+  animation: aurora-c 42s ease-in-out infinite reverse;
+}
+.aurora-6 {
+  animation: aurora-a 36s ease-in-out infinite reverse;
+}
+
+/* ============================================================
+   MARQUEE — GPU-only transform, pauses for reduced motion
+   ============================================================ */
+
+/* The shift must equal exactly one copy of the item list, so the track is
+   rendered N times and shifted 100/N percent. N is 3 rather than 2 so the list
+   still spans an ultrawide viewport without a gap appearing mid-loop. */
+@keyframes street-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--marquee-shift, -33.3333%), 0, 0);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: street-marquee linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+.marquee-pausable:hover .marquee-track,
+.marquee-pausable:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 14s linear infinite;
+}
+
+@keyframes blink-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.animate-blink {
+  animation: blink-dot 1.4s steps(2, end) infinite;
+}
+
+/* ============================================================
+   HORIZONTAL RAILS — real scroll containers, not fake carousels
+   ============================================================ */
+
+/* Full-bleed track whose first card lines up with the page gutter and whose
+   last card can scroll past the right edge. */
+.rail {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-inline: max(var(--gutter), calc((100vw - var(--shell)) / 2));
+  scroll-padding-inline: max(var(--gutter), calc((100vw - var(--shell)) / 2));
+}
+
+.rail > * {
+  scroll-snap-align: start;
+  flex: none;
+}
+
+/* While a mouse drag is in progress, suppress snap so the motion is 1:1 */
+.rail.is-dragging {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+
+/* Centring uses the standalone `translate` property, not a transform.
+   framer-motion drives `transform` on these elements, and its `x`/`y` ARE
+   translateX/translateY — mixing the two in one style object silently drops
+   the motion values and pins the cursor in place. */
+.cursor-layer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+/* The native cursor is only hidden once the custom one has actually mounted,
+   so a touch device, a reduced-motion preference or a JS failure all keep the
+   normal pointer. */
+html[data-cursor="custom"],
+html[data-cursor="custom"] * {
+  cursor: none;
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:where(a, button):focus-visible {
+  outline: 3px solid hsl(var(--volt));
+  outline-offset: 3px;
+}
+
+/* Respect users who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  /* Drop the intro curtain in CSS so it never paints, rather than mounting it
+     and animating it away. Preloader still signals ready immediately. */
+  #preloader {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track {
+    animation: none;
+    transform: none;
+  }
+}

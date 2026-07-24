@@ -1,61 +1,130 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+import { motion, useMotionValue, useSpring } from "framer-motion"
 
+type Mode = "idle" | "interactive" | "drag"
+
+const INTERACTIVE = "a, button, [role='button'], input, textarea, select, label, summary"
+
+/**
+ * Crosshair cursor: a hard dot that tracks exactly, plus a trailing frame that
+ * springs behind it and reshapes over links and horizontal rails.
+ *
+ * Painted in `mix-blend-mode: difference` against white, so it inverts whatever
+ * is underneath — it stays visible over the aurora backdrop, dark slabs and
+ * photography alike, in both themes.
+ *
+ * Only mounts for real pointers; touch devices and reduced-motion users render
+ * nothing at all and keep their native cursor.
+ */
 export default function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 })
-  const [isHovered, setIsHovered] = useState(false)
+  const [enabled, setEnabled] = useState(false)
+  const [mode, setMode] = useState<Mode>("idle")
+  const [visible, setVisible] = useState(false)
+  const moved = useRef(false)
+
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const ringX = useSpring(x, { stiffness: 380, damping: 30, mass: 0.4 })
+  const ringY = useSpring(y, { stiffness: 380, damping: 30, mass: 0.4 })
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const update = () => setEnabled(fine.matches && !reduced.matches)
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      // Check if target or any of its parents is clickable
-      const isClickable = target.closest("button") || 
-                          target.closest("a") || 
-                          target.closest("[role='button']") ||
-                          window.getComputedStyle(target).cursor === "pointer"
-      setIsHovered(!!isClickable)
-    }
-
-    window.addEventListener("mousemove", updateMousePosition)
-    window.addEventListener("mouseover", handleMouseOver)
-
+    update()
+    fine.addEventListener("change", update)
+    reduced.addEventListener("change", update)
     return () => {
-      window.removeEventListener("mousemove", updateMousePosition)
-      window.removeEventListener("mouseover", handleMouseOver)
+      fine.removeEventListener("change", update)
+      reduced.removeEventListener("change", update)
     }
   }, [])
 
+  useEffect(() => {
+    if (!enabled) return
+
+    // Hide the OS cursor only now that we are definitely rendering ours.
+    document.documentElement.dataset.cursor = "custom"
+
+    const onMove = (e: MouseEvent) => {
+      x.set(e.clientX)
+      y.set(e.clientY)
+
+      if (!moved.current) {
+        moved.current = true
+        // Jump the trailing ring to the pointer so it doesn't fly in from 0,0
+        ringX.jump(e.clientX)
+        ringY.jump(e.clientY)
+        setVisible(true)
+      }
+
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      if (target.closest(".rail")) setMode("drag")
+      else if (target.closest(INTERACTIVE)) setMode("interactive")
+      else setMode("idle")
+    }
+
+    const onLeave = () => setVisible(false)
+    const onEnter = () => moved.current && setVisible(true)
+
+    window.addEventListener("mousemove", onMove, { passive: true })
+    document.addEventListener("mouseleave", onLeave)
+    document.addEventListener("mouseenter", onEnter)
+
+    return () => {
+      delete document.documentElement.dataset.cursor
+      window.removeEventListener("mousemove", onMove)
+      document.removeEventListener("mouseleave", onLeave)
+      document.removeEventListener("mouseenter", onEnter)
+    }
+  }, [enabled, x, y, ringX, ringY])
+
+  if (!enabled) return null
+
+  const ring =
+    mode === "drag"
+      ? { width: 92, height: 44, rotate: 0, borderRadius: 999 }
+      : mode === "interactive"
+        ? { width: 56, height: 56, rotate: 45, borderRadius: 0 }
+        : { width: 30, height: 30, rotate: 0, borderRadius: 0 }
+
   return (
     <>
-      {/* Inner Dot (Instant Follow) */}
+      {/* Trailing frame */}
       <motion.div
-        className="hidden md:block fixed top-0 left-0 pointer-events-none z-[9999] rounded-full mix-blend-difference bg-white"
-        animate={{
-          x: mousePosition.x - (isHovered ? 6 : 4),
-          y: mousePosition.y - (isHovered ? 6 : 4),
-          width: isHovered ? 12 : 8,
-          height: isHovered ? 12 : 8,
+        aria-hidden
+        className="cursor-layer z-[9998] grid place-items-center border-2 border-white"
+        style={{ x: ringX, y: ringY }}
+        animate={{ ...ring, opacity: visible ? 1 : 0 }}
+        transition={{
+          type: "spring",
+          stiffness: 420,
+          damping: 30,
+          opacity: { duration: 0.18 },
         }}
-        transition={{ type: "spring", stiffness: 1000, damping: 28, mass: 0.1 }}
-      />
+      >
+        {mode === "drag" && (
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+            Drag
+          </span>
+        )}
+      </motion.div>
 
-      {/* Outer Ring (Smooth Lag) */}
+      {/* Exact-tracking dot */}
       <motion.div
-        className="hidden md:block fixed top-0 left-0 pointer-events-none z-[9998] rounded-full border border-primary/50 mix-blend-difference"
+        aria-hidden
+        className="cursor-layer z-[9999] bg-white"
+        style={{ x, y }}
         animate={{
-          x: mousePosition.x - (isHovered ? 24 : 16),
-          y: mousePosition.y - (isHovered ? 24 : 16),
-          width: isHovered ? 48 : 32,
-          height: isHovered ? 48 : 32,
-          backgroundColor: isHovered ? "rgba(255, 255, 255, 0.1)" : "transparent",
+          width: mode === "idle" ? 6 : 0,
+          height: mode === "idle" ? 6 : 0,
+          opacity: visible ? 1 : 0,
         }}
-        transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.5 }}
+        transition={{ duration: 0.18 }}
       />
     </>
   )

@@ -13,6 +13,37 @@ export const translations = {
       subtitle: "Phát triển các giải pháp web toàn diện với nền tảng kiến trúc vững chắc. Tập trung vào việc cung cấp mã nguồn sạch, tối ưu hóa hiệu năng hệ thống và nâng cao trải nghiệm người dùng cuối.", viewWork: "Xem dự án",
       role: "Fullstack Developer"
     },
+    street: {
+      poster1: "Lập trình",
+      poster2: "Fullstack",
+      location: "TP. Hồ Chí Minh, VN",
+      scroll: "Cuộn xuống",
+      contactCta: "Bắt đầu dự án",
+      tickerWords: ["Fullstack", "Realtime", "Mã sạch", "Hiệu năng", "Kiến trúc", "Giao diện", "API", "Bảo mật"],
+      labels: {
+        index: "Mục lục",
+        about: "Hồ sơ",
+        work: "Dự án",
+        stack: "Công nghệ",
+        expertise: "Chuyên môn",
+        contact: "Liên hệ"
+      },
+      stats: {
+        projects: "Dự án",
+        tech: "Công nghệ",
+        months: "Tháng kinh nghiệm",
+        score: "Điểm PageSpeed"
+      },
+      stackGroups: {
+        core: "Nền tảng",
+        secondary: "Framework & Dữ liệu",
+        others: "Vận hành & Công cụ"
+      },
+      dragHint: "Kéo ngang →",
+      viewCase: "Xem chi tiết",
+      allProjects: "Tất cả dự án",
+      selected: "Tuyển chọn"
+    },
     skills: {
       title: "Năng lực chuyên môn",
       core: ["C#", "TypeScript", "React", "Next.js", "ASP.NET Core", "Node.js"],
@@ -138,6 +169,37 @@ export const translations = {
       title: "Crafting Next-Gen Digital Experiences",
       subtitle: "Developing comprehensive web solutions with a solid architectural foundation. Focused on delivering clean code, optimizing system performance, and enhancing the end-user experience.", viewWork: "View Work",
       role: "Fullstack Developer"
+    },
+    street: {
+      poster1: "Fullstack",
+      poster2: "Developer",
+      location: "Ho Chi Minh City, VN",
+      scroll: "Scroll down",
+      contactCta: "Start a project",
+      tickerWords: ["Fullstack", "Realtime", "Clean code", "Performance", "Architecture", "Interfaces", "APIs", "Security"],
+      labels: {
+        index: "Index",
+        about: "Profile",
+        work: "Work",
+        stack: "Stack",
+        expertise: "Expertise",
+        contact: "Contact"
+      },
+      stats: {
+        projects: "Projects",
+        tech: "Technologies",
+        months: "Months experience",
+        score: "PageSpeed score"
+      },
+      stackGroups: {
+        core: "Core",
+        secondary: "Frameworks & Data",
+        others: "Ops & Tooling"
+      },
+      dragHint: "Drag / swipe →",
+      viewCase: "View case",
+      allProjects: "All projects",
+      selected: "Selected"
     },
     skills: {
       title: "Technical Stack",
