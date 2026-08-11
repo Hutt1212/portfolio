@@ -9,11 +9,11 @@ export const translations = {
     },
     hero: {
       status: "Sẵn sàng đón nhận cơ hội mới",
-      title: "Xây dựng trải nghiệm số thế hệ mới",
-      subtitle: "Phát triển các giải pháp web toàn diện với nền tảng kiến trúc vững chắc. Tập trung vào việc cung cấp mã nguồn sạch, tối ưu hóa hiệu năng hệ thống và nâng cao trải nghiệm người dùng cuối.", viewWork: "Xem dự án",
+      title: "Tôi xây hệ thống web fullstack bằng .NET và Next.js",
+      subtitle: "Dự án gần nhất: tích hợp trợ lý RAG vào hệ thống chat realtime SignalR của một thương hiệu F&B — phân loại ý định khách, trả lời kèm thẻ món ăn, tự chuyển cho nhân viên khi câu hỏi vượt phạm vi.", viewWork: "Xem dự án",
       role: "Fullstack Developer"
     },
-    street: {
+    site: {
       poster1: "Lập trình",
       poster2: "Fullstack",
       location: "TP. Hồ Chí Minh, VN",
@@ -53,12 +53,12 @@ export const translations = {
     services: {
       title: "Chuyên môn kỹ thuật",
       items: [
-        { name: "Fullstack Development", description: "Xây dựng ứng dụng từ A-Z với kiến trúc hiện đại, hiệu năng cao." },
-        { name: "API Development", description: "Thiết kế RESTful & GraphQL API chuẩn mực, bảo mật và dễ mở rộng." },
-        { name: "Realtime Systems", description: "Phát triển hệ thống thời gian thực với WebSockets và SignalR." },
-        { name: "Performance Optimization", description: "Tối ưu hóa Core Web Vitals và hiệu suất truy vấn Database." },
-        { name: "Database Architecture", description: "Thiết kế cơ sở dữ liệu quan hệ và phi quan hệ quy mô lớn." },
-        { name: "Security & Best Practices", description: "Triển khai OAuth2, JWT và các tiêu chuẩn bảo mật OWASP." }
+        { name: "Fullstack Development", description: "Xây dựng ứng dụng từ backend .NET/Node tới frontend Next.js, dùng chung một mô hình dữ liệu và một bộ quy ước." },
+        { name: "API Development", description: "REST API có phiên bản, phân trang và cách trả lỗi nhất quán; tài liệu hoá để người khác dùng được mà không phải hỏi." },
+        { name: "Realtime Systems", description: "Chat và cập nhật trực tiếp bằng SignalR: quản lý kết nối, phòng, và trạng thái khi client rớt mạng rồi vào lại." },
+        { name: "Performance Optimization", description: "Đo trước khi sửa: Core Web Vitals ở frontend, truy vấn N+1 và chỉ mục ở database, cache Redis khi thật sự cần." },
+        { name: "Database Architecture", description: "Thiết kế lược đồ cho SQL Server, PostgreSQL và MongoDB; chọn quan hệ hay tài liệu dựa trên cách dữ liệu thực sự được đọc." },
+        { name: "Security & Best Practices", description: "Xác thực JWT/OAuth2, phân quyền theo vai trò, và các hạng mục cơ bản của OWASP: kiểm tra đầu vào, không rò rỉ dữ liệu qua API." }
       ]
     },
     portfolio: {
@@ -96,34 +96,69 @@ export const translations = {
           image: "/projects/unagi-hero.png"
         },
         {
-          id: "portfolio",
-          title: "Portfolio – Giao diện tối giản & Hiệu năng cao",
-          description: "Trang portfolio cá nhân được thiết kế theo phong cách Bento Grid hiện đại, tích hợp đa ngôn ngữ và tối ưu hóa điểm số hiệu năng tuyệt đối.",
-          longDescription: "Dự án portfolio cá nhân được xây dựng với mục tiêu thể hiện năng lực thiết kế và lập trình thông qua giao diện Bento Grid độc đáo. Hệ thống hỗ trợ đa ngôn ngữ (Anh - Việt), tích hợp các hiệu ứng tương tác mượt mà, tối ưu hóa SEO và đạt hiệu suất tải trang tối đa (Core Web Vitals tuyệt đối) để mang lại trải nghiệm tốt nhất cho nhà tuyển dụng.",
-          vision: "Xây dựng một 'bản lý lịch số' sống động, không chỉ giới thiệu năng lực lập trình mà còn trực tiếp chứng minh kỹ năng tối ưu hóa UI/UX, viết mã nguồn sạch và khả năng kiểm soát hiệu suất hệ thống thực tế.",
-          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          id: "bddwriter",
+          title: "BDDWriter – Sinh kịch bản kiểm thử Gherkin bằng LLM tự fine-tune",
+          description: "Khoá luận tốt nghiệp: fine-tune StarCoderBase-1B bằng LoRA để biến User Story thành kịch bản kiểm thử chuẩn Gherkin, đóng gói thành công cụ chat cho Tester.",
+          longDescription: "BDDWriter nhận yêu cầu phần mềm viết dưới dạng User Story (As a… I want… so that…) và sinh ra kịch bản kiểm thử theo chuẩn Gherkin Given – When – Then, để Tester đưa thẳng vào quy trình BDD hoặc automation. Thay vì gọi API của các LLM thương mại, nhóm chọn hướng tự fine-tune một mô hình nhỏ chạy độc lập: StarCoderBase-1B tinh chỉnh bằng LoRA. Đánh đổi này có lý do rõ ràng — User Story và logic nghiệp vụ nội bộ không rời khỏi hệ thống, và chi phí vận hành không tăng theo số lần gọi. Đây là khoá luận tốt nghiệp làm theo nhóm ba người tại Trường Đại học Công Thương TP.HCM, hoàn thành tháng 12/2025.",
+          vision: "Rút ngắn khâu tốn thời gian nhất của Tester: ngồi nghĩ và gõ tay từng kịch bản từ bản mô tả yêu cầu. Mục tiêu không phải thay thế người kiểm thử mà lo phần khung cơ bản, để họ dành thời gian cho các tình huống nghiệp vụ đặc thù mà mô hình chưa nghĩ ra được.",
+          tech: ["Python", "StarCoderBase-1B", "LoRA / PEFT", "Fine-tuning", "Gherkin / BDD", "Web chat UI"],
           highlights: [
             {
-              title: "Thiết kế Bento Grid hiện đại & Thích ứng",
-              description: "Bố cục lưới (Bento Grid) trực quan, tự động điều chỉnh hiển thị tối ưu trên mọi kích thước màn hình từ điện thoại đến màn hình siêu rộng."
+              title: "Fine-tune mô hình nhỏ thay vì gọi API mô hình lớn",
+              description: "StarCoderBase-1B được tinh chỉnh bằng LoRA — chỉ thêm các ma trận hạng thấp vào một số layer, giữ nguyên phần lớn trọng số gốc. Nhờ vậy huấn luyện được trên phần cứng hạn chế, và mô hình chạy tại chỗ nên dữ liệu nghiệp vụ không gửi ra ngoài."
             },
             {
-              title: "Tối ưu hóa Core Web Vitals tuyệt đối",
-              description: "Đạt điểm hiệu năng (Performance), SEO và Best Practices tuyệt đối (95-100) nhờ việc tối ưu hóa ảnh động, lazy loading và cấu trúc HTML ngữ nghĩa."
+              title: "Đầu ra bám chuẩn Gherkin",
+              description: "Mô hình được huấn luyện để sinh đúng cấu trúc Feature / Scenario / Scenario Outline với các bước Given – When – Then, tức là kết quả dùng được ngay trong Cucumber, SpecFlow hay các framework BDD khác chứ không phải văn xuôi mô tả."
             },
             {
-              title: "Hiệu ứng tương tác Micro-interactions",
-              description: "Sử dụng Framer Motion và CSS gradients để tạo các hiệu ứng di chuột (spotlight effect), chuyển động mượt mà và chuyển đổi giao diện sáng/tối tự nhiên."
+              title: "Giao diện chat cho Tester",
+              description: "Mô hình được đóng gói thành ứng dụng web: người dùng gõ yêu cầu dạng User Story, nhận về bộ scenario, và giữ lại lịch sử từng đoạn hội thoại để tra lại."
             },
             {
-              title: "Hệ thống Đa ngôn ngữ (i18n)",
-              description: "Tự động phát hiện và chuyển đổi ngôn ngữ Anh - Việt mượt mà không cần tải lại trang nhờ cơ chế State Management gọn nhẹ."
+              title: "Đánh giá trên bộ 100 yêu cầu tự xây dựng",
+              description: "Nhóm dựng riêng tập kiểm thử 100 requirement rồi đo hai khía cạnh tách bạch: tính hợp lệ của cấu trúc kịch bản và độ bao phủ giữa luồng thuận và luồng lỗi."
             }
           ],
           impact: [
-            "Đạt điểm số 98-100 trên Google PageSpeed Insights cho cả thiết bị di động và máy tính.",
-            "Tốc độ phản hồi cực nhanh dưới 100ms nhờ Static Site Generation (SSG).",
-            "Ấn tượng mạnh mẽ với nhà tuyển dụng nhờ thiết kế Bento Grid hiện đại và chỉn chu."
+            "Sinh 3.412 scenario từ 100 yêu cầu đầu vào, trong đó 3.345 scenario đạt cấu trúc hoàn chỉnh — khoảng 98%.",
+            "Độ bao phủ phân bố 2.015 kịch bản luồng thuận và 1.397 kịch bản luồng lỗi.",
+            "Một QC lead tại doanh nghiệp phần mềm đánh giá độc lập: cú pháp và ngữ nghĩa chính xác, phản hồi nhanh, nhưng độ bao phủ chưa đủ cho tình huống đặc thù nên vẫn cần kết hợp kiểm thử thủ công.",
+            "Hạn chế đã ghi nhận: khoảng 2% scenario bị cắt giữa chừng do giới hạn token, và một số kịch bản trùng lặp nội dung."
+          ],
+          link: "#",
+          github: "#",
+          image: "/projects/bddwriter-chat.png"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Site cá nhân dựng bằng Next.js & GSAP",
+          description: "Chính trang bạn đang xem. Next.js App Router, hoạt cảnh cuộn bằng GSAP ScrollTrigger, một cảnh nền vẽ bằng canvas 2D, song ngữ Việt–Anh.",
+          longDescription: "Trang cá nhân này được dựng quanh một cảnh canvas 2D: khoảng 640 sợi sáng sinh ngẫu nhiên có nhiễu hướng, vẽ chồng theo chế độ cộng sáng để tạo quầng. Toàn bộ cấu trúc tĩnh được vẽ sẵn một lần vào bộ đệm ngoài màn hình; mỗi khung hình chỉ ghép lại tấm đó rồi vẽ vài chục xung sáng chạy dọc các sợi thật — rẻ hơn nhiều so với tô lại 640 đường cong mỗi khung. Cuộn trang do Lenis điều khiển và được đồng bộ với ScrollTrigger qua gsap.ticker.",
+          vision: "Dùng chính trang cá nhân làm chỗ thử những kỹ thuật khó hơn mức một trang giới thiệu cần: hoạt cảnh cuộn có trạng thái, dựng hình bằng canvas, và đa ngôn ngữ không tải lại trang.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          highlights: [
+            {
+              title: "Cảnh nền dựng bằng Canvas 2D",
+              description: "Sợi sáng sinh ngẫu nhiên với nhiễu hướng mỗi bước nên đường nào cũng cong, vẽ chồng theo chế độ cộng sáng. Cấu trúc tĩnh chỉ dựng một lần rồi tái sử dụng."
+            },
+            {
+              title: "Hoạt cảnh cuộn bằng GSAP ScrollTrigger",
+              description: "Từng đoạn được ghim lại và quãng cuộn được ánh xạ thành tiến trình hoạt cảnh, nên nội dung xuất hiện theo nhịp title card thay vì chạy tự do."
+            },
+            {
+              title: "Lenis chạy trên đồng hồ của GSAP",
+              description: "Lenis được gắn vào gsap.ticker thay vì rAF riêng: lệch một khung hình giữa hai đồng hồ là nguyên nhân kinh điển khiến các đoạn ghim bị rung."
+            },
+            {
+              title: "Song ngữ không tải lại trang",
+              description: "Chuyển Việt–Anh qua React context, toàn bộ nội dung nằm trong một module dịch duy nhất."
+            }
+          ],
+          impact: [
+            "Mọi hoạt cảnh đều tôn trọng prefers-reduced-motion: tắt hẳn hiệu ứng nặng thay vì chỉ giảm tốc.",
+            "Cảnh canvas và các đoạn ghim tự tắt trên màn hình nhỏ và thiết bị cảm ứng, nhường chỗ cho bố cục tĩnh.",
+            "Các trang đều được dựng sẵn ở dạng tĩnh, trừ trang chi tiết dự án render theo yêu cầu."
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -134,8 +169,8 @@ export const translations = {
     about: {
       title: "Về Tôi",
       profession: "Fullstack Developer",
-      description1: "Là một Fullstack Developer, tôi tập trung vào việc thiết kế và triển khai các hệ thống web có khả năng mở rộng cao. Tôi ưu tiên sự mạch lạc trong kiến trúc phần mềm, từ luồng dữ liệu backend đến giao diện người dùng cuối.",
-      description2: "Trong quá trình làm việc, tôi luôn chú trọng vào tối ưu hóa hiệu suất, thiết kế cơ sở dữ liệu chặt chẽ và áp dụng các tiêu chuẩn bảo mật. Tôi đề cao tính thực tiễn, khả năng phối hợp nhóm hiệu quả và chất lượng mã nguồn để giải quyết các bài toán kỹ thuật một cách tối ưu nhất."
+      description1: "Tôi làm fullstack: .NET và Node ở backend, Next.js với TypeScript ở frontend. Phần tôi thích nhất là chỗ hai đầu gặp nhau — luồng dữ liệu, realtime, và những thứ phải chạy đúng khi có người thật đang dùng.",
+      description2: "Gần đây tôi làm nhiều với hệ thống thời gian thực và tích hợp AI: SignalR cho chat, Semantic Kernel và vector database cho trợ lý RAG. Trước khi thêm một lớp phức tạp nào, tôi hỏi nó giải quyết vấn đề gì và ai sẽ phải vận hành nó."
     },
     footer: {
       slogan: "Cùng nhau xây dựng những sản phẩm tuyệt vời.",
@@ -166,11 +201,11 @@ export const translations = {
     },
     hero: {
       status: "Available for new opportunities",
-      title: "Crafting Next-Gen Digital Experiences",
-      subtitle: "Developing comprehensive web solutions with a solid architectural foundation. Focused on delivering clean code, optimizing system performance, and enhancing the end-user experience.", viewWork: "View Work",
+      title: "I build fullstack web systems with .NET and Next.js",
+      subtitle: "Most recently: wiring a RAG assistant into a food brand's SignalR realtime chat — classifying customer intent, answering with product cards, and handing off to staff when a question falls outside its scope.", viewWork: "View Work",
       role: "Fullstack Developer"
     },
-    street: {
+    site: {
       poster1: "Fullstack",
       poster2: "Developer",
       location: "Ho Chi Minh City, VN",
@@ -210,12 +245,12 @@ export const translations = {
     services: {
       title: "Technical Expertise",
       items: [
-        { name: "Fullstack Development", description: "Building A-Z applications with modern, high-performance architecture." },
-        { name: "API Development", description: "Designing standard, secure, and scalable RESTful & GraphQL APIs." },
-        { name: "Realtime Systems", description: "Developing real-time systems using WebSockets and SignalR." },
-        { name: "Performance Optimization", description: "Optimizing Core Web Vitals and Database query performance." },
-        { name: "Database Architecture", description: "Designing large-scale relational and non-relational databases." },
-        { name: "Security & Best Practices", description: "Implementing OAuth2, JWT, and OWASP security standards." }
+        { name: "Fullstack Development", description: "Applications end to end, from a .NET or Node backend to a Next.js frontend, sharing one data model and one set of conventions." },
+        { name: "API Development", description: "Versioned REST APIs with consistent pagination and error shapes, documented well enough that nobody has to ask me how they work." },
+        { name: "Realtime Systems", description: "Live chat and live updates over SignalR: connection lifecycle, rooms, and what happens to state when a client drops and reconnects." },
+        { name: "Performance Optimization", description: "Measure before changing anything: Core Web Vitals on the front, N+1 queries and indexes on the database, Redis only where it earns its keep." },
+        { name: "Database Architecture", description: "Schema design across SQL Server, PostgreSQL and MongoDB, choosing relational or document based on how the data is actually read." },
+        { name: "Security & Best Practices", description: "JWT and OAuth2 auth, role-based access, and the unglamorous OWASP basics: validating input and not leaking data through an API." }
       ]
     },
     portfolio: {
@@ -253,34 +288,69 @@ export const translations = {
           image: "/projects/unagi-hero.png"
         },
         {
-          id: "portfolio",
-          title: "Portfolio – Minimalist & High-Performance Hub",
-          description: "A sleek, personal portfolio built with a modern Bento Grid layout, full multilingual support, and exceptional performance optimization.",
-          longDescription: "This personal portfolio project is engineered to demonstrate cutting-edge frontend capabilities and UI/UX design. Using a unique Bento Grid layout, it offers a seamless multilingual experience (English - Vietnamese), fluid micro-animations, flawless SEO optimization, and exceptional Core Web Vitals scores, serving as a real-world testament to production-grade development standards.",
-          vision: "To create a living digital resume that doesn't just list technical skills but actively demonstrates them through outstanding performance, clean code architecture, and high-fidelity user interactions.",
-          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          id: "bddwriter",
+          title: "BDDWriter – Gherkin test scenarios from a self-tuned LLM",
+          description: "Final-year thesis: StarCoderBase-1B fine-tuned with LoRA to turn user stories into standards-compliant Gherkin scenarios, wrapped in a chat tool for testers.",
+          longDescription: "BDDWriter takes a software requirement written as a user story (As a… I want… so that…) and produces test scenarios in Gherkin Given – When – Then form, ready to drop into a BDD or automation pipeline. Rather than calling a commercial LLM API, the team fine-tuned a small self-hosted model: StarCoderBase-1B adapted with LoRA. The trade-off was deliberate — user stories and internal business logic never leave the system, and running cost does not scale with call volume. This was a three-person final-year thesis at Ho Chi Minh City University of Industry and Trade, completed in December 2025.",
+          vision: "To remove the slowest part of a tester's day: reading a requirement and hand-writing every scenario from it. The goal was never to replace the tester, but to cover the routine skeleton so their time goes to the domain-specific edge cases a model will not think of.",
+          tech: ["Python", "StarCoderBase-1B", "LoRA / PEFT", "Fine-tuning", "Gherkin / BDD", "Web chat UI"],
           highlights: [
             {
-              title: "Adaptive Bento Grid System",
-              description: "A highly responsive grid-based interface that reflows gracefully across all viewports, ensuring a premium presentation on mobile and desktop alike."
+              title: "Fine-tuning a small model instead of calling a large one",
+              description: "StarCoderBase-1B was adapted with LoRA, which injects small low-rank matrices into selected layers and leaves most original weights untouched. That made training feasible on limited hardware, and keeps inference local so business data never leaves the system."
             },
             {
-              title: "Stellar Performance & Core Web Vitals",
-              description: "Achieving near-perfect Lighthouse scores through advanced image optimization, lightweight components, and highly structured HTML semantics."
+              title: "Output that holds to the Gherkin standard",
+              description: "The model was trained to emit correct Feature / Scenario / Scenario Outline structure with Given – When – Then steps, so the result drops straight into Cucumber or SpecFlow rather than being prose that still needs rewriting."
             },
             {
-              title: "Fluid Micro-interactions",
-              description: "Leveraging Framer Motion and dynamic CSS radial spotlights to respond to user hover and touch events, adding polished micro-animations."
+              title: "A chat interface built for testers",
+              description: "The model is wrapped in a web app: users type a requirement as a user story, get a set of scenarios back, and keep each conversation in history for later reference."
             },
             {
-              title: "Smooth Multilingual Engine (i18n)",
-              description: "An ultra-lightweight client-side localization system enabling instant language swapping (EN/VN) without layout shifts or page reloads."
+              title: "Measured against a purpose-built set of 100 requirements",
+              description: "The team assembled its own 100-requirement test set and measured two things separately: whether the generated scenario structure was valid, and how coverage split between happy paths and failure paths."
             }
           ],
           impact: [
-            "Maintained 98-100 PageSpeed Insights performance and accessibility scores.",
-            "Achieved ultra-low Largest Contentful Paint (LCP) of under 0.8 seconds.",
-            "Delivered a compelling, high-retention recruiter landing page with immersive aesthetics."
+            "Generated 3,412 scenarios from 100 input requirements, of which 3,345 were structurally complete — around 98%.",
+            "Coverage split into 2,015 happy-path and 1,397 negative-path scenarios.",
+            "Independently reviewed by a QC lead at a software company: syntax and semantics accurate with fast responses, but coverage not yet deep enough for specialised cases, so manual testing is still required alongside it.",
+            "Known limitations: roughly 2% of scenarios were cut short by the model's token limit, and some generated scenarios duplicated one another."
+          ],
+          link: "#",
+          github: "#",
+          image: "/projects/bddwriter-chat.png"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Personal site built with Next.js & GSAP",
+          description: "The site you are reading. Next.js App Router, scroll animation driven by GSAP ScrollTrigger, a canvas-rendered background scene, and Vietnamese/English throughout.",
+          longDescription: "This personal site is built around a 2D canvas scene: roughly 640 procedurally generated filaments, each one wandering slightly at every step, stroked with additive blending so overlaps bloom. The entire static structure is baked once into an offscreen buffer; each frame only composites that buffer and strokes a few dozen travelling pulses along real filament paths, which costs far less than re-stroking 640 curves every frame. Lenis drives the scroll and is synchronised to ScrollTrigger through gsap.ticker.",
+          vision: "To use my own site as the place to try techniques a brochure page does not need: stateful scroll animation, canvas rendering, and instant language switching without a reload.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          highlights: [
+            {
+              title: "Canvas-rendered background scene",
+              description: "Filaments are generated with per-step directional noise so every strand curls, then stroked with additive blending. The static structure is built once and reused."
+            },
+            {
+              title: "Scroll animation with GSAP ScrollTrigger",
+              description: "Sections are pinned and scroll distance is mapped to animation progress, so copy arrives on a deliberate beat instead of drifting past."
+            },
+            {
+              title: "Lenis running on the GSAP ticker",
+              description: "Lenis is driven by gsap.ticker rather than its own rAF loop: a one-frame gap between the two clocks is the classic cause of jittering pinned sections."
+            },
+            {
+              title: "Bilingual with no page reload",
+              description: "Vietnamese and English swap through React context, with all copy living in a single translation module."
+            }
+          ],
+          impact: [
+            "Every animation respects prefers-reduced-motion, switching heavy effects off rather than merely slowing them down.",
+            "The canvas scene and pinned sections disable themselves on small screens and touch devices in favour of a static layout.",
+            "Pages are prerendered as static content, apart from the project detail route which renders on demand."
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -291,8 +361,8 @@ export const translations = {
     about: {
       title: "About Me",
       profession: "Fullstack Developer",
-      description1: "As a Fullstack Developer, I focus on designing and implementing highly scalable web systems. I prioritize coherence in software architecture, from the backend data flow to the end-user interface.",
-      description2: "In my workflow, I focus on performance optimization, rigorous database design, and security standards. I value practicality, effective teamwork, and code quality to resolve complex technical challenges efficiently."
+      description1: "I work across the stack: .NET and Node on the backend, Next.js and TypeScript on the front. The part I like most is where the two meet — data flow, realtime, and the things that have to hold up once real people are using them.",
+      description2: "Lately most of my work has been realtime systems and AI integration: SignalR for chat, Semantic Kernel and a vector database for a RAG assistant. Before adding any layer of complexity I ask what it solves and who has to operate it."
     },
     footer: {
       slogan: "Let's build something amazing together.",

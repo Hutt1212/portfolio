@@ -1,27 +1,20 @@
 import "./globals.css"
-import { Anton, Archivo, JetBrains_Mono } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
+import { Archivo, JetBrains_Mono } from "next/font/google"
 import { LanguageProvider } from "./context/LanguageContext"
-import CustomCursor from "./components/CustomCursor"
-import Preloader from "./components/street/Preloader"
-import StreetBackground from "./components/StreetBackground"
-import TransitionOverlay from "./components/TransitionOverlay"
 import SmoothScroll from "./components/SmoothScroll"
+import Loader from "./components/y/Loader"
+import Cursor from "./components/y/Cursor"
+import Nav from "./components/y/Nav"
+import Footer from "./components/y/Footer"
 import type { Metadata, Viewport } from "next"
 import type React from "react"
 
+/* One family does every job. The `wdth` axis is what lets the display sizes run
+   wide enough to read as sportswear-poster type without a second download. */
 const archivo = Archivo({
   subsets: ["latin", "vietnamese"],
+  axes: ["wdth"],
   variable: "--font-sans",
-  display: "swap",
-})
-
-const anton = Anton({
-  subsets: ["latin", "vietnamese"],
-  weight: "400",
-  variable: "--font-display",
   display: "swap",
 })
 
@@ -41,10 +34,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F4F2EC" },
-    { media: "(prefers-color-scheme: dark)", color: "#121212" },
-  ],
+  themeColor: "#F3F0E7",
 }
 
 export default function RootLayout({
@@ -53,27 +43,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Without JS the preloader would never lift, so take it out entirely. */}
-        <noscript>
-          <style>{`#preloader{display:none!important}`}</style>
-        </noscript>
-      </head>
-      <body
-        className={`${archivo.variable} ${anton.variable} ${jetbrains.variable} font-sans min-h-screen bg-background text-foreground`}
-      >
+    <html lang="en">
+      <body className={`${archivo.variable} ${jetbrains.variable} font-sans min-h-screen bg-background text-foreground`}>
         <LanguageProvider>
           <SmoothScroll>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <Preloader />
-              <CustomCursor />
-              <TransitionOverlay />
-              <StreetBackground />
-              <Header />
-              <main className="relative z-10">{children}</main>
-              <Footer />
-            </ThemeProvider>
+            <Loader />
+            <Cursor />
+            <Nav />
+            <main className="relative">{children}</main>
+            <Footer />
           </SmoothScroll>
         </LanguageProvider>
       </body>

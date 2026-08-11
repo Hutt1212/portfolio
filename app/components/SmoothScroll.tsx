@@ -2,42 +2,46 @@
 
 import { useEffect } from "react"
 import Lenis from "lenis"
-import { MotionConfig } from "framer-motion"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
+import { registerLenis } from "@/lib/scroll-lock"
+import type React from "react"
 
 /**
- * Desktop-only smooth scrolling. Touch devices keep their native momentum
- * scrolling (which is smoother and cheaper than emulating it), and users who
- * ask for reduced motion get the browser default.
+ * Lenis drives the page, GSAP drives the clock. Running Lenis off its own rAF
+ * while ScrollTrigger runs off gsap.ticker puts the two a frame apart, which is
+ * exactly how pinned sections end up jittering — so the ticker owns both.
  */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const isTouch = window.matchMedia("(pointer: coarse)").matches
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    if (isTouch || reduced) return
+    // Touch devices keep native momentum: it is smoother and cheaper than any
+    // emulation, and ScrollTrigger works against native scroll regardless.
+    const isTouch = window.matchMedia("(pointer: coarse)").matches
+    if (reduced || isTouch) return
 
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       wheelMultiplier: 1,
     })
 
-    let frame = 0
-    const raf = (time: number) => {
-      lenis.raf(time)
-      frame = requestAnimationFrame(raf)
-    }
-    frame = requestAnimationFrame(raf)
+    lenis.on("scroll", ScrollTrigger.update)
+    registerLenis(lenis)
+
+    const tick = (time: number) => lenis.raf(time * 1000)
+    gsap.ticker.add(tick)
+    // Without this, a long frame makes GSAP fake a small delta and the scroll
+    // position lurches when the tab regains focus.
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
-      cancelAnimationFrame(frame)
+      gsap.ticker.remove(tick)
+      registerLenis(null)
       lenis.destroy()
     }
   }, [])
 
-  // `reducedMotion="user"` makes every framer-motion animation on the site obey
-  // the OS setting. The CSS rule in globals.css only covers CSS animations —
-  // JS-driven transforms would otherwise ignore the preference entirely.
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>
+  return <>{children}</>
 }

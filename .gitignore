@@ -42,3 +42,6 @@ next-env.d.ts
 *.njsproj
 *.sln
 *.sw?
+# Thesis source document — contains third-party personal data (names, student IDs).
+# Keep it local; the site only ships the screenshots extracted from it.
+*.pdf

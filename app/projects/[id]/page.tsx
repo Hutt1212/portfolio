@@ -3,257 +3,193 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { motion } from "framer-motion"
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  CheckCircle2,
-  Cpu,
-  ExternalLink,
-  Github,
-  Layers,
-  Shield,
-  Zap,
-} from "lucide-react"
+import { ArrowUpRight, CheckCircle2, ExternalLink, Github } from "lucide-react"
 import { useLanguage } from "@/app/hooks/useLanguage"
-import Rise from "@/app/components/street/Rise"
-import Ticker from "@/app/components/street/Ticker"
+import PageHeader from "@/app/components/y/PageHeader"
+import SacredTimeline from "@/app/components/y/SacredTimeline"
 
-const EASE = [0.16, 1, 0.3, 1] as const
-const HIGHLIGHT_ICONS = [Zap, Shield, Layers, Cpu]
+/** Extra screenshots per project, used by the sticky story column. */
+const GALLERY: Record<string, string[]> = {
+  unagi: ["/projects/unagi-hero.png", "/projects/unagi-features.png", "/projects/unagi-combo.png"],
+  bddwriter: [
+    "/projects/bddwriter-chat.png",
+    "/projects/bddwriter-landing.jpg",
+    "/projects/bddwriter-features.jpg",
+  ],
+  portfolio: ["/projects/portfolio-hero.png"],
+}
 
 export default function ProjectDetailPage() {
   const { id } = useParams()
   const { t, language } = useLanguage()
+  const vi = language === "vi"
 
   const project = t.portfolio.projects.find((p: any) => p.id === id)
 
   if (!project) {
     return (
-      <div className="mx-auto flex min-h-screen w-full max-w-[110rem] items-center justify-center px-4 py-32 sm:px-6 lg:px-10">
-        <div className="slab shadow-hard-lg max-w-lg bg-card p-6 md:p-10">
-          <span className="t-tag text-flare">404</span>
-          <h1 className="font-display t-big mt-3">
-            {language === "vi" ? "Không tìm thấy dự án" : "Project not found"}
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            {language === "vi"
-              ? "Dự án bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ."
-              : "The project you are looking for does not exist or has been removed."}
-          </p>
-          <Link
-            href="/"
-            className="slab press shadow-hard mt-8 flex items-center justify-between gap-4 bg-foreground p-4 text-background md:p-5"
-          >
-            <span className="font-display t-mid">
-              {language === "vi" ? "Về trang chủ" : "Back home"}
-            </span>
-            <ArrowUpRight size={24} strokeWidth={2.5} />
-          </Link>
-        </div>
+      <div className="shell flex min-h-screen flex-col justify-center py-32">
+        <span className="t-label text-muted-foreground">404</span>
+        <h1 className="t-display t-huge mt-4">
+          {vi ? "Không tìm thấy dự án" : "Project not found"}
+        </h1>
+        <p className="t-lede mt-5 max-w-[46ch] text-muted-foreground">
+          {vi
+            ? "Dự án bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ."
+            : "The project you are looking for does not exist or has been removed."}
+        </p>
+        <Link href="/work" data-cursor className="pill pill-solid mt-9 self-start">
+          {vi ? "Xem tất cả dự án" : "See all work"} →
+        </Link>
       </div>
     )
   }
 
   const [headline, ...rest] = project.title.split("–")
   const subline = rest.join("–").trim()
+  const shots = GALLERY[project.id as string] ?? [project.image]
 
   return (
-    <div className="relative">
-      <div className="mx-auto w-full max-w-[110rem] px-4 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pt-32">
-        {/* Breadcrumb */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
-          <Link
-            href="/#work"
-            className="t-tag group flex items-center gap-2 transition-colors hover:text-flare"
-          >
-            <ArrowLeft
-              size={14}
-              strokeWidth={3}
-              className="transition-transform group-hover:-translate-x-1"
-            />
-            {language === "vi" ? "Quay lại dự án" : "Back to work"}
-          </Link>
-          <span className="t-tag text-muted-foreground">/ {t.street.labels.work}</span>
+    <>
+      <PageHeader
+        eyebrow={t.site.labels.work}
+        title={headline.trim()}
+        lede={subline || undefined}
+        backHref="/work"
+        backLabel={vi ? "Quay lại dự án" : "Back to work"}
+      />
+
+      <div className="shell">
+        <div className="flex flex-wrap gap-2">
+          {project.tech.map((tech: string) => (
+            <span key={tech} className="pill">
+              {tech}
+            </span>
+          ))}
         </div>
 
-        {/* Title block */}
-        <Rise y={30} duration={0.7} className="mt-6 md:mt-10">
-          <h1 className="font-display t-mega">{headline.trim()}</h1>
-          {subline && (
-            <p className="mt-4 max-w-3xl text-base font-semibold uppercase leading-snug tracking-wide text-muted-foreground md:mt-6 md:text-xl">
-              {subline}
-            </p>
-          )}
+        <div className="frame mt-10 aspect-[16/9] md:mt-14">
+          <Image src={project.image} alt={project.title} fill priority sizes="100vw" className="object-cover" />
+        </div>
 
-          <div className="mt-6 flex flex-wrap gap-2 md:mt-8">
-            {project.tech.map((tech: string) => (
-              <span
-                key={tech}
-                className="t-tag border-2 border-foreground bg-card px-2.5 py-1.5 md:px-3 md:py-2"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </Rise>
-
-        {/* Cover */}
-        <Rise
-          delay={0.15}
-          duration={0.7}
-          className="slab shadow-hard-lg relative mt-8 aspect-[16/10] w-full overflow-hidden bg-secondary md:mt-12 md:aspect-[21/9]"
-        >
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-        </Rise>
-
-        {/* Body */}
-        <div className="mt-10 grid grid-cols-12 gap-4 md:mt-16 md:gap-6">
-          {/* Main column */}
-          <div className="col-span-12 flex flex-col gap-6 md:gap-10 lg:col-span-8">
-            <section>
-              <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
-                <span className="h-2.5 w-2.5 bg-volt" />
-                <span className="t-tag">{t.projectDetail.overview}</span>
-              </div>
-              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:mt-7 md:text-xl md:leading-relaxed">
-                {project.longDescription}
-              </p>
-            </section>
+        {/* Overview */}
+        <section className="grid gap-6 pt-16 md:grid-cols-12 md:gap-10 md:pt-24">
+          <span className="t-label text-muted-foreground md:col-span-3">{t.projectDetail.overview}</span>
+          <div className="md:col-span-9">
+            <p className="t-lede text-muted-foreground">{project.longDescription}</p>
 
             {project.vision && (
-              <section className="slab shadow-hard bg-volt text-volt-foreground p-5 md:p-8">
-                <span className="t-tag block opacity-70">{t.projectDetail.vision}</span>
-                <p className="mt-3 text-lg font-medium leading-snug md:mt-5 md:text-2xl md:leading-[1.3]">
-                  {project.vision}
-                </p>
-              </section>
+              <div className="mt-10 border-l-2 border-[hsl(var(--violet))] pl-6 md:pl-8">
+                <span className="t-label text-muted-foreground">{t.projectDetail.vision}</span>
+                <p className="t-mid mt-3 !leading-[1.4]">{project.vision}</p>
+              </div>
             )}
-
-            <section>
-              <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
-                <span className="h-2.5 w-2.5 bg-flare" />
-                <span className="t-tag">{t.projectDetail.highlights}</span>
-              </div>
-
-              <div className="mt-5 grid grid-cols-1 gap-3 md:mt-7 md:gap-5 sm:grid-cols-2">
-                {(project.highlights || []).map((feature: any, i: number) => {
-                  const Icon = HIGHLIGHT_ICONS[i % HIGHLIGHT_ICONS.length]
-                  return (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-60px" }}
-                      transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}
-                      className="slab shadow-hard flex flex-col gap-4 bg-card p-5 md:p-7"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="grid h-11 w-11 place-items-center border-2 border-foreground bg-background">
-                          <Icon size={20} strokeWidth={2.5} />
-                        </span>
-                        <span className="t-tag text-muted-foreground">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="font-display t-mid">{feature.title}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                        {feature.description || feature.desc}
-                      </p>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </section>
           </div>
+        </section>
+      </div>
 
-          {/* Sidebar */}
-          <div className="col-span-12 flex flex-col gap-4 md:gap-6 lg:col-span-4">
-            <div className="flex flex-col gap-3 md:gap-4 lg:sticky lg:top-28">
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="slab press shadow-hard group flex items-center justify-between gap-4 bg-foreground p-5 text-background md:p-7"
-              >
-                <span className="font-display t-mid">{t.projectActions.visit}</span>
-                <ExternalLink size={24} strokeWidth={2.5} className="shrink-0" />
-              </a>
+      <div className="pt-16 md:pt-24">
+        <SacredTimeline
+          label={t.projectDetail.highlights}
+          nodes={(project.highlights ?? []).map((h: any, i: number) => ({
+            index: String(i + 1).padStart(2, "0"),
+            title: h.title,
+            blurb: h.description ?? h.desc ?? "",
+          }))}
+        />
+      </div>
 
-              {project.github && project.github !== "#" && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="slab press shadow-hard group flex items-center justify-between gap-4 bg-card p-5 md:p-7"
-                >
-                  <span className="font-display t-mid">{t.projectActions.github}</span>
-                  <Github size={24} strokeWidth={2.5} className="shrink-0" />
-                </a>
-              )}
-
-              {project.impact && (
-                <div className="slab bg-card p-5 md:p-7">
-                  <span className="t-tag block text-muted-foreground">
-                    {t.projectDetail.impact}
-                  </span>
-                  <ul className="mt-4 flex flex-col gap-4 md:mt-6">
-                    {project.impact.map((item: string, i: number) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <CheckCircle2
-                          size={20}
-                          strokeWidth={2.5}
-                          className="mt-0.5 shrink-0 text-flare"
-                        />
-                        <span className="text-sm leading-relaxed md:text-base">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+      {shots.length > 1 && (
+        <div className="shell pt-20 md:pt-28">
+          <span className="t-label text-muted-foreground">
+            {vi ? "Hình ảnh" : "Gallery"}
+          </span>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {shots.map((src, i) => (
+              <div key={src} className="frame aspect-[16/10]">
+                <Image
+                  src={src}
+                  alt={`${project.title} — ${i + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 48vw"
+                  className="object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Other projects */}
-        <div className="mt-14 md:mt-24">
-          <div className="flex items-center gap-3 border-b-2 border-foreground pb-3 md:border-b-[3px]">
-            <span className="h-2.5 w-2.5 bg-cobalt" />
-            <span className="t-tag">{t.street.allProjects}</span>
-          </div>
-          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5">
+      <div className="shell pb-28 md:pb-40">
+        {project.impact && (
+          <section className="grid gap-6 md:grid-cols-12 md:gap-10">
+            <span className="t-label text-muted-foreground md:col-span-3">{t.projectDetail.impact}</span>
+            <ul className="flex flex-col gap-5 md:col-span-9">
+              {project.impact.map((item: string, i: number) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 size={18} className="mt-1 shrink-0 text-[hsl(var(--violet))]" />
+                  <span className="leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <div className="mt-14 flex flex-wrap gap-3">
+          {/* "#" means there is no public deployment — render nothing rather
+              than a button that goes nowhere. */}
+          {project.link && project.link !== "#" && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor
+              className="pill pill-solid"
+            >
+              {t.projectActions.visit}
+              <ExternalLink size={16} />
+            </a>
+          )}
+
+          {project.github && project.github !== "#" && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor
+              className="pill"
+            >
+              {t.projectActions.github}
+              <Github size={16} />
+            </a>
+          )}
+        </div>
+
+        <section className="mt-20 md:mt-28">
+          <div className="hairline" />
+          <span className="t-label mt-8 block text-muted-foreground">{t.site.allProjects}</span>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {t.portfolio.projects
               .filter((p: any) => p.id !== project.id)
               .map((other: any) => (
                 <Link
                   key={other.id}
                   href={`/projects/${other.id}`}
-                  className="slab press shadow-hard group flex items-center justify-between gap-4 bg-card p-5 md:p-7"
+                  data-cursor
+                  className="group flex items-center justify-between gap-4 border-t-[1.5px] border-foreground/[0.14] py-6"
                 >
-                  <span className="font-display t-mid min-w-0 truncate-safe">
+                  <span className="t-display t-big truncate-safe">
                     {other.title.split("–")[0].trim()}
                   </span>
                   <ArrowUpRight
-                    size={26}
-                    strokeWidth={2.5}
+                    size={22}
                     className="shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
                   />
                 </Link>
               ))}
           </div>
-        </div>
+        </section>
       </div>
-
-      <div className="tilt-r -ml-[2%] mt-14 w-[104%] md:mt-24">
-        <Ticker items={project.tech} variant="volt" speed={30} />
-      </div>
-    </div>
+    </>
   )
 }
