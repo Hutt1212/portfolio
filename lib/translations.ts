@@ -3,62 +3,53 @@ export const translations = {
     name: "Nguyễn Minh Huy",
     nav: {
       projects: "Dự án",
-      skills: "Kỹ năng",
+      skills: "Chuyên môn",
       about: "Về tôi",
       contact: "Liên hệ"
     },
     hero: {
-      status: "Sẵn sàng đón nhận cơ hội mới",
-      title: "Xây dựng trải nghiệm số thế hệ mới",
-      subtitle: "Phát triển các giải pháp web toàn diện với nền tảng kiến trúc vững chắc. Tập trung vào việc cung cấp mã nguồn sạch, tối ưu hóa hiệu năng hệ thống và nâng cao trải nghiệm người dùng cuối.", viewWork: "Xem dự án",
+      status: "Cởi mở với dự án phù hợp",
+      subtitle: "Tôi xây hệ thống web fullstack với .NET và Next.js, và ghép AI vào những sản phẩm đang chạy.",
+      viewWork: "Xem dự án",
       role: "Fullstack Developer"
     },
-    street: {
-      poster1: "Lập trình",
-      poster2: "Fullstack",
+    site: {
       location: "TP. Hồ Chí Minh, VN",
       scroll: "Cuộn xuống",
-      contactCta: "Bắt đầu dự án",
-      tickerWords: ["Fullstack", "Realtime", "Mã sạch", "Hiệu năng", "Kiến trúc", "Giao diện", "API", "Bảo mật"],
+      contactCta: "Trao đổi dự án",
       labels: {
-        index: "Mục lục",
-        about: "Hồ sơ",
+        about: "Về tôi",
         work: "Dự án",
-        stack: "Công nghệ",
         expertise: "Chuyên môn",
         contact: "Liên hệ"
       },
-      stats: {
-        projects: "Dự án",
-        tech: "Công nghệ",
-        months: "Tháng kinh nghiệm",
-        score: "Điểm PageSpeed"
-      },
       stackGroups: {
-        core: "Nền tảng",
-        secondary: "Framework & Dữ liệu",
-        others: "Vận hành & Công cụ"
+        core: "Nền tảng chính",
+        realtime: "AI & Tích hợp",
+        data: "Dữ liệu",
+        ops: "Vận hành & Công cụ"
       },
-      dragHint: "Kéo ngang →",
       viewCase: "Xem chi tiết",
       allProjects: "Tất cả dự án",
-      selected: "Tuyển chọn"
+      selected: "Tuyển chọn",
+      ndaNote: "Một phần công nghệ ở trên đến từ các dự án nội bộ của công ty, thuộc phạm vi bảo mật nên không có case study công khai. Tôi sẵn sàng trao đổi chi tiết về cách tiếp cận trong buổi nói chuyện trực tiếp."
     },
     skills: {
-      title: "Năng lực chuyên môn",
-      core: ["C#", "TypeScript", "React", "Next.js", "ASP.NET Core", "Node.js"],
-      secondary: ["NestJS", "Tailwind CSS", "PostgreSQL", "SQL Server", "MongoDB", "Redis"],
-      others: ["Docker", "CI/CD", "Nginx", "Git"]
+      title: "Công nghệ sử dụng",
+      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "NestJS"],
+      realtime: ["SignalR", "Semantic Kernel", "RAG / Vector search", "Python", "LoRA / Fine-tuning"],
+      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis"],
+      ops: ["Docker", "CI/CD", "Nginx", "Tailwind CSS", "GSAP"]
     },
     services: {
-      title: "Chuyên môn kỹ thuật",
+      title: "Tôi làm gì",
       items: [
-        { name: "Fullstack Development", description: "Xây dựng ứng dụng từ A-Z với kiến trúc hiện đại, hiệu năng cao." },
-        { name: "API Development", description: "Thiết kế RESTful & GraphQL API chuẩn mực, bảo mật và dễ mở rộng." },
-        { name: "Realtime Systems", description: "Phát triển hệ thống thời gian thực với WebSockets và SignalR." },
-        { name: "Performance Optimization", description: "Tối ưu hóa Core Web Vitals và hiệu suất truy vấn Database." },
-        { name: "Database Architecture", description: "Thiết kế cơ sở dữ liệu quan hệ và phi quan hệ quy mô lớn." },
-        { name: "Security & Best Practices", description: "Triển khai OAuth2, JWT và các tiêu chuẩn bảo mật OWASP." }
+        { name: "Fullstack Development", description: "Xây dựng ứng dụng từ backend .NET/Node tới frontend Next.js, dùng chung một mô hình dữ liệu và một bộ quy ước." },
+        { name: "Tích hợp AI", description: "Ghép trợ lý RAG vào hệ thống có sẵn: phân loại ý định, trả lời dựa trên dữ liệu nội bộ, chuyển cho người thật khi câu hỏi vượt phạm vi. Phần chat và cập nhật trực tiếp dựng bằng SignalR." },
+        { name: "API Development", description: "REST API có phiên bản, phân trang và cách trả lỗi nhất quán; tài liệu hoá để người khác dùng được mà không phải hỏi." },
+        { name: "Performance Optimization", description: "Đo trước khi sửa: Core Web Vitals ở frontend, truy vấn N+1 và chỉ mục ở database, cache Redis khi thật sự cần." },
+        { name: "Database Design", description: "Thiết kế lược đồ cho SQL Server, PostgreSQL và MongoDB; chọn quan hệ hay tài liệu dựa trên cách dữ liệu thực sự được đọc." },
+        { name: "Security & Best Practices", description: "Xác thực JWT/OAuth2, phân quyền theo vai trò, và các hạng mục cơ bản của OWASP: kiểm tra đầu vào, không rò rỉ dữ liệu qua API." }
       ]
     },
     portfolio: {
@@ -67,63 +58,77 @@ export const translations = {
       projects: [
         {
           id: "unagi",
-          title: "UNAGI – Website Bán Đồ Ăn Nhật Bản Tích Hợp Chatbot RAG Realtime",
-          description: "Hệ thống website bán đồ ăn Nhật Bản hiện đại, tích hợp khung chat SignalR realtime kết hợp trợ lý ảo thông minh RAG hỗ trợ tư vấn món ăn và đặt hàng tự động.",
-          longDescription: "Dự án phát triển và nâng cấp hệ thống website bán đồ ăn Nhật Bản cao cấp. Điểm nhấn kỹ thuật đặc biệt là việc tích hợp Chatbot AI RAG thông minh vào hệ thống chat realtime có sẵn. Hệ thống sử dụng Semantic Kernel, kết hợp mô hình AI và Vector Database để nhận diện ý định khách hàng. Chatbot có khả năng trả lời tự nhiên, giới thiệu món ăn sinh động dưới dạng Product Card trực quan và tự động định tuyến, chuyển tiếp cuộc hội thoại mượt mà cho nhân viên hỗ trợ khi cần thiết.",
-          vision: "Tối ưu hóa quy trình chăm sóc khách hàng và bán hàng tự động trong ngành F&B. Giảm 70-80% thời gian xử lý các câu hỏi lặp lại của nhân viên, đồng thời nâng cao trải nghiệm mua sắm của thực khách nhờ trợ lý ảo phản hồi tức thì và trực quan.",
+          title: "UNAGI – Chat realtime & trợ lý RAG cho website đồ ăn Nhật",
+          description: "Tôi làm luồng chat realtime SignalR và giao diện chat cho website đồ ăn Nhật của một thương hiệu F&B.",
+          longDescription: "Tôi dựng luồng realtime trên SignalR, làm giao diện chat, rồi ghép trợ lý RAG vào khung chat đó. Trợ lý phân loại ý định khách, trả lời từ dữ liệu thực đơn và tự chuyển cho nhân viên khi câu hỏi vượt phạm vi; phần còn lại của website do người khác trong nhóm làm.",
           tech: ["Next.js", "React", ".NET", "SignalR", "MongoDB", "Redis", "Docker"],
           highlights: [
             {
-              title: "Khung Chat Realtime Thống Nhất",
-              description: "Tích hợp bot và nhân viên hỗ trợ cùng hoạt động trên một giao diện chat SignalR duy nhất. Phân biệt trực quan người trả lời qua thiết kế avatar."
+              title: "Một khung chat, hai người trả lời",
+              description: "Bot và nhân viên dùng chung một kết nối SignalR, hội thoại không đứt khi chuyển giao."
             },
             {
-              title: "Bộ Định Tuyến Thông Minh (Intelligent Routing)",
-              description: "Sử dụng Fast Classifier để phân loại câu hỏi (sản phẩm, thông tin nhà hàng, khuyến mãi, đơn hàng). Tự động chuyển tiếp cho nhân viên khi nhận diện ý định hỗ trợ chuyên sâu hoặc confidence thấp."
+              title: "Định tuyến theo ý định",
+              description: "Fast classifier phân câu hỏi thành sản phẩm, nhà hàng, khuyến mãi hay đơn hàng; confidence thấp thì đẩy sang nhân viên."
             },
             {
-              title: "Trợ Lý RAG & Gợi Ý Trực Quan",
-              description: "Sử dụng kĩ thuật RAG để tìm kiếm ngữ cảnh chính xác từ file dữ liệu thực đơn. Trả về câu trả lời tự nhiên kèm theo các Product Card hiển thị món ăn trực tiếp trong khung chat."
+              title: "Trả lời kèm thẻ món ăn",
+              description: "RAG lấy ngữ cảnh từ thực đơn và trả về Product Card bấm được để đặt ngay trong khung chat."
             }
-          ],
-          impact: [
-            "Tự động hóa phản hồi các câu hỏi thường gặp của khách hàng trong dưới 3 giây.",
-            "Tăng trải nghiệm mua sắm trực tuyến nhờ Product Card trực quan, click được trực tiếp để đặt hàng.",
-            "Tối ưu hóa năng suất vận hành khi nhân viên chỉ cần can thiệp khi có yêu cầu hỗ trợ phức tạp hoặc khiếu nại."
           ],
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
         },
         {
-          id: "portfolio",
-          title: "Portfolio – Giao diện tối giản & Hiệu năng cao",
-          description: "Trang portfolio cá nhân được thiết kế theo phong cách Bento Grid hiện đại, tích hợp đa ngôn ngữ và tối ưu hóa điểm số hiệu năng tuyệt đối.",
-          longDescription: "Dự án portfolio cá nhân được xây dựng với mục tiêu thể hiện năng lực thiết kế và lập trình thông qua giao diện Bento Grid độc đáo. Hệ thống hỗ trợ đa ngôn ngữ (Anh - Việt), tích hợp các hiệu ứng tương tác mượt mà, tối ưu hóa SEO và đạt hiệu suất tải trang tối đa (Core Web Vitals tuyệt đối) để mang lại trải nghiệm tốt nhất cho nhà tuyển dụng.",
-          vision: "Xây dựng một 'bản lý lịch số' sống động, không chỉ giới thiệu năng lực lập trình mà còn trực tiếp chứng minh kỹ năng tối ưu hóa UI/UX, viết mã nguồn sạch và khả năng kiểm soát hiệu suất hệ thống thực tế.",
-          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          id: "bddwriter",
+          title: "BDDWriter – Sinh kịch bản Gherkin và mã Cypress bằng LLM tự host",
+          description: "Khoá luận tốt nghiệp: User Story → kịch bản Gherkin → mã kiểm thử Cypress, chạy trên hai mô hình tự host.",
+          longDescription: "BDDWriter chạy hai chặng: StarCoderBase-1B fine-tune bằng LoRA biến User Story thành kịch bản Gherkin chuẩn Given – When – Then, rồi Qwen2.5-Coder-1.5B nhận kịch bản đó kèm HTML của trang để sinh mã Cypress chạy được. Cả hai mô hình đều tự host; tôi làm phần huấn luyện, đánh giá và ứng dụng web — khoá luận nhóm ba người tại ĐH Công Thương TP.HCM, 12/2025.",
+          tech: ["Python", "StarCoderBase-1B", "Qwen2.5-Coder-1.5B", "LoRA / PEFT", "Gherkin / BDD", "Cypress", "Node.js"],
           highlights: [
             {
-              title: "Thiết kế Bento Grid hiện đại & Thích ứng",
-              description: "Bố cục lưới (Bento Grid) trực quan, tự động điều chỉnh hiển thị tối ưu trên mọi kích thước màn hình từ điện thoại đến màn hình siêu rộng."
+              title: "Fine-tune mô hình nhỏ thay vì gọi mô hình lớn",
+              description: "LoRA chỉ thêm ma trận hạng thấp vào vài layer nên huấn luyện được trên phần cứng hạn chế, và dữ liệu nghiệp vụ không gửi ra ngoài."
             },
             {
-              title: "Tối ưu hóa Core Web Vitals tuyệt đối",
-              description: "Đạt điểm hiệu năng (Performance), SEO và Best Practices tuyệt đối (95-100) nhờ việc tối ưu hóa ảnh động, lazy loading và cấu trúc HTML ngữ nghĩa."
+              title: "Từ kịch bản sang mã Cypress chạy được",
+              description: "Chặng hai nhận Gherkin kèm HTML DOM của trang, nên selector trong mã sinh ra bám vào cấu trúc thật thay vì đoán."
             },
             {
-              title: "Hiệu ứng tương tác Micro-interactions",
-              description: "Sử dụng Framer Motion và CSS gradients để tạo các hiệu ứng di chuột (spotlight effect), chuyển động mượt mà và chuyển đổi giao diện sáng/tối tự nhiên."
-            },
-            {
-              title: "Hệ thống Đa ngôn ngữ (i18n)",
-              description: "Tự động phát hiện và chuyển đổi ngôn ngữ Anh - Việt mượt mà không cần tải lại trang nhờ cơ chế State Management gọn nhẹ."
+              title: "Nạp mô hình theo yêu cầu",
+              description: "Hai mô hình không cùng nằm trong bộ nhớ — chặng nào chạy thì nạp mô hình của chặng đó, đủ để vừa phần cứng có sẵn."
             }
           ],
           impact: [
-            "Đạt điểm số 98-100 trên Google PageSpeed Insights cho cả thiết bị di động và máy tính.",
-            "Tốc độ phản hồi cực nhanh dưới 100ms nhờ Static Site Generation (SSG).",
-            "Ấn tượng mạnh mẽ với nhà tuyển dụng nhờ thiết kế Bento Grid hiện đại và chỉn chu."
+            "3.412 scenario từ 100 yêu cầu, 3.345 đạt cấu trúc hoàn chỉnh — khoảng 98%.",
+            "Bao phủ: 2.015 kịch bản luồng thuận, 1.397 luồng lỗi.",
+            "QC lead đánh giá độc lập: cú pháp và ngữ nghĩa chính xác, nhưng bao phủ chưa đủ cho tình huống đặc thù.",
+            "Hạn chế: khoảng 2% scenario bị cắt do giới hạn token."
+          ],
+          link: "#",
+          github: "#",
+          image: "/projects/bddwriter-landing.jpg"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Site cá nhân dựng bằng Next.js & GSAP",
+          description: "Chính trang bạn đang xem. Next.js App Router, hoạt cảnh cuộn bằng GSAP ScrollTrigger, một cảnh nền vẽ bằng canvas 2D, song ngữ Việt–Anh.",
+          longDescription: "Trang này dựng quanh một cảnh canvas 2D: khoảng 640 sợi sáng sinh ngẫu nhiên, vẽ chồng theo chế độ cộng sáng. Cấu trúc tĩnh được vẽ sẵn một lần vào bộ đệm ngoài màn hình, mỗi khung hình chỉ ghép lại tấm đó rồi vẽ vài chục xung sáng chạy dọc các sợi thật.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          highlights: [
+            {
+              title: "Cảnh nền dựng bằng Canvas 2D",
+              description: "Sợi sáng có nhiễu hướng mỗi bước nên đường nào cũng cong; cấu trúc tĩnh dựng một lần rồi tái sử dụng."
+            },
+            {
+              title: "Hoạt cảnh cuộn bằng GSAP ScrollTrigger",
+              description: "Quãng cuộn được ánh xạ thành tiến trình hoạt cảnh, nội dung xuất hiện theo nhịp title card thay vì trôi qua."
+            },
+            {
+              title: "Lenis chạy trên đồng hồ của GSAP",
+              description: "Gắn vào gsap.ticker thay vì rAF riêng — lệch một khung hình giữa hai đồng hồ khiến các đoạn ghim bị rung."
+            }
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -132,16 +137,14 @@ export const translations = {
       ]
     },
     about: {
-      title: "Về Tôi",
+      title: "Về tôi",
       profession: "Fullstack Developer",
-      description1: "Là một Fullstack Developer, tôi tập trung vào việc thiết kế và triển khai các hệ thống web có khả năng mở rộng cao. Tôi ưu tiên sự mạch lạc trong kiến trúc phần mềm, từ luồng dữ liệu backend đến giao diện người dùng cuối.",
-      description2: "Trong quá trình làm việc, tôi luôn chú trọng vào tối ưu hóa hiệu suất, thiết kế cơ sở dữ liệu chặt chẽ và áp dụng các tiêu chuẩn bảo mật. Tôi đề cao tính thực tiễn, khả năng phối hợp nhóm hiệu quả và chất lượng mã nguồn để giải quyết các bài toán kỹ thuật một cách tối ưu nhất."
+      education: "ĐH Công Thương TP.HCM, 2025",
+      description1: "Tôi làm fullstack: .NET và Node ở backend, Next.js với TypeScript ở frontend. Phần tôi thích nhất là chỗ hai đầu gặp nhau — luồng dữ liệu, độ trễ, và những thứ phải chạy đúng khi có người thật đang dùng.",
+      description2: "Hiện tôi làm ở bộ phận R&D của một công ty phần mềm, chủ yếu là ghép AI vào những sản phẩm đang chạy: SignalR cho chat, Semantic Kernel và vector database cho trợ lý RAG. Phần lớn công việc đó nằm trong phạm vi bảo mật nên không xuất hiện ở đây; những gì trưng ra là phần tôi được phép chia sẻ. Trước khi thêm một lớp phức tạp nào, tôi hỏi nó giải quyết vấn đề gì và ai sẽ phải vận hành nó."
     },
     footer: {
-      slogan: "Cùng nhau xây dựng những sản phẩm tuyệt vời.",
-      contactTitle: "Liên hệ với tôi",
-      available: "Đang sẵn sàng cho các dự án mới",
-      copyright: "© 2026 Nguyễn Minh Huy."
+      contactTitle: "Liên hệ với tôi"
     },
     projectActions: {
       visit: "Truy cập website",
@@ -149,73 +152,61 @@ export const translations = {
       techStack: "Công nghệ sử dụng"
     },
     projectDetail: {
-      overview: "Tổng quan",
-      vision: "Tầm nhìn dự án",
-      highlights: "Giải pháp kỹ thuật tiêu biểu",
-      impact: "Kết quả & Giá trị",
-      links: "Liên kết"
+      highlights: "Giải pháp kỹ thuật",
+      impact: "Kết quả"
     }
   },
   en: {
     name: "Nguyen Minh Huy",
     nav: {
       projects: "Projects",
-      skills: "Skills",
+      skills: "Expertise",
       about: "About",
       contact: "Contact"
     },
     hero: {
-      status: "Available for new opportunities",
-      title: "Crafting Next-Gen Digital Experiences",
-      subtitle: "Developing comprehensive web solutions with a solid architectural foundation. Focused on delivering clean code, optimizing system performance, and enhancing the end-user experience.", viewWork: "View Work",
+      status: "Open to the right projects",
+      subtitle: "I build fullstack web systems with .NET and Next.js, and wire AI into products that are already running.",
+      viewWork: "View Work",
       role: "Fullstack Developer"
     },
-    street: {
-      poster1: "Fullstack",
-      poster2: "Developer",
+    site: {
       location: "Ho Chi Minh City, VN",
       scroll: "Scroll down",
-      contactCta: "Start a project",
-      tickerWords: ["Fullstack", "Realtime", "Clean code", "Performance", "Architecture", "Interfaces", "APIs", "Security"],
+      contactCta: "Talk about a project",
       labels: {
-        index: "Index",
-        about: "Profile",
+        about: "About",
         work: "Work",
-        stack: "Stack",
         expertise: "Expertise",
         contact: "Contact"
       },
-      stats: {
-        projects: "Projects",
-        tech: "Technologies",
-        months: "Months experience",
-        score: "PageSpeed score"
-      },
       stackGroups: {
         core: "Core",
-        secondary: "Frameworks & Data",
-        others: "Ops & Tooling"
+        realtime: "AI & Integration",
+        data: "Data",
+        ops: "Ops & Tooling"
       },
-      dragHint: "Drag / swipe →",
       viewCase: "View case",
       allProjects: "All projects",
-      selected: "Selected"
+      selected: "Selected",
+      ndaNote: "Some of the tools above come from internal company work that is under NDA, so there is no public case study for it. I am happy to talk through the approach in a conversation."
     },
     skills: {
-      title: "Technical Stack",
-      core: ["C#", "TypeScript", "React", "Next.js", "ASP.NET Core", "Node.js"],
-      secondary: ["NestJS", "Tailwind CSS", "PostgreSQL", "SQL Server", "MongoDB", "Redis"],
-      others: ["Docker", "CI/CD", "Nginx", "Git"]
+      title: "Tools I use",
+      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "NestJS"],
+      realtime: ["SignalR", "Semantic Kernel", "RAG / Vector search", "Python", "LoRA / Fine-tuning"],
+      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis"],
+      ops: ["Docker", "CI/CD", "Nginx", "Tailwind CSS", "GSAP"]
     },
     services: {
-      title: "Technical Expertise",
+      title: "What I work on",
       items: [
-        { name: "Fullstack Development", description: "Building A-Z applications with modern, high-performance architecture." },
-        { name: "API Development", description: "Designing standard, secure, and scalable RESTful & GraphQL APIs." },
-        { name: "Realtime Systems", description: "Developing real-time systems using WebSockets and SignalR." },
-        { name: "Performance Optimization", description: "Optimizing Core Web Vitals and Database query performance." },
-        { name: "Database Architecture", description: "Designing large-scale relational and non-relational databases." },
-        { name: "Security & Best Practices", description: "Implementing OAuth2, JWT, and OWASP security standards." }
+        { name: "Fullstack Development", description: "Applications end to end, from a .NET or Node backend to a Next.js frontend, sharing one data model and one set of conventions." },
+        { name: "AI Integration", description: "RAG assistants wired into systems that already exist: intent classification, answers grounded in internal data, handover to a human when the question falls outside scope. Live chat and live updates built on SignalR." },
+        { name: "API Development", description: "Versioned REST APIs with consistent pagination and error shapes, documented well enough that nobody has to ask me how they work." },
+        { name: "Performance Optimization", description: "Measure before changing anything: Core Web Vitals on the front, slow queries and indexes on the database, Redis only where it earns its keep." },
+        { name: "Database Design", description: "Schema design across SQL Server, PostgreSQL and MongoDB, choosing relational or document based on how the data is actually read." },
+        { name: "Security & Best Practices", description: "JWT and OAuth2 auth, role-based access, and the unglamorous OWASP basics: validating input and not leaking data through an API." }
       ]
     },
     portfolio: {
@@ -224,63 +215,77 @@ export const translations = {
       projects: [
         {
           id: "unagi",
-          title: "UNAGI – Japanese Food E-commerce Website with Real-time RAG Chatbot",
-          description: "A modern Japanese food ordering platform integrated with a real-time SignalR chat system and an intelligent RAG-powered virtual assistant for food recommendations and automated ordering support.",
-          longDescription: "This project focuses on building and enhancing a premium Japanese food e-commerce platform. The standout technical highlight is the integration of an intelligent RAG-based AI chatbot into an existing real-time chat system. The system leverages Semantic Kernel, AI models, and a vector database to understand customer intent. The chatbot delivers natural responses, dynamically presents menu items through visually engaging Product Cards, and seamlessly routes conversations to human staff when necessary.",
-          vision: "Optimize customer service and sales automation in the F&B industry. Reduce 70–80% of repetitive customer inquiries while improving the dining and shopping experience through an instant, responsive, and visually interactive virtual assistant.",
+          title: "UNAGI – Real-time chat & RAG assistant for a Japanese food site",
+          description: "I built the real-time SignalR chat flow and its interface for an F&B brand's Japanese food ordering site.",
+          longDescription: "I built the real-time flow on SignalR and its chat interface, then wired a RAG assistant into that window. The assistant classifies customer intent, answers from the menu data and hands off to a human when a question falls outside its scope; the rest of the site was handled by others on the team.",
           tech: ["Next.js", "React", ".NET", "SignalR", "MongoDB", "Redis", "Docker"],
           highlights: [
             {
-              title: "Unified Real-time Chat System",
-              description: "Integrates both AI chatbot and human agents within a single SignalR-based chat interface, with clear visual differentiation via avatars."
+              title: "One chat window, two kinds of responder",
+              description: "Bot and staff share a single SignalR connection, and the conversation does not break at handover."
             },
             {
-              title: "Intelligent Routing System",
-              description: "Utilizes a fast classifier to categorize user queries (products, restaurant info, promotions, orders). Automatically escalates to human agents for complex requests or low-confidence predictions."
+              title: "Routing by intent",
+              description: "A fast classifier sorts questions into products, restaurant info, promotions or orders; low confidence escalates to a human."
             },
             {
-              title: "RAG-powered Assistant & Visual Recommendations",
-              description: "Applies RAG techniques to retrieve accurate context from menu data. Generates natural responses accompanied by interactive Product Cards displayed directly within the chat interface."
+              title: "Answers that come with the dish",
+              description: "RAG pulls context from the menu data and returns clickable Product Cards, so an order can start inside the chat."
             }
-          ],
-          impact: [
-            "Automates responses to common customer inquiries in under 3 seconds.",
-            "Enhances online ordering experience through interactive and clickable Product Cards.",
-            "Improves operational efficiency by allowing human agents to focus on complex or sensitive cases only."
           ],
           link: "https://unagi.vn",
           github: "#",
           image: "/projects/unagi-hero.png"
         },
         {
-          id: "portfolio",
-          title: "Portfolio – Minimalist & High-Performance Hub",
-          description: "A sleek, personal portfolio built with a modern Bento Grid layout, full multilingual support, and exceptional performance optimization.",
-          longDescription: "This personal portfolio project is engineered to demonstrate cutting-edge frontend capabilities and UI/UX design. Using a unique Bento Grid layout, it offers a seamless multilingual experience (English - Vietnamese), fluid micro-animations, flawless SEO optimization, and exceptional Core Web Vitals scores, serving as a real-world testament to production-grade development standards.",
-          vision: "To create a living digital resume that doesn't just list technical skills but actively demonstrates them through outstanding performance, clean code architecture, and high-fidelity user interactions.",
-          tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Framer Motion", "SEO & Core Web Vitals"],
+          id: "bddwriter",
+          title: "BDDWriter – Gherkin scenarios and Cypress code from self-hosted LLMs",
+          description: "Final-year thesis: user story → Gherkin scenario → runnable Cypress test, across two self-hosted models.",
+          longDescription: "BDDWriter runs in two stages: StarCoderBase-1B, fine-tuned with LoRA, turns a user story into Given – When – Then Gherkin scenarios; Qwen2.5-Coder-1.5B then takes that scenario together with the page's HTML and generates runnable Cypress code. Both models are self-hosted; I did the training, the evaluation and the web app — a three-person thesis at Ho Chi Minh City University of Industry and Trade, December 2025.",
+          tech: ["Python", "StarCoderBase-1B", "Qwen2.5-Coder-1.5B", "LoRA / PEFT", "Gherkin / BDD", "Cypress", "Node.js"],
           highlights: [
             {
-              title: "Adaptive Bento Grid System",
-              description: "A highly responsive grid-based interface that reflows gracefully across all viewports, ensuring a premium presentation on mobile and desktop alike."
+              title: "Fine-tuning a small model instead of calling a large one",
+              description: "LoRA injects small low-rank matrices into selected layers, so training was feasible on limited hardware and business data never leaves the system."
             },
             {
-              title: "Stellar Performance & Core Web Vitals",
-              description: "Achieving near-perfect Lighthouse scores through advanced image optimization, lightweight components, and highly structured HTML semantics."
+              title: "From scenario to runnable Cypress code",
+              description: "The second stage receives the Gherkin alongside the page's HTML DOM, so selectors in the generated code follow the real structure rather than being guessed."
             },
             {
-              title: "Fluid Micro-interactions",
-              description: "Leveraging Framer Motion and dynamic CSS radial spotlights to respond to user hover and touch events, adding polished micro-animations."
-            },
-            {
-              title: "Smooth Multilingual Engine (i18n)",
-              description: "An ultra-lightweight client-side localization system enabling instant language swapping (EN/VN) without layout shifts or page reloads."
+              title: "Models loaded on demand",
+              description: "The two models never sit in memory together — each stage loads its own, which is what makes the whole thing fit the available hardware."
             }
           ],
           impact: [
-            "Maintained 98-100 PageSpeed Insights performance and accessibility scores.",
-            "Achieved ultra-low Largest Contentful Paint (LCP) of under 0.8 seconds.",
-            "Delivered a compelling, high-retention recruiter landing page with immersive aesthetics."
+            "3,412 scenarios from 100 requirements, of which 3,345 were structurally complete — around 98%.",
+            "Coverage split into 2,015 happy-path and 1,397 negative-path scenarios.",
+            "Independently reviewed by a QC lead: syntax and semantics accurate, but coverage not yet deep enough for specialised cases.",
+            "Known limitation: roughly 2% of scenarios were cut short by the token limit."
+          ],
+          link: "#",
+          github: "#",
+          image: "/projects/bddwriter-chat-1.png"
+        },
+        {
+          id: "portfolio",
+          title: "Portfolio – Personal site built with Next.js & GSAP",
+          description: "The site you are reading. Next.js App Router, scroll animation driven by GSAP ScrollTrigger, a canvas-rendered background scene, and Vietnamese/English throughout.",
+          longDescription: "This site is built around a 2D canvas scene: roughly 640 procedurally generated filaments stroked with additive blending so overlaps bloom. The static structure is baked once into an offscreen buffer, and each frame only composites that buffer and strokes a few dozen travelling pulses along real filament paths.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          highlights: [
+            {
+              title: "Canvas-rendered background scene",
+              description: "Filaments are generated with per-step directional noise so every strand curls; the static structure is built once and reused."
+            },
+            {
+              title: "Scroll animation with GSAP ScrollTrigger",
+              description: "Scroll distance is mapped to animation progress, so copy arrives on a deliberate beat instead of drifting past."
+            },
+            {
+              title: "Lenis running on the GSAP ticker",
+              description: "Driven by gsap.ticker rather than its own rAF loop — a one-frame gap between the two clocks is the classic cause of jittering pinned sections."
+            }
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -289,16 +294,14 @@ export const translations = {
       ]
     },
     about: {
-      title: "About Me",
+      title: "About",
       profession: "Fullstack Developer",
-      description1: "As a Fullstack Developer, I focus on designing and implementing highly scalable web systems. I prioritize coherence in software architecture, from the backend data flow to the end-user interface.",
-      description2: "In my workflow, I focus on performance optimization, rigorous database design, and security standards. I value practicality, effective teamwork, and code quality to resolve complex technical challenges efficiently."
+      education: "Ho Chi Minh City University of Industry and Trade, 2025",
+      description1: "I work across the stack: .NET and Node on the backend, Next.js and TypeScript on the front. The part I like most is where the two meet — data flow, latency, and the things that have to hold up once real people are using them.",
+      description2: "I currently work in R&D at a software company, mostly wiring AI into products that are already running: SignalR for chat, Semantic Kernel and a vector database for a RAG assistant. Most of that work is under NDA and does not appear here; what is on this site is the part I am free to share. Before adding any layer of complexity I ask what it solves and who has to operate it."
     },
     footer: {
-      slogan: "Let's build something amazing together.",
-      contactTitle: "Get in touch",
-      available: "Currently available for new projects",
-      copyright: "© 2026 Minh Huy Nguyen."
+      contactTitle: "Get in touch"
     },
     projectActions: {
       visit: "Visit Live Site",
@@ -306,11 +309,8 @@ export const translations = {
       techStack: "Tech Stack"
     },
     projectDetail: {
-      overview: "Overview",
-      vision: "Project Vision",
       highlights: "Technical Highlights",
-      impact: "Business Impact",
-      links: "Live Links"
+      impact: "Results"
     }
   }
 }
