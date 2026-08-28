@@ -1,11 +1,11 @@
 "use client"
 
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { X, ArrowUpRight } from "lucide-react"
+import { X, ExternalLink, Github } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
+import { galleryFor } from "@/lib/project-gallery"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
 
@@ -14,13 +14,19 @@ export type DrawerProject = {
   title: string
   description: string
   longDescription?: string
-  vision?: string
   tech: string[]
   image: string
   highlights?: { title: string; description?: string; desc?: string }[]
+  impact?: string[]
+  /** "#" means there is nothing public to link to, so the button is dropped. */
+  link?: string
+  github?: string
 }
 
 const FOCUSABLE = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+
+/** Several projects carry "#" as a placeholder rather than a real URL. */
+const hasLink = (url?: string) => Boolean(url && url !== "#")
 
 /**
  * Slide-over panel. The page behind it is frozen and blurred; the panel keeps
@@ -40,10 +46,14 @@ export default function ProjectDrawer({
   const vi = language === "vi"
   const panel = useRef<HTMLDivElement>(null)
   const backdrop = useRef<HTMLDivElement>(null)
+  const stage = useRef<HTMLDivElement>(null)
   const closing = useRef(false)
 
   const [headline, ...rest] = project.title.split("–")
   const subline = rest.join("–").trim()
+
+  const shots = galleryFor(project.id, project.image)
+  const [shot, setShot] = useState(0)
 
   /** Animate out first, then unmount — closing instantly looks like a glitch. */
   const close = useCallback(() => {
@@ -77,6 +87,14 @@ export default function ProjectDrawer({
 
     return () => unlockScroll()
   }, [])
+
+  // Cross-fade the main shot when a thumbnail is picked. Swapping the src with
+  // no transition reads as a glitch rather than a deliberate change.
+  useEffect(() => {
+    if (!stage.current) return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    gsap.fromTo(stage.current, { autoAlpha: 0.35 }, { autoAlpha: 1, duration: 0.35 })
+  }, [shot])
 
   useEffect(() => {
     // Move focus into the panel so keyboard users are not left behind the overlay.
@@ -124,15 +142,36 @@ export default function ProjectDrawer({
             </button>
           </div>
 
-          <div className="frame mt-6 aspect-[16/10]">
+          <div ref={stage} className="frame mt-6 aspect-[16/10]">
             <Image
-              src={project.image}
+              key={shots[shot]}
+              src={shots[shot]}
               alt={project.title}
               fill
               sizes="(max-width: 768px) 92vw, 44rem"
               className="object-cover"
             />
           </div>
+
+          {shots.length > 1 && (
+            <div className="mt-3 flex gap-3">
+              {shots.map((src, i) => (
+                <button
+                  key={src}
+                  type="button"
+                  data-cursor
+                  onClick={() => setShot(i)}
+                  aria-label={`${vi ? "Ảnh" : "Image"} ${i + 1}`}
+                  aria-current={i === shot}
+                  className={`frame relative aspect-[16/10] w-24 shrink-0 transition-opacity duration-300 ${
+                    i === shot ? "opacity-100" : "opacity-45 hover:opacity-80"
+                  }`}
+                >
+                  <Image src={src} alt="" fill sizes="6rem" className="object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
 
           <h2 className="t-display t-big mt-8">{headline.trim()}</h2>
           {subline && <p className="t-label mt-3 text-muted-foreground">{subline}</p>}
@@ -141,21 +180,14 @@ export default function ProjectDrawer({
             {project.longDescription ?? project.description}
           </p>
 
-          {project.vision && (
-            <div className="mt-8 border-l-2 border-[hsl(var(--violet))] pl-6">
-              <span className="t-label text-muted-foreground">{t.projectDetail.vision}</span>
-              <p className="mt-2 leading-relaxed">{project.vision}</p>
-            </div>
-          )}
-
           {project.highlights && project.highlights.length > 0 && (
-            <div className="mt-10">
+            <div className="mt-9">
               <span className="t-label text-muted-foreground">{t.projectDetail.highlights}</span>
-              <ul className="mt-5 flex flex-col gap-5">
+              <ul className="mt-5 flex flex-col gap-4">
                 {project.highlights.slice(0, 3).map((h) => (
-                  <li key={h.title} className="border-t-[1.5px] border-foreground/[0.14] pt-4">
+                  <li key={h.title} className="border-t-[1.5px] border-foreground/[0.14] pt-3">
                     <h3 className="font-medium">{h.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                       {h.description ?? h.desc}
                     </p>
                   </li>
@@ -164,7 +196,20 @@ export default function ProjectDrawer({
             </div>
           )}
 
-          <div className="mt-10">
+          {project.impact && project.impact.length > 0 && (
+            <div className="mt-9">
+              <span className="t-label text-muted-foreground">{t.projectDetail.impact}</span>
+              <ul className="mt-4 flex flex-col gap-2">
+                {project.impact.map((item) => (
+                  <li key={item} className="text-sm leading-relaxed text-muted-foreground">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-9">
             <span className="t-label text-muted-foreground">{t.projectActions.techStack}</span>
             <div className="mt-4 flex flex-wrap gap-2">
               {project.tech.map((tech) => (
@@ -175,10 +220,34 @@ export default function ProjectDrawer({
             </div>
           </div>
 
-          <Link href={`/projects/${project.id}`} data-cursor className="pill pill-solid mt-10">
-            {t.site.viewCase}
-            <ArrowUpRight size={16} />
-          </Link>
+          {(hasLink(project.link) || hasLink(project.github)) && (
+            <div className="mt-9 flex flex-wrap gap-3">
+              {hasLink(project.link) && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-cursor
+                  className="pill pill-solid"
+                >
+                  {t.projectActions.visit}
+                  <ExternalLink size={15} />
+                </a>
+              )}
+              {hasLink(project.github) && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-cursor
+                  className="pill"
+                >
+                  {t.projectActions.github}
+                  <Github size={15} />
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

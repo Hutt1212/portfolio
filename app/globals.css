@@ -10,35 +10,35 @@
 
 @layer base {
   :root {
-    --background: 44 30% 94%; /* #F3F0E7 warm cream */
-    --foreground: 30 6% 8%; /* near-black ink */
-    --card: 40 33% 97%;
-    --card-foreground: 30 6% 8%;
-    --popover: 40 33% 97%;
-    --popover-foreground: 30 6% 8%;
+    --background: 24 30% 4%; /* #080503 deep TVA obsidian dark */
+    --foreground: 40 30% 94%; /* #f3e5d8 warm light text */
+    --card: 24 20% 7%;
+    --card-foreground: 40 30% 94%;
+    --popover: 24 20% 7%;
+    --popover-foreground: 40 30% 94%;
 
-    /* 90s accents */
+    /* TVA & Loki Accents */
     --pink: 336 100% 69%; /* #FF5FA2 */
-    --violet: 249 89% 63%; /* #6B4DF5 */
-    --sky: 197 85% 61%; /* #45C2F0 */
-    --lime: 71 86% 62%; /* #C9F24C */
-    --orange: 18 100% 58%; /* #FF6A2B */
+    --violet: 275 89% 63%; /* #B026FF */
+    --sky: 195 95% 61%; /* #00F0FF */
+    --lime: 160 86% 62%; /* #00FFAA */
+    --orange: 38 100% 55%; /* #FF8C00 */
 
-    --primary: 30 6% 8%;
-    --primary-foreground: 44 30% 94%;
-    --secondary: 42 24% 89%;
-    --secondary-foreground: 30 6% 8%;
-    --muted: 42 20% 87%;
-    --muted-foreground: 30 5% 34%;
-    --accent: 336 100% 69%;
-    --accent-foreground: 30 6% 8%;
-    --destructive: 18 100% 58%;
-    --destructive-foreground: 44 30% 94%;
+    --primary: 38 100% 55%;
+    --primary-foreground: 24 30% 4%;
+    --secondary: 24 15% 14%;
+    --secondary-foreground: 40 30% 94%;
+    --muted: 24 15% 14%;
+    --muted-foreground: 40 15% 72%;
+    --accent: 38 100% 55%;
+    --accent-foreground: 24 30% 4%;
+    --destructive: 345 100% 58%;
+    --destructive-foreground: 40 30% 94%;
 
-    --border: 30 6% 8%;
-    --input: 30 6% 8%;
-    --ring: 249 89% 63%;
-    --radius: 999px; /* pills everywhere — the era's favourite shape */
+    --border: 38 40% 25%;
+    --input: 38 40% 25%;
+    --ring: 38 100% 55%;
+    --radius: 999px;
 
     --shell: 100rem;
     --gutter: 1.25rem;
@@ -247,7 +247,9 @@
    ============================================================ */
 
 :root {
-  --tl-void: 260 30% 4%;
+  /* Matches the canvas' own base grade, so the band that shows before the
+     first frame paints is the same colour as the frame itself. */
+  --tl-void: 232 56% 4%;
   --tl-glow: 38 100% 62%; /* amber filament */
   --tl-dim: 40 26% 80%;
 }
@@ -265,6 +267,9 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /* The grain overlay is deliberately larger than the box; without this it can
+     push a scrollbar out in browsers that count fixed children as overflow. */
+  overflow: hidden;
 }
 
 .ts-canvas-contained {
@@ -280,6 +285,50 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* Film grain over the stream. Kept in CSS rather than in the render loop: it is
+   a static tile the compositor can cache, so the shimmer costs one transform
+   per frame instead of a full-canvas noise fill. Oversized and only ever
+   translated, so the drifting tile can't expose an edge. */
+.ts-canvas-fixed::after,
+.ts-canvas-contained::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  opacity: 0.13;
+  mix-blend-mode: overlay;
+  will-change: transform;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  animation: ts-grain 0.9s steps(4) infinite;
+}
+
+/* Whole-pixel steps: sub-pixel offsets resample the tile every frame, which
+   reads as the grain crawling rather than as grain. */
+@keyframes ts-grain {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-2%, 1%, 0);
+  }
+  50% {
+    transform: translate3d(1%, -2%, 0);
+  }
+  75% {
+    transform: translate3d(-1%, -1%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-canvas-fixed::after,
+  .ts-canvas-contained::after {
+    animation: none;
+  }
 }
 
 /* Sections that sit above the stream, named explicitly.
@@ -310,18 +359,6 @@
 .hero-inner {
   width: 100%;
   transform-style: preserve-3d;
-}
-
-.ts-cta-solid {
-  background: hsl(var(--tl-glow));
-  color: hsl(var(--tl-void));
-  border-color: hsl(var(--tl-glow));
-}
-
-.ts-cta-solid:hover,
-.ts-cta-solid:focus-visible {
-  background: transparent;
-  color: hsl(var(--tl-glow));
 }
 
 /* Nav sits on the dark scene on the landing page, so it flips to light-on-dark. */
@@ -357,6 +394,142 @@
 .on-dark .t-label,
 .on-dark .text-muted-foreground {
   color: hsl(var(--tl-dim));
+}
+
+/* ============================================================
+   WARP INTRO — the short introduction and the stack, flown at
+   the reader out of the depth of the stream.
+   ============================================================ */
+
+.warp-block {
+  position: relative;
+  z-index: 1;
+}
+
+/* The 3D context. Nothing here may carry opacity, a filter, or a non-visible
+   overflow: every one of those forces `transform-style` back to flat, which
+   would drop the whole field onto a single plane and turn the flight into a
+   plain zoom. Clipping is unnecessary anyway — the stage is pinned (so it is
+   position: fixed while it plays and adds nothing to the scroll height), and
+   flyers fade out before they grow past the frame. */
+.warp-stage {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warp-beat {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100%, 72rem);
+  padding-inline: var(--gutter);
+  text-align: center;
+  will-change: transform, opacity;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* The CTAs live inside a beat that is hidden most of the time; `autoAlpha`
+   takes visibility to hidden with it, so an off-screen beat cannot swallow a
+   click meant for the one on screen. */
+.warp-beat .ts-cta {
+  pointer-events: auto;
+}
+
+/* Soft radial scrim instead of a panel, so a beat stays legible over the
+   brightest part of the stream without looking like a widget. Only the beats
+   that fly as one object get it — on the field beat the container never
+   animates, so its scrim would sit on screen for the whole sequence. */
+.warp-scrim::before {
+  content: "";
+  position: absolute;
+  inset: -35% -18%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--tl-void) / 0.82) 0%,
+    hsl(var(--tl-void) / 0.55) 45%,
+    hsl(var(--tl-void) / 0) 72%
+  );
+}
+
+.warp-grid {
+  margin-top: 3rem;
+  display: grid;
+  gap: 2.5rem 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  transform-style: preserve-3d;
+}
+
+@media (min-width: 1100px) {
+  .warp-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.warp-group {
+  transform-style: preserve-3d;
+}
+
+.warp-group-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--tl-dim));
+  opacity: 0.75;
+}
+
+.warp-chips {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+.warp-chip {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid hsl(40 30% 94% / 0.28);
+  border-radius: var(--radius);
+  background: hsl(var(--tl-void) / 0.45);
+  color: hsl(40 30% 94%);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  /* Deliberately no `will-change`: there are 21 of these, and a standing hint
+     holds 21 compositor layers alive for the whole page, not just while the
+     beat plays. GSAP's force3D promotes them for the duration of the tween,
+     which is the part that actually needs a layer. */
+  backface-visibility: hidden;
+}
+
+/* No pin, no depth: the beats become an ordinary stacked section that reveals
+   on scroll. Mirrors the JS matchMedia query exactly — if the two drift apart,
+   one branch positions the beats and the other animates them. */
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .warp-stage {
+    display: block;
+    min-height: 0;
+    perspective: none;
+    padding-block: 5rem;
+  }
+
+  .warp-beat {
+    position: static;
+    width: auto;
+    margin-block: 4.5rem;
+  }
+
+  .warp-grid {
+    margin-top: 2rem;
+  }
 }
 
 /* ============================================================
@@ -727,6 +900,21 @@
   color: hsl(var(--tl-void));
 }
 
+/* Must stay after `.ts-cta`: same specificity, so the later rule wins. Sitting
+   above it, the solid variant lost its `color` to the base and rendered glow
+   text on a glow background. */
+.ts-cta-solid {
+  background: hsl(var(--tl-glow));
+  color: hsl(var(--tl-void));
+  border-color: hsl(var(--tl-glow));
+}
+
+.ts-cta-solid:hover,
+.ts-cta-solid:focus-visible {
+  background: transparent;
+  color: hsl(var(--tl-glow));
+}
+
 /* ============================================================
    CURSOR
    ============================================================ */
@@ -768,3 +956,94 @@
     visibility: visible !important;
   }
 }
+
+/* ============================================================
+   MARVEL LOKI - TVA RETRO OVERLAYS & GLOW UTILITIES
+   ============================================================ */
+
+:root {
+  --tva-grid: rgba(255, 140, 0, 0.07);
+  --tva-main-hex: #ff8c00;
+  --tva-glow-hex: #ffd700;
+}
+
+/* Pure CSS TVA Animated Grid Background */
+.tva-bg-grid {
+  background-size: 38px 38px;
+  background-image: 
+    linear-gradient(to right, var(--tva-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--tva-grid) 1px, transparent 1px);
+  background-position: center center;
+  transition: background-image 0.8s ease;
+}
+
+/* Vignette Depth */
+.tva-vignette {
+  background: radial-gradient(circle at center, transparent 20%, rgba(10, 6, 3, 0.75) 68%, rgba(3, 1, 1, 0.96) 100%);
+}
+
+/* CRT Scanlines with subtle flicker */
+.crt-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.32) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.025),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.025)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+@keyframes crtFlicker {
+  0% { opacity: 0.94; }
+  50% { opacity: 1; }
+  52% { opacity: 0.91; }
+  54% { opacity: 0.99; }
+  80% { opacity: 0.96; }
+  100% { opacity: 0.94; }
+}
+
+.animate-crt-flicker {
+  animation: crtFlicker 0.15s infinite;
+}
+
+/* Dynamic Glow Utilities */
+.glow-orange {
+  text-shadow: 0 0 12px rgba(255, 140, 0, 0.85), 0 0 24px rgba(255, 140, 0, 0.45);
+}
+
+.glow-emerald {
+  text-shadow: 0 0 12px rgba(0, 255, 170, 0.85), 0 0 24px rgba(0, 255, 170, 0.45);
+}
+
+.glow-purple {
+  text-shadow: 0 0 12px rgba(176, 38, 255, 0.85), 0 0 24px rgba(0, 229, 255, 0.45);
+}
+
+.glow-rose {
+  text-shadow: 0 0 12px rgba(255, 42, 95, 0.85), 0 0 24px rgba(255, 140, 0, 0.45);
+}
+
+/* UI Panel Zen Mode Transitions */
+.ui-panel-smooth {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ui-zen-hidden {
+  opacity: 0 !important;
+  transform: scale(0.97) translateY(14px) !important;
+  pointer-events: none !important;
+}
+
+/* TVA Terminal Glass Card */
+.tva-glass-badge {
+  background: rgba(8, 5, 3, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+

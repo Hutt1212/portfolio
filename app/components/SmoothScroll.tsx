@@ -32,9 +32,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     const tick = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)
-    // Without this, a long frame makes GSAP fake a small delta and the scroll
-    // position lurches when the tab regains focus.
-    gsap.ticker.lagSmoothing(0)
+    gsap.ticker.lagSmoothing(500, 33)
 
     return () => {
       gsap.ticker.remove(tick)

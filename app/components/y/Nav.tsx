@@ -6,13 +6,15 @@ import { usePathname } from "next/navigation"
 import { gsap, ScrollTrigger } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
+import { useTimelineTheme } from "@/app/context/TimelineThemeContext"
+
+const EMAIL = "nguyenminhhuy01234@gmail.com"
 
 export default function Nav() {
   const { t, language, setLanguage } = useLanguage()
+  const { openShowcase } = useTimelineTheme()
   const pathname = usePathname()
   const bar = useRef<HTMLElement>(null)
-  // Every page opens on a dark band, so the bar starts light-on-dark and flips
-  // once it has scrolled onto the cream body. The landing is dark throughout.
   const [onDark, setOnDark] = useState(true)
   const isLanding = pathname === "/"
 
@@ -21,12 +23,8 @@ export default function Nav() {
     if (!el) return
 
     const ctx = gsap.context(() => {
-      // Hide going down, reveal going up — the standard scroll-direction bar.
       const show = gsap.to(el, { yPercent: -140, duration: 0.5, paused: true })
 
-      // The dark band's height depends on how long the page title wraps, so a
-      // hardcoded threshold leaves the bar dark-on-dark (invisible) on some
-      // pages. Measure the real band instead, and re-measure on refresh.
       let bandBottom = 0
       const measure = () => {
         const band = document.querySelector<HTMLElement>(".ts-page, .page-hero")
@@ -53,12 +51,6 @@ export default function Nav() {
     return () => ctx.revert()
   }, [isLanding])
 
-  const links = [
-    { href: "/work", label: t.nav.projects },
-    { href: "/expertise", label: t.nav.skills },
-    { href: "/about", label: t.nav.about },
-  ]
-
   return (
     <header
       ref={bar}
@@ -75,18 +67,14 @@ export default function Nav() {
         </Link>
 
         <div className="nav-group hidden items-center gap-1 rounded-full border-[1.5px] border-foreground bg-background/80 p-1 backdrop-blur md:flex">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              data-cursor
-              className={`pill !border-transparent ${
-                pathname === link.href ? "!bg-foreground !text-background" : ""
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <button
+            type="button"
+            data-cursor
+            onClick={openShowcase}
+            className="pill !border-transparent hover:!bg-foreground hover:!text-background"
+          >
+            {t.nav.projects}
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
@@ -99,9 +87,13 @@ export default function Nav() {
           >
             {language === "vi" ? "EN" : "VI"}
           </button>
-          <Link href="/contact" data-cursor className="pill pill-solid hidden !py-2.5 sm:inline-flex">
+          <a
+            href={`mailto:${EMAIL}`}
+            data-cursor
+            className="pill pill-solid hidden !py-2.5 sm:inline-flex"
+          >
             {t.nav.contact}
-          </Link>
+          </a>
         </div>
       </nav>
     </header>

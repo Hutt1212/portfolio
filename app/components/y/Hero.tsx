@@ -1,13 +1,14 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import Link from "next/link"
-import { gsap } from "@/lib/gsap"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
+import { useTimelineTheme } from "@/app/context/TimelineThemeContext"
 import { INTRO_DONE } from "./Loader"
 
-/** True once the loader curtain has left (or immediately, if it never ran). */
+const EMAIL = "nguyenminhhuy01234@gmail.com"
+
 function useIntroDone() {
   const [done, setDone] = useState(false)
 
@@ -24,35 +25,40 @@ function useIntroDone() {
   return done
 }
 
-/**
- * Landing hero, floating in the stream. No portrait here on purpose: a
- * photograph in a frame breaks the illusion that you are inside the scene.
- */
 export default function Hero() {
   const { t } = useLanguage()
   const s = t.site
   const root = useRef<HTMLElement>(null)
   const introDone = useIntroDone()
+  const { setTheme, openShowcase } = useTimelineTheme()
 
   useIsomorphicLayoutEffect(() => {
     const el = root.current
     if (!el || !introDone) return
+
+    setTheme("sacred")
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
     const ctx = gsap.context(() => {
       gsap.from(".hero-rise", { y: 30, autoAlpha: 0, duration: 1.1, stagger: 0.1 })
 
-      // The hero recedes into the stream as the timeline takes over.
       gsap.to(".hero-inner", {
         z: 420,
         autoAlpha: 0,
         ease: "none",
-        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: 0.6 },
+        scrollTrigger: {
+          trigger: el,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.6,
+          onEnterBack: () => setTheme("sacred"),
+        },
       })
     }, el)
 
     return () => ctx.revert()
-  }, [introDone])
+  }, [introDone, setTheme])
 
   return (
     <section ref={root} className="hero-scene">
@@ -68,12 +74,21 @@ export default function Hero() {
         </p>
 
         <div className="hero-rise mt-10 flex flex-wrap gap-3">
-          <Link href="/work" data-cursor className="ts-cta ts-cta-solid">
+          <button
+            type="button"
+            data-cursor
+            onClick={openShowcase}
+            className="ts-cta ts-cta-solid"
+          >
             {t.hero.viewWork} →
-          </Link>
-          <Link href="/contact" data-cursor className="ts-cta">
+          </button>
+          <a
+            href={`mailto:${EMAIL}`}
+            data-cursor
+            className="ts-cta"
+          >
             {s.contactCta}
-          </Link>
+          </a>
         </div>
 
         <span className="hero-rise t-label mt-16 block text-[hsl(var(--tl-dim))] opacity-70">

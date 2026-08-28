@@ -1,12 +1,12 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
+import ProjectDrawer, { type DrawerProject } from "./ProjectDrawer"
 
 type Project = {
   id: string
@@ -16,11 +16,17 @@ type Project = {
   image: string
 }
 
-/** The project list. Its heading lives on the page, not here. */
+/**
+ * The project list. Its heading lives on the page, not here.
+ *
+ * Cards open the same drawer the home page uses rather than routing to a
+ * detail page — there is one place a project is read in full, and this is it.
+ */
 export default function Projects() {
   const { t } = useLanguage()
   const s = t.site
   const root = useRef<HTMLElement>(null)
+  const [selected, setSelected] = useState<number | null>(null)
 
   useIsomorphicLayoutEffect(() => {
     const el = root.current
@@ -59,7 +65,13 @@ export default function Projects() {
 
           return (
             <li key={project.id} className="project-row">
-              <Link href={`/projects/${project.id}`} data-cursor className="group block">
+              <button
+                type="button"
+                data-cursor
+                onClick={() => setSelected(i)}
+                aria-haspopup="dialog"
+                className="group block w-full text-left"
+              >
                 <div className="frame aspect-[16/9]">
                   <div className="project-art absolute inset-0 scale-[1.12]">
                     <Image
@@ -96,11 +108,19 @@ export default function Projects() {
                     </span>
                   </div>
                 </div>
-              </Link>
+              </button>
             </li>
           )
         })}
       </ul>
+
+      {selected !== null && (
+        <ProjectDrawer
+          project={t.portfolio.projects[selected] as DrawerProject}
+          index={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </section>
   )
 }

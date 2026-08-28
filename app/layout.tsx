@@ -1,6 +1,7 @@
 import "./globals.css"
 import { Archivo, JetBrains_Mono } from "next/font/google"
 import { LanguageProvider } from "./context/LanguageContext"
+import { TimelineThemeProvider } from "./context/TimelineThemeContext"
 import SmoothScroll from "./components/SmoothScroll"
 import Loader from "./components/y/Loader"
 import Cursor from "./components/y/Cursor"
@@ -9,8 +10,6 @@ import Footer from "./components/y/Footer"
 import type { Metadata, Viewport } from "next"
 import type React from "react"
 
-/* One family does every job. The `wdth` axis is what lets the display sizes run
-   wide enough to read as sportswear-poster type without a second download. */
 const archivo = Archivo({
   subsets: ["latin", "vietnamese"],
   axes: ["wdth"],
@@ -34,7 +33,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#F3F0E7",
+  themeColor: "#060402",
 }
 
 export default function RootLayout({
@@ -46,13 +45,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${archivo.variable} ${jetbrains.variable} font-sans min-h-screen bg-background text-foreground`}>
         <LanguageProvider>
-          <SmoothScroll>
-            <Loader />
-            <Cursor />
-            <Nav />
-            <main className="relative">{children}</main>
-            <Footer />
-          </SmoothScroll>
+          <TimelineThemeProvider>
+            <SmoothScroll>
+              <Loader />
+              <Cursor />
+              <Nav />
+              <main className="relative">{children}</main>
+              <Footer />
+            </SmoothScroll>
+          </TimelineThemeProvider>
         </LanguageProvider>
       </body>
     </html>
