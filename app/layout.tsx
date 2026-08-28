@@ -7,6 +7,7 @@ import Loader from "./components/y/Loader"
 import Cursor from "./components/y/Cursor"
 import Nav from "./components/y/Nav"
 import Footer from "./components/y/Footer"
+import { Analytics } from "@vercel/analytics/next"
 import type { Metadata, Viewport } from "next"
 import type React from "react"
 
@@ -55,6 +56,7 @@ export default function RootLayout({
             </SmoothScroll>
           </TimelineThemeProvider>
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   )
