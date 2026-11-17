@@ -1,35 +1,19 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { gsap, ScrollTrigger } from "@/lib/gsap"
+import { useRef } from "react"
+import { gsap } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import { useTimelineTheme } from "@/app/context/TimelineThemeContext"
-import { INTRO_DONE } from "./Loader"
+import { useAppReady } from "@/app/hooks/useAppReady"
 
 const EMAIL = "nguyenminhhuy01234@gmail.com"
-
-function useIntroDone() {
-  const [done, setDone] = useState(false)
-
-  useEffect(() => {
-    if ((window as unknown as { __yIntroDone?: boolean }).__yIntroDone) {
-      setDone(true)
-      return
-    }
-    const on = () => setDone(true)
-    window.addEventListener(INTRO_DONE, on)
-    return () => window.removeEventListener(INTRO_DONE, on)
-  }, [])
-
-  return done
-}
 
 export default function Hero() {
   const { t } = useLanguage()
   const s = t.site
   const root = useRef<HTMLElement>(null)
-  const introDone = useIntroDone()
+  const introDone = useAppReady()
   const { setTheme, openShowcase } = useTimelineTheme()
 
   useIsomorphicLayoutEffect(() => {
@@ -62,38 +46,45 @@ export default function Hero() {
 
   return (
     <section ref={root} className="hero-scene">
+      {/* Two bands: the name above the time stream, the pitch and CTAs below
+          it. The stream is drawn at 52% of the viewport (TimeStream), so copy
+          centred in the hero used to sit right on its brightest strands. */}
       <div className="hero-inner shell">
-        <span className="hero-rise t-label block text-[hsl(var(--tl-glow))]">
-          {t.hero.role} — {s.location}
-        </span>
+        <div className="hero-top">
+          <span className="hero-rise t-label block text-[hsl(var(--tl-glow))]">
+            {t.hero.role} — {s.location}
+          </span>
 
-        <h1 className="hero-rise t-display t-hero mt-6 max-w-[16ch]">{t.name}</h1>
-
-        <p className="hero-rise t-lede mt-7 max-w-[46ch] text-[hsl(var(--tl-dim))]">
-          {t.hero.subtitle}
-        </p>
-
-        <div className="hero-rise mt-10 flex flex-wrap gap-3">
-          <button
-            type="button"
-            data-cursor
-            onClick={openShowcase}
-            className="ts-cta ts-cta-solid"
-          >
-            {t.hero.viewWork} →
-          </button>
-          <a
-            href={`mailto:${EMAIL}`}
-            data-cursor
-            className="ts-cta"
-          >
-            {s.contactCta}
-          </a>
+          <h1 className="hero-rise t-display t-hero mt-6 max-w-[16ch]">{t.name}</h1>
         </div>
 
-        <span className="hero-rise t-label mt-16 block text-[hsl(var(--tl-dim))] opacity-70">
-          {s.scroll} ↓
-        </span>
+        <div className="hero-bottom">
+          <p className="hero-rise t-lede max-w-[46ch] text-[hsl(var(--tl-dim))]">
+            {t.hero.subtitle}
+          </p>
+
+          <div className="hero-rise mt-8 flex flex-wrap gap-3">
+            <button
+              type="button"
+              data-cursor
+              onClick={openShowcase}
+              className="ts-cta ts-cta-solid"
+            >
+              {t.hero.viewWork} →
+            </button>
+            <a
+              href={`mailto:${EMAIL}`}
+              data-cursor
+              className="ts-cta"
+            >
+              {s.contactCta}
+            </a>
+          </div>
+
+          <span className="hero-rise hero-scroll t-label mt-10 block text-[hsl(var(--tl-dim))] opacity-70">
+            {s.scroll} ↓
+          </span>
+        </div>
       </div>
     </section>
   )

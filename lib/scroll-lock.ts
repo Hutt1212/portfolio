@@ -14,6 +14,8 @@ let depth = 0
 
 export function registerLenis(l: Lenis | null) {
   instance = l
+  // A lock taken before Lenis existed (the preloader mounts first) must still hold.
+  if (l && depth > 0) l.stop()
 }
 
 export function lockScroll() {
@@ -25,8 +27,8 @@ export function lockScroll() {
 }
 
 export function unlockScroll() {
+  if (depth === 0) return
   if (--depth > 0) return
-  depth = Math.max(0, depth)
   document.body.style.overflow = ""
   document.body.style.paddingRight = ""
   instance?.start()

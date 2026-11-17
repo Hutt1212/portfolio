@@ -22,8 +22,8 @@ export default function Home() {
       index: "01",
       title: t.portfolio.title,
       blurb: vi
-        ? "Các hệ thống đã xây dựng: thương mại điện tử có trợ lý RAG, và một công cụ sinh kịch bản kiểm thử bằng LLM."
-        : "Systems I have shipped: e-commerce with a RAG assistant, and an LLM that writes test scenarios.",
+        ? "Các hệ thống đã xây dựng: thương mại điện tử có trợ lý RAG, công cụ sinh test BDD bằng LLM tự host, và portfolio cỗ máy thời gian đa vũ trụ."
+        : "Systems I have shipped: e-commerce with a RAG assistant, a self-hosted LLM test generator, and a multiverse temporal portfolio.",
       cta: vi ? "Xem dự án" : "View work",
       action: openShowcase,
     },
@@ -31,7 +31,7 @@ export default function Home() {
       kind: "title",
       eyebrow: t.site.labels.about,
       title: t.about.profession,
-      sub: `${t.about.education} · ${t.site.location}`,
+      sub: t.site.location,
     },
     { kind: "lede", text: t.about.description1 },
     {

@@ -1,5 +1,6 @@
 import "./globals.css"
 import { Archivo, JetBrains_Mono } from "next/font/google"
+import localFont from "next/font/local"
 import { LanguageProvider } from "./context/LanguageContext"
 import { TimelineThemeProvider } from "./context/TimelineThemeContext"
 import SmoothScroll from "./components/SmoothScroll"
@@ -24,6 +25,15 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 })
 
+// TemPad screen face, shipped with the TVA Classic theme (IBM Plex Mono Light, OFL).
+const tempadFont = localFont({
+  src: "./fonts/IBMPlexMono-Light.ttf",
+  weight: "300",
+  variable: "--font-tempad",
+  display: "block",
+  preload: true,
+})
+
 export const metadata: Metadata = {
   title: "Nguyễn Minh Huy | Fullstack Developer",
   description:
@@ -44,7 +54,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${archivo.variable} ${jetbrains.variable} font-sans min-h-screen bg-background text-foreground`}>
+      <body className={`${archivo.variable} ${jetbrains.variable} ${tempadFont.variable} font-sans min-h-screen bg-background text-foreground`}>
         <LanguageProvider>
           <TimelineThemeProvider>
             <SmoothScroll>

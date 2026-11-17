@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import Image from "next/image"
+import ShotImage from "./ShotImage"
 import { X } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
@@ -128,7 +128,7 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
                   className="showcase-card"
                 >
                   <span className="frame block aspect-[16/10]">
-                    <Image
+                    <ShotImage
                       src={project.image}
                       alt={project.title}
                       fill

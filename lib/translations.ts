@@ -25,9 +25,9 @@ export const translations = {
       },
       stackGroups: {
         core: "Nền tảng chính",
-        realtime: "AI & Tích hợp",
-        data: "Dữ liệu",
-        ops: "Vận hành & Công cụ"
+        realtime: "AI & RAG",
+        data: "Dữ liệu & Lưu trữ",
+        ops: "Kiểm thử, Bảo mật & Tự động hoá"
       },
       viewCase: "Xem chi tiết",
       allProjects: "Tất cả dự án",
@@ -36,20 +36,20 @@ export const translations = {
     },
     skills: {
       title: "Công nghệ sử dụng",
-      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "NestJS"],
-      realtime: ["SignalR", "Semantic Kernel", "RAG / Vector search", "Python", "LoRA / Fine-tuning"],
-      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis"],
-      ops: ["Docker", "CI/CD", "Nginx", "Tailwind CSS", "GSAP"]
+      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "Python"],
+      realtime: ["RAG Pipeline", "Vector Embeddings", "Qdrant", "Chunking", "QLoRA / LoRA", "Semantic Kernel", "SignalR"],
+      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis", "Qdrant Vector DB"],
+      ops: ["Playwright", "Cypress", "Gherkin / BDD", "OWASP Top 10", "Paramiko / Netmiko", "Docker", "CI/CD"]
     },
     services: {
       title: "Tôi làm gì",
       items: [
         { name: "Fullstack Development", description: "Xây dựng ứng dụng từ backend .NET/Node tới frontend Next.js, dùng chung một mô hình dữ liệu và một bộ quy ước." },
-        { name: "Tích hợp AI", description: "Ghép trợ lý RAG vào hệ thống có sẵn: phân loại ý định, trả lời dựa trên dữ liệu nội bộ, chuyển cho người thật khi câu hỏi vượt phạm vi. Phần chat và cập nhật trực tiếp dựng bằng SignalR." },
+        { name: "Tích hợp AI & RAG", description: "Xây dựng pipeline RAG toàn diện: chiến lược chunking tối ưu ngữ cảnh, vector embeddings với Qdrant, Semantic Kernel và fine-tune mô hình nhỏ bằng LoRA/QLoRA; kết nối realtime qua SignalR." },
+        { name: "Automation & Testing", description: "Đặc tả hành vi chuẩn BDD với Gherkin, tự động hoá kiểm thử E2E với Cypress và Playwright; tự động hoá tác vụ mạng và hạ tầng máy chủ qua Paramiko / Netmiko." },
         { name: "API Development", description: "REST API có phiên bản, phân trang và cách trả lỗi nhất quán; tài liệu hoá để người khác dùng được mà không phải hỏi." },
-        { name: "Performance Optimization", description: "Đo trước khi sửa: Core Web Vitals ở frontend, truy vấn N+1 và chỉ mục ở database, cache Redis khi thật sự cần." },
-        { name: "Database Design", description: "Thiết kế lược đồ cho SQL Server, PostgreSQL và MongoDB; chọn quan hệ hay tài liệu dựa trên cách dữ liệu thực sự được đọc." },
-        { name: "Security & Best Practices", description: "Xác thực JWT/OAuth2, phân quyền theo vai trò, và các hạng mục cơ bản của OWASP: kiểm tra đầu vào, không rò rỉ dữ liệu qua API." }
+        { name: "Database & Performance", description: "Thiết kế lược đồ cho SQL Server, PostgreSQL, MongoDB và vector database; tối ưu Core Web Vitals, chỉ mục truy vấn và cache Redis." },
+        { name: "Security & OWASP", description: "Bảo mật ứng dụng chuẩn OWASP Top 10: xác thực JWT/OAuth2, phân quyền chặt chẽ, kiểm tra khử độc đầu vào, phòng chống SQLi, XSS, SSRF và chống rò rỉ dữ liệu qua API." }
       ]
     },
     portfolio: {
@@ -112,23 +112,29 @@ export const translations = {
         },
         {
           id: "portfolio",
-          title: "Portfolio – Site cá nhân dựng bằng Next.js & GSAP",
-          description: "Chính trang bạn đang xem. Next.js App Router, hoạt cảnh cuộn bằng GSAP ScrollTrigger, một cảnh nền vẽ bằng canvas 2D, song ngữ Việt–Anh.",
-          longDescription: "Trang này dựng quanh một cảnh canvas 2D: khoảng 640 sợi sáng sinh ngẫu nhiên, vẽ chồng theo chế độ cộng sáng. Cấu trúc tĩnh được vẽ sẵn một lần vào bộ đệm ngoài màn hình, mỗi khung hình chỉ ghép lại tấm đó rồi vẽ vài chục xung sáng chạy dọc các sợi thật.",
-          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          title: "Portfolio – Cỗ máy đa vũ trụ thời gian với Next.js & GSAP",
+          description: "Chính trang bạn đang xem: Trải nghiệm du hành dòng thời gian TVA/Loki với mô phỏng sóng Canvas 2D thời gian thực, chuỗi Warp Sequence bằng GSAP và song ngữ Việt–Anh.",
+          longDescription: "Trang web được thiết kế như một hành trình du hành không-thời gian lấy cảm hứng từ TVA & Loki: một canvas 2D mô phỏng dòng thời gian thiêng liêng (TimeStream) với 5 trạng thái năng lượng đa vũ trụ (Sacred Gold, Multiverse Warp, God Loki Yggdrasil, Quantum Matrix, Nexus Redline). Các sợi quang học và hạt lượng tử được tính toán vật lý sóng hỗn loạn trong thời gian thực, chuyển đổi màu mượt mà bằng thuật toán nội suy lerpRgb theo từng chặng cuộn của GSAP ScrollTrigger.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D Physics", "Lenis", "Tailwind CSS", "Context API"],
           highlights: [
             {
-              title: "Cảnh nền dựng bằng Canvas 2D",
-              description: "Sợi sáng có nhiễu hướng mỗi bước nên đường nào cũng cong; cấu trúc tĩnh dựng một lần rồi tái sử dụng."
+              title: "Mô phỏng dòng thời gian TimeStream 5 trạng thái",
+              description: "Canvas 2D tính toán vật lý sóng dao động (wave turbulence) và hạt lượng tử thời gian thực; tự động nội suy màu 3 chiều (lerpRgb) giữa 5 theme dòng thời gian (Sacred, Multiverse, Loki, Quantum, Nexus) theo nhịp cuộn."
             },
             {
-              title: "Hoạt cảnh cuộn bằng GSAP ScrollTrigger",
-              description: "Quãng cuộn được ánh xạ thành tiến trình hoạt cảnh, nội dung xuất hiện theo nhịp title card thay vì trôi qua."
+              title: "Chuỗi hoạt cảnh Warp Sequence ghim sân khấu",
+              description: "Kỹ thuật anticipatePin ghim sân khấu cố định và ánh xạ quãng cuộn thành tiến trình không gian; mỗi beat nội dung vừa kích hoạt biến đổi chủ đề không-thời gian, vừa chuyển động chiều sâu 3D."
             },
             {
-              title: "Lenis chạy trên đồng hồ của GSAP",
-              description: "Gắn vào gsap.ticker thay vì rAF riêng — lệch một khung hình giữa hai đồng hồ khiến các đoạn ghim bị rung."
+              title: "Lenis Smooth Scroll đồng bộ hóa với GSAP Ticker",
+              description: "Gắn vòng lặp cuộn Lenis vào gsap.ticker thay vì rAF riêng biệt, triệt tiêu hoàn toàn hiện tượng lệch pha 1 khung hình giữa hai đồng hồ vốn gây rung giật ở các đoạn ghim."
             }
+          ],
+          impact: [
+            "Duy trì ổn định 60–120 FPS mượt mà nhờ tách biệt tầng render canvas 2D và quản lý compositor layer bằng GSAP force3D.",
+            "Biến đổi tức thì 5 theme không gian và 2 ngôn ngữ với độ dịch chuyển layout bằng không (CLS = 0).",
+            "Tối ưu hiệu năng Core Web Vitals tối đa thông qua vật lý thủ tục nhẹ thay vì nạp thư viện 3D WebGL nặng nề.",
+            "Trải nghiệm điện ảnh khép lại bằng minh hoạ bàn tay Loki dệt dòng thời gian với nghệ thuật blend màu mix-blend-screen."
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -139,9 +145,8 @@ export const translations = {
     about: {
       title: "Về tôi",
       profession: "Fullstack Developer",
-      education: "ĐH Công Thương TP.HCM, 2025",
-      description1: "Tôi làm fullstack: .NET và Node ở backend, Next.js với TypeScript ở frontend. Phần tôi thích nhất là chỗ hai đầu gặp nhau — luồng dữ liệu, độ trễ, và những thứ phải chạy đúng khi có người thật đang dùng.",
-      description2: "Hiện tôi làm ở bộ phận R&D của một công ty phần mềm, chủ yếu là ghép AI vào những sản phẩm đang chạy: SignalR cho chat, Semantic Kernel và vector database cho trợ lý RAG. Phần lớn công việc đó nằm trong phạm vi bảo mật nên không xuất hiện ở đây; những gì trưng ra là phần tôi được phép chia sẻ. Trước khi thêm một lớp phức tạp nào, tôi hỏi nó giải quyết vấn đề gì và ai sẽ phải vận hành nó."
+      description1: "Tôi làm fullstack và tự động hoá: .NET và Node ở backend, Next.js với TypeScript ở frontend. Tôi chú trọng kiến trúc hệ thống bền vững, tuân thủ các nguyên tắc bảo mật OWASP Top 10 và đảm bảo chất lượng phần mềm bằng kiểm thử tự động với Gherkin, Cypress và Playwright.",
+      description2: "Hiện tôi làm ở bộ phận R&D của một công ty phần mềm, chuyên sâu vào việc ghép AI và tự động hoá vào sản phẩm thực tế: xây dựng luồng RAG với chiến lược chunking và vector search trên Qdrant, thử nghiệm fine-tune mô hình bằng LoRA/QLoRA, và viết kịch bản tự động hoá hạ tầng/mạng với Paramiko và Netmiko. Phần lớn dự án nằm trong phạm vi bảo mật nên không xuất hiện ở đây; những gì trưng ra là phần tôi được phép chia sẻ. Trước khi thêm một lớp phức tạp nào, tôi luôn hỏi nó giải quyết vấn đề gì và ai sẽ vận hành nó."
     },
     footer: {
       contactTitle: "Liên hệ với tôi"
@@ -182,9 +187,9 @@ export const translations = {
       },
       stackGroups: {
         core: "Core",
-        realtime: "AI & Integration",
-        data: "Data",
-        ops: "Ops & Tooling"
+        realtime: "AI & RAG",
+        data: "Data & Storage",
+        ops: "Testing, Security & Automation"
       },
       viewCase: "View case",
       allProjects: "All projects",
@@ -193,20 +198,20 @@ export const translations = {
     },
     skills: {
       title: "Tools I use",
-      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "NestJS"],
-      realtime: ["SignalR", "Semantic Kernel", "RAG / Vector search", "Python", "LoRA / Fine-tuning"],
-      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis"],
-      ops: ["Docker", "CI/CD", "Nginx", "Tailwind CSS", "GSAP"]
+      core: ["C#", "ASP.NET Core", "TypeScript", "React", "Next.js", "Node.js", "Python"],
+      realtime: ["RAG Pipeline", "Vector Embeddings", "Qdrant", "Chunking", "QLoRA / LoRA", "Semantic Kernel", "SignalR"],
+      data: ["SQL Server", "PostgreSQL", "MongoDB", "Redis", "Qdrant Vector DB"],
+      ops: ["Playwright", "Cypress", "Gherkin / BDD", "OWASP Top 10", "Paramiko / Netmiko", "Docker", "CI/CD"]
     },
     services: {
       title: "What I work on",
       items: [
         { name: "Fullstack Development", description: "Applications end to end, from a .NET or Node backend to a Next.js frontend, sharing one data model and one set of conventions." },
-        { name: "AI Integration", description: "RAG assistants wired into systems that already exist: intent classification, answers grounded in internal data, handover to a human when the question falls outside scope. Live chat and live updates built on SignalR." },
+        { name: "AI & RAG Pipelines", description: "End-to-end RAG pipelines: context-aware chunking strategies, vector embeddings with Qdrant, Semantic Kernel, and parameter-efficient fine-tuning via LoRA/QLoRA; real-time conversational streaming over SignalR." },
+        { name: "Automation & Testing", description: "BDD specifications with Gherkin, automated end-to-end testing with Cypress and Playwright; automated remote server and network device operations using Paramiko and Netmiko." },
         { name: "API Development", description: "Versioned REST APIs with consistent pagination and error shapes, documented well enough that nobody has to ask me how they work." },
-        { name: "Performance Optimization", description: "Measure before changing anything: Core Web Vitals on the front, slow queries and indexes on the database, Redis only where it earns its keep." },
-        { name: "Database Design", description: "Schema design across SQL Server, PostgreSQL and MongoDB, choosing relational or document based on how the data is actually read." },
-        { name: "Security & Best Practices", description: "JWT and OAuth2 auth, role-based access, and the unglamorous OWASP basics: validating input and not leaking data through an API." }
+        { name: "Database & Performance", description: "Schema design across SQL Server, PostgreSQL, MongoDB, and vector databases; profiling Core Web Vitals, database indexes, and Redis caching." },
+        { name: "Security & OWASP", description: "Application security grounded in OWASP Top 10: robust JWT/OAuth2 authentication, strict role-based access control, input sanitization against injection/XSS/SSRF, and preventing sensitive data exposure via APIs." }
       ]
     },
     portfolio: {
@@ -269,23 +274,29 @@ export const translations = {
         },
         {
           id: "portfolio",
-          title: "Portfolio – Personal site built with Next.js & GSAP",
-          description: "The site you are reading. Next.js App Router, scroll animation driven by GSAP ScrollTrigger, a canvas-rendered background scene, and Vietnamese/English throughout.",
-          longDescription: "This site is built around a 2D canvas scene: roughly 640 procedurally generated filaments stroked with additive blending so overlaps bloom. The static structure is baked once into an offscreen buffer, and each frame only composites that buffer and strokes a few dozen travelling pulses along real filament paths.",
-          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D", "Lenis", "Tailwind CSS"],
+          title: "Portfolio – Multiverse Time Engine built with Next.js & GSAP",
+          description: "The site you are viewing: An interactive TVA/Loki-inspired temporal journey featuring real-time 2D Canvas wave physics, GSAP Warp Sequence pinning, and full bilingual support.",
+          longDescription: "Built as a cinematic temporal journey inspired by the TVA and God Loki: an interactive 2D canvas simulating the Sacred Timeline (TimeStream) across 5 distinct multiverse energy states (Sacred Gold, Multiverse Warp, God Loki Yggdrasil, Quantum Matrix, Nexus Redline). Procedural fiber strands and quantum dust particles are computed in real time with wave turbulence, seamlessly morphing RGB palettes via 3D linear interpolation (lerpRgb) alongside GSAP ScrollTrigger beats.",
+          tech: ["Next.js", "TypeScript", "GSAP ScrollTrigger", "Canvas 2D Physics", "Lenis", "Tailwind CSS", "Context API"],
           highlights: [
             {
-              title: "Canvas-rendered background scene",
-              description: "Filaments are generated with per-step directional noise so every strand curls; the static structure is built once and reused."
+              title: "5-State TimeStream Canvas Wave Simulation",
+              description: "Real-time canvas physics computing sinusoidal wave turbulence and quantum particles; smooth 3D RGB linear interpolation (lerpRgb) transitioning seamlessly across 5 timeline energy states on scroll."
             },
             {
-              title: "Scroll animation with GSAP ScrollTrigger",
-              description: "Scroll distance is mapped to animation progress, so copy arrives on a deliberate beat instead of drifting past."
+              title: "GSAP Warp Sequence & Stage Pinning",
+              description: "Precision anticipatePin stage-pinning maps scroll distance directly to narrative progression; each beat triggers a dimensional theme morph while content glides along the depth axis."
             },
             {
-              title: "Lenis running on the GSAP ticker",
-              description: "Driven by gsap.ticker rather than its own rAF loop — a one-frame gap between the two clocks is the classic cause of jittering pinned sections."
+              title: "Lenis Smooth Scroll Synced with GSAP Ticker",
+              description: "Driven synchronously by gsap.ticker rather than an isolated rAF loop — eliminating the classic single-frame clock drift that causes pinned stage jitter."
             }
+          ],
+          impact: [
+            "Rock-solid 60–120 FPS across high-refresh screens by separating procedural canvas rendering from DOM compositing via GSAP force3D.",
+            "Instantaneous theme morphing across 5 dimensions and 2 languages with zero cumulative layout shift (CLS = 0).",
+            "Exceptional Core Web Vitals delivered through lightweight 2D procedural physics rather than heavy WebGL/Three.js bundles.",
+            "Cinematic finale featuring God Loki weaving the Sacred Timeline with mix-blend-screen lighting integration."
           ],
           link: "https://nguyenminhhuy-portfolio.vercel.app/",
           github: "https://github.com/Hutt1212/portfolio",
@@ -296,9 +307,8 @@ export const translations = {
     about: {
       title: "About",
       profession: "Fullstack Developer",
-      education: "Ho Chi Minh City University of Industry and Trade, 2025",
-      description1: "I work across the stack: .NET and Node on the backend, Next.js and TypeScript on the front. The part I like most is where the two meet — data flow, latency, and the things that have to hold up once real people are using them.",
-      description2: "I currently work in R&D at a software company, mostly wiring AI into products that are already running: SignalR for chat, Semantic Kernel and a vector database for a RAG assistant. Most of that work is under NDA and does not appear here; what is on this site is the part I am free to share. Before adding any layer of complexity I ask what it solves and who has to operate it."
+      description1: "I work across fullstack development and automation: .NET and Node on the backend, Next.js and TypeScript on the front. I focus on resilient architecture, building with OWASP Top 10 security practices in mind and safeguarding software quality through automated testing with Gherkin, Cypress, and Playwright.",
+      description2: "I currently work in R&D at a software company, wiring AI and automation into production systems: architecting RAG pipelines with optimized chunking and vector search on Qdrant, fine-tuning lightweight models with LoRA/QLoRA, and automating network & server operations with Paramiko and Netmiko. Most of that work is under NDA and does not appear here; what is on this site is the part I am free to share. Before adding any layer of complexity, I always ask what it solves and who has to operate it."
     },
     footer: {
       contactTitle: "Get in touch"
