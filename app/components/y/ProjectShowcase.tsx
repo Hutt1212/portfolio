@@ -53,12 +53,6 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
   useIsomorphicLayoutEffect(() => {
     lockScroll()
 
-    // Warm the cache so hovering through the list swaps the preview instantly.
-    projects.forEach((p) => {
-      const img = new window.Image()
-      img.src = p.image
-    })
-
     // Focus the first file so the keyboard works straight away. It has to wait
     // until the dialog is visible: GSAP holds it at visibility:hidden while
     // its opacity is 0, and a hidden element cannot take focus.
@@ -227,15 +221,24 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
                     className="casefile-preview casefile-reveal"
                     aria-label={`${vi ? "Mở" : "Open"} ${headline.trim()}`}
                   >
+                    {/* Every preview is mounted at once and only the active one is
+                        shown, so moving through the list swaps instantly — and
+                        each still goes through the image optimiser, unlike a
+                        `new Image()` preload of the raw file. */}
                     <span className="frame casefile-frame">
-                      <ShotImage
-                        key={current.image}
-                        src={current.image}
-                        alt={current.title}
-                        fill
-                        sizes="(max-width: 768px) 90vw, 560px"
-                        className="casefile-art object-cover object-top"
-                      />
+                      {projects.map((p, i) => (
+                        <span key={p.id} className={`casefile-shot ${i === active ? "is-active" : ""}`} aria-hidden={i !== active}>
+                          <ShotImage
+                            src={p.image}
+                            alt={i === active ? p.title : ""}
+                            fill
+                            sizes="(max-width: 768px) 90vw, 560px"
+                            // Eager: the hidden ones must be fetched up front for instant swaps.
+                            loading="eager"
+                            className="casefile-art object-cover object-top"
+                          />
+                        </span>
+                      ))}
                     </span>
                     <span className="casefile-tag">
                       {vi ? "HỒ SƠ" : "FILE"} {String(active + 1).padStart(2, "0")} / {total} · {vi ? "MỞ" : "OPEN"} ▸
