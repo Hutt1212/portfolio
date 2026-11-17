@@ -8,6 +8,13 @@ import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
 
 const SEEN_KEY = "tva:tempad-seen"
 
+/** Boot steps, shown as menu rows on the TemPad screen. The highlight walks down them. */
+const STEPS = ["SCAN TIMELINE", "LOCK COORDINATES", "CHARGE TIMEDOOR", "OPEN PORTAL"]
+
+/** Theme tokens taken from the TVA Classic theme config (styles/TVA Classic/config.json). */
+const ORANGE = "#f8861e"
+const TRACK = "#29231e"
+
 /** Storage can throw (private mode, blocked site data) — never let it break the intro. */
 function readSeen() {
   try {
@@ -35,7 +42,8 @@ export default function Loader() {
   const flashRef = useRef<HTMLDivElement>(null)
   const countRef = useRef<HTMLSpanElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
-  const logRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+  const batteryRef = useRef<HTMLImageElement>(null)
 
   const [visible, setVisible] = useState(true)
 
@@ -71,14 +79,6 @@ export default function Loader() {
       unlockScroll()
     }
 
-    const logs = [
-      "INITIALIZING TEMPORAL DRIVE...",
-      "SCANNING CHRONAL FREQUENCIES...",
-      "LOCKING SACRED TIMELINE COORDINATES...",
-      "GENERATING TIMEDOOR QUANTUM FIELD...",
-      "PORTAL ENGAGED - STEPPING THROUGH...",
-    ]
-
     const finish = () => {
       release()
       markAppReady()
@@ -86,9 +86,11 @@ export default function Loader() {
     }
 
     let safety = 0
-
     const counter = { val: 0 }
-    const duration = seen ? 0.7 : 1.3
+    const duration = seen ? 0.8 : 1.6
+    const rows = Array.from(listRef.current?.children ?? []) as HTMLElement[]
+    let lastStep = -1
+    let lastCell = -1
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -98,96 +100,62 @@ export default function Loader() {
         },
       })
 
-      // 1. Digital segmented counter & progress bar
+      // 0. The CRT power-on runs in CSS from first paint (see .tempad-screen),
+      //    so it never waits on hydration. Give it a beat before booting.
+      tl.to({}, { duration: seen ? 0.1 : 0.35 })
+
+      // 1. Boot progress: bar, percentage, battery cells and the menu highlight.
       tl.to(counter, {
         val: 100,
-        duration: duration,
-        ease: "power2.inOut",
+        duration,
+        ease: "power1.inOut",
         onUpdate: () => {
           const v = Math.round(counter.val)
-          if (countRef.current) {
-            countRef.current.textContent = `${String(v).padStart(3, "0")}%`
-          }
+          if (countRef.current) countRef.current.textContent = `${String(v).padStart(3, "0")}%`
           if (barRef.current) {
-            barRef.current.style.width = `${v}%`
+            barRef.current.style.transform = `scaleX(${v / 100})`
             barRef.current.parentElement?.setAttribute("aria-valuenow", String(v))
           }
-          if (logRef.current) {
-            const stepIdx = Math.min(logs.length - 1, Math.floor((v / 100) * logs.length))
-            logRef.current.textContent = `> ${logs[stepIdx]}`
+
+          const cell = v >= 100 ? 4 : Math.min(4, Math.floor(v / 25) + 1)
+          if (cell !== lastCell && batteryRef.current) {
+            lastCell = cell
+            batteryRef.current.src = v >= 100 ? "/tempad/btc.png" : `/tempad/bt${cell}.png`
+          }
+
+          const step = Math.min(STEPS.length - 1, Math.floor((v / 100) * STEPS.length))
+          if (step !== lastStep) {
+            lastStep = step
+            rows.forEach((row, i) => {
+              row.dataset.state = i < step ? "done" : i === step ? "active" : "idle"
+            })
           }
         },
       })
 
-      // 2. TemPad Chassis glint / shake before portal release
-      tl.to(
-        padRef.current,
-        {
-          scale: 1.04,
-          duration: 0.12,
-          yoyo: true,
-          repeat: 2,
-          ease: "power1.inOut",
-        },
-        duration - 0.2
-      )
+      // 2. Selected row blinks twice — the "confirm" press.
+      tl.to(rows[rows.length - 1] ?? {}, { autoAlpha: 0.25, duration: 0.07, yoyo: true, repeat: 3, ease: "none" })
 
-      // 3. Step 1: Timedoor portal materializes in the center
+      // 3. Timedoor materialises out of the screen, then swallows the viewport.
       tl.fromTo(
         doorRef.current,
         { scaleX: 0.02, scaleY: 0.1, autoAlpha: 0 },
-        {
-          scaleX: 1,
-          scaleY: 1,
-          autoAlpha: 1,
-          duration: 0.35,
-          ease: "power3.out",
-        }
+        { scaleX: 1, scaleY: 1, autoAlpha: 1, duration: 0.35, ease: "power3.out" }
       )
-        // Step 2: Timedoor explosively expands outward until it covers 100% of the entire viewport!
-        .to(doorRef.current, {
-          scaleX: 8,
-          scaleY: 8,
-          duration: 0.5,
-          ease: "power3.in",
-        })
-        // Step 3: Full-screen golden flash reaches peak (100% covering the screen)
-        .to(
-          flashRef.current,
-          {
-            autoAlpha: 1,
-            duration: 0.3,
-            ease: "power2.in",
-          },
-          "-=0.25"
-        )
-        // Disappear the TemPad UI behind the golden flash
+        .to(doorRef.current, { scaleX: 8, scaleY: 8, duration: 0.5, ease: "power3.in" })
+        .to(flashRef.current, { autoAlpha: 1, duration: 0.3, ease: "power2.in" }, "-=0.25")
         .set(padRef.current, { autoAlpha: 0 })
         // Hand over to the Hero underneath and give scrolling back
         .call(() => {
           release()
           markAppReady()
         })
-        // Step 4: Golden Timedoor light veil smoothly dissolves, revealing the Sacred Timeline!
-        .to(flashRef.current, {
-          autoAlpha: 0,
-          duration: 0.65,
-          ease: "power2.out",
-        })
-        .to(
-          el,
-          {
-            autoAlpha: 0,
-            duration: 0.4,
-            ease: "power2.out",
-          },
-          "-=0.4"
-        )
+        .to(flashRef.current, { autoAlpha: 0, duration: 0.65, ease: "power2.out" })
+        .to(el, { autoAlpha: 0, duration: 0.4, ease: "power2.out" }, "-=0.4")
 
       // Failsafe in case the timeline never completes (e.g. the tab starts in
-      // the background and rAF is paused). It is derived from the real length
-      // of the timeline — a fixed guess used to fire mid-flash and cut the
-      // portal off abruptly on return visits.
+      // the background and rAF is paused). Derived from the real length of the
+      // timeline so it can never cut the portal off mid-flash.
       safety = window.setTimeout(finish, tl.duration() * 1000 + 1500)
     }, el)
 
@@ -206,98 +174,109 @@ export default function Loader() {
       role="status"
       aria-live="polite"
       aria-label="Loading"
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-[#070402] px-4 select-none font-mono text-[#ffd700] overflow-hidden"
+      className="tempad-root fixed inset-0 z-[999] flex items-center justify-center overflow-hidden bg-[#070402] px-4 select-none"
     >
-      {/* Background CRT Scanlines */}
-      <div aria-hidden className="absolute inset-0 crt-scanlines opacity-90 pointer-events-none z-10" />
+      {/* Room ambience: faint grid + warm falloff around the device */}
+      <div aria-hidden className="absolute inset-0 tva-bg-grid opacity-30 pointer-events-none" />
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(60% 55% at 50% 50%, rgba(248,134,30,0.14), transparent 70%)" }}
+      />
 
-      {/* Retro TVA Ambient Grid */}
-      <div aria-hidden className="absolute inset-0 tva-bg-grid opacity-40 pointer-events-none z-0" />
-
-      {/* Iconic TVA Timedoor Portal (Expands to engulf the screen) */}
+      {/* Timedoor (expands to engulf the screen). Halo is a gradient, not a box-shadow:
+          Chrome clips very large blurred shadows on a scaled layer. */}
       <div
         ref={doorRef}
         aria-hidden
-        className="absolute w-72 h-[34rem] max-h-[80svh] pointer-events-none opacity-0 z-40"
+        className="absolute z-40 h-[34rem] max-h-[80svh] w-72 pointer-events-none opacity-0"
         style={{ transformOrigin: "center center" }}
       >
-        {/* Halo as a gradient, not a box-shadow: Chrome clips very large blurred
-            shadows on a scaled layer, which showed up as a hard rectangle. */}
         <div
           className="absolute -inset-40"
           style={{
             background:
-              "radial-gradient(closest-side, rgba(255,215,0,0.7), rgba(255,140,0,0.35) 45%, rgba(255,140,0,0) 100%)",
+              "radial-gradient(closest-side, rgba(255,200,80,0.7), rgba(248,134,30,0.35) 45%, rgba(248,134,30,0) 100%)",
           }}
         />
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-[#ffffff] via-[#ffb700] to-[#ff7700] shadow-[inset_0_0_60px_#ffffff]" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-[#fff4dc] via-[#ffb347] to-[#f8861e] shadow-[inset_0_0_60px_#ffffff]" />
       </div>
 
-      {/* Fullscreen Golden Temporal Energy Veil (Ensures 100% seamless full-screen coverage) */}
       <div
         ref={flashRef}
         aria-hidden
-        className="fixed inset-0 pointer-events-none opacity-0 z-50 bg-gradient-to-b from-[#ffe79a] via-[#ff9900] to-[#ffd700] shadow-[inset_0_0_100px_#ffffff]"
+        className="fixed inset-0 z-50 pointer-events-none opacity-0 bg-gradient-to-b from-[#ffe7b0] via-[#ffa53a] to-[#f8861e]"
       />
 
-      {/* Main TemPad Device Chassis */}
-      <div
-        ref={padRef}
-        className="relative z-20 w-full max-w-md rounded-2xl bg-[#0e0a05] border-2 border-[#ff8c00]/60 p-6 md:p-8 shadow-[0_0_50px_rgba(255,140,0,0.25),inset_0_0_25px_rgba(255,140,0,0.1)] backdrop-blur-md space-y-6"
-      >
-        {/* TemPad Top Header */}
-        <div className="flex items-center justify-between border-b border-[#ff8c00]/30 pb-3.5 text-xs text-[#ffb700]/80">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff8c00] animate-ping" />
-            <span className="font-bold tracking-widest text-[#ffcc00]">T.V.A // TEMPAD</span>
-          </div>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-[#ff8c00]/20 border border-[#ff8c00]/40 text-[#ffd700]">
-            TIMEDOOR LINK
-          </span>
-        </div>
+      {/* ── TemPad device ─────────────────────────────────────────── */}
+      <div ref={padRef} className="tempad relative z-20 w-[min(92vw,680px)]">
+        <div className="tempad-shell">
+          <div className="tempad-bezel">
+            <div className="tempad-screen" style={{ backgroundImage: "url(/tempad/screen.png)" }}>
+              {/* Status bar */}
+              <div className="tempad-status">
+                <span>TEMPAD</span>
+                <span className="tempad-status-icons">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/tempad/playing.png" alt="" className="tempad-icon" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/tempad/bluetooth.png" alt="" className="tempad-icon" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img ref={batteryRef} src="/tempad/bt1.png" alt="" className="tempad-battery" />
+                </span>
+              </div>
 
-        {/* Center CRT Hologram Display */}
-        <div className="rounded-xl bg-black/80 border border-[#ff8c00]/40 p-4 space-y-4 shadow-inner">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-[#ff9900]/70 uppercase tracking-wider text-[10px]">Portal Initialization</span>
-            <span ref={countRef} className="font-bold text-base text-[#ffd700] glow-orange tracking-widest">
-              000%
-            </span>
-          </div>
+              <div className="tempad-title">&gt; TIMEDOOR</div>
 
-          {/* Glowing Energy Bar */}
-          <div
-            role="progressbar"
-            aria-label="Loading"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={0}
-            className="w-full h-2.5 rounded-full bg-[#1a0f05] border border-[#ff8c00]/40 overflow-hidden p-0.5"
-          >
-            <div
-              ref={barRef}
-              className="h-full rounded-full bg-gradient-to-r from-[#ff6a00] via-[#ffb700] to-[#ffd700] shadow-[0_0_12px_#ff8c00]"
-              style={{ width: "0%" }}
-            />
-          </div>
+              {/* Menu: one row per boot step */}
+              <ul ref={listRef} className="tempad-list">
+                {STEPS.map((step, i) => (
+                  <li key={step} data-state={i === 0 ? "active" : "idle"} className="tempad-row">
+                    <span className="tempad-row-num">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="tempad-row-label">{step}</span>
+                    <span className="tempad-row-tick" aria-hidden>
+                      OK
+                    </span>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/tempad/arrow.png" alt="" className="tempad-arrow" />
+                  </li>
+                ))}
+              </ul>
 
-          {/* Chronal Coordinate Telemetry */}
-          <div className="grid grid-cols-2 gap-2 text-[10px] text-[#ff9900]/60 pt-1 border-t border-[#ff8c00]/20">
-            <div>
-              <span className="block text-[#ff9900]/40">TARGET SECTOR:</span>
-              <span className="text-[#ffcc00] font-bold">SACRED TIMELINE</span>
+              {/* Progress, styled from the theme's player config */}
+              <div className="tempad-progress">
+                <div
+                  role="progressbar"
+                  aria-label="Loading"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={0}
+                  className="tempad-track"
+                  style={{ background: TRACK }}
+                >
+                  <div ref={barRef} className="tempad-fill" style={{ background: ORANGE }} />
+                </div>
+                <span ref={countRef} className="tempad-count">
+                  000%
+                </span>
+              </div>
+
+              <div className="tempad-sector">
+                <span>/EARTH-616</span>
+                <span>SACRED TIMELINE</span>
+              </div>
+
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/tempad/glyphs.png" alt="" className="tempad-glyphs" />
+
+              <div aria-hidden className="tempad-scan" />
             </div>
-            <div className="text-right">
-              <span className="block text-[#ff9900]/40">VARIANCE FLUX:</span>
-              <span className="text-[#00ffaa] font-bold">0.0000 %</span>
-            </div>
           </div>
-        </div>
 
-        {/* Live System Log Stream */}
-        <div className="text-[11px] text-[#ffb700]/80 h-5 overflow-hidden font-mono">
-          <div ref={logRef} className="truncate tracking-wide text-[#ffd700]/90">
-            &gt; INITIALIZING TEMPORAL DRIVE...
+          <div className="tempad-foot" aria-hidden>
+            <span className="tempad-led" />
+            <span>TVA · TEMPAD</span>
+            <span className="tempad-grille" />
           </div>
         </div>
       </div>

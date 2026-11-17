@@ -1080,3 +1080,262 @@
   transition: border-color 0.6s ease, box-shadow 0.6s ease;
 }
 
+
+/* ── TemPad preloader (assets: public/tempad, from the TVA Classic theme) ── */
+.tempad-shell {
+  position: relative;
+  border-radius: 1.75rem;
+  padding: clamp(0.75rem, 2.4vw, 1.25rem) clamp(0.75rem, 2.4vw, 1.25rem) 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 30%),
+    linear-gradient(160deg, #2b231c, #15100c 60%, #0d0907);
+  border: 1px solid rgba(248, 134, 30, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 30px 80px -20px rgba(0, 0, 0, 0.9),
+    0 0 60px rgba(248, 134, 30, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.tempad-bezel {
+  border-radius: 1rem;
+  padding: clamp(0.35rem, 1.2vw, 0.6rem);
+  background: #050302;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(248, 134, 30, 0.18);
+}
+
+.tempad-screen {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  container-type: inline-size;
+  background-color: #000;
+  background-size: 100% 100%;
+  color: #f8861e;
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  transform-origin: center;
+  text-shadow: 0 0 6px rgba(248, 134, 30, 0.45);
+  animation: tempad-power 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* CRT switch-on: a bright line that opens into the panel. */
+@keyframes tempad-power {
+  0% { transform: scale(0.6, 0.012); filter: brightness(3); }
+  45% { transform: scale(1, 0.02); filter: brightness(2.2); }
+  100% { transform: scale(1, 1); filter: brightness(1); }
+}
+
+.tempad-status {
+  position: absolute;
+  inset: 4.2cqw 5cqw auto 5cqw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 3.4cqw;
+  letter-spacing: 0.18em;
+}
+
+.tempad-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+}
+
+.tempad-icon {
+  width: 3.6cqw;
+  height: 3.6cqw;
+  image-rendering: pixelated;
+}
+
+.tempad-battery {
+  width: 5.4cqw;
+  height: 3.6cqw;
+  image-rendering: pixelated;
+}
+
+.tempad-title {
+  position: absolute;
+  top: 11.5cqw;
+  left: 5cqw;
+  font-size: 3.4cqw;
+  opacity: 0.75;
+  letter-spacing: 0.2em;
+}
+
+.tempad-list {
+  position: absolute;
+  top: 17cqw;
+  left: 3cqw;
+  right: 9cqw;
+  display: grid;
+  gap: 0.6cqw;
+}
+
+.tempad-row {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  height: 7.6cqw;
+  padding: 0 2cqw;
+  font-size: 4.3cqw;
+}
+
+.tempad-row-num {
+  font-size: 3cqw;
+  opacity: 0.6;
+}
+
+.tempad-row-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tempad-row-tick {
+  font-size: 3cqw;
+  opacity: 0;
+}
+
+.tempad-arrow {
+  height: 4.2cqw;
+  width: auto;
+  image-rendering: pixelated;
+  opacity: 0.55;
+}
+
+/* The highlight bar from the theme (itemSelectedBackground): solid orange, black text. */
+.tempad-row[data-state="active"] {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 14px rgba(248, 134, 30, 0.55);
+}
+
+.tempad-row[data-state="active"] .tempad-arrow {
+  filter: brightness(0);
+  opacity: 1;
+}
+
+.tempad-row[data-state="done"] {
+  opacity: 0.55;
+}
+
+.tempad-row[data-state="done"] .tempad-row-tick {
+  opacity: 1;
+}
+
+.tempad-row[data-state="done"] .tempad-arrow {
+  opacity: 0;
+}
+
+.tempad-progress {
+  position: absolute;
+  left: 5cqw;
+  right: 9cqw;
+  top: 55.5cqw;
+  display: flex;
+  align-items: center;
+  gap: 2.6cqw;
+}
+
+.tempad-track {
+  flex: 1;
+  height: 2cqw;
+  overflow: hidden;
+  border: 1px solid rgba(248, 134, 30, 0.35);
+}
+
+.tempad-fill {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  box-shadow: 0 0 10px rgba(248, 134, 30, 0.8);
+}
+
+.tempad-count {
+  min-width: 9cqw;
+  text-align: right;
+  font-size: 3.6cqw;
+  font-variant-numeric: tabular-nums;
+}
+
+.tempad-sector {
+  position: absolute;
+  right: 5cqw;
+  bottom: 4cqw;
+  display: grid;
+  justify-items: end;
+  font-size: 3.4cqw;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+}
+
+.tempad-glyphs {
+  position: absolute;
+  right: 3.6cqw;
+  top: 19cqw;
+  height: 36cqw;
+  width: auto;
+  image-rendering: pixelated;
+  opacity: 0.9;
+}
+
+/* Scanlines + a slow refresh band, kept inside the glass. */
+.tempad-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.28) 50%) 0 0 / 100% 3px,
+    radial-gradient(120% 90% at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.tempad-scan::after {
+  content: "";
+  position: absolute;
+  inset: -20% 0 auto;
+  height: 20%;
+  background: linear-gradient(rgba(248, 134, 30, 0), rgba(248, 134, 30, 0.08), rgba(248, 134, 30, 0));
+  animation: tempad-refresh 2.4s linear infinite;
+}
+
+@keyframes tempad-refresh {
+  to { transform: translateY(600%); }
+}
+
+.tempad-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: clamp(2.5rem, 7vw, 3.25rem);
+  padding: 0 0.5rem;
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.6rem, 1.6vw, 0.72rem);
+  letter-spacing: 0.32em;
+  color: rgba(248, 134, 30, 0.55);
+}
+
+.tempad-led {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #f8861e;
+  box-shadow: 0 0 8px #f8861e;
+  animation: tempad-led 1s steps(2) infinite;
+}
+
+@keyframes tempad-led {
+  50% { opacity: 0.25; }
+}
+
+.tempad-grille {
+  margin-left: auto;
+  width: clamp(3rem, 12vw, 5rem);
+  height: 0.6rem;
+  background: repeating-linear-gradient(90deg, rgba(248, 134, 30, 0.35) 0 2px, transparent 2px 6px);
+  border-radius: 2px;
+}
