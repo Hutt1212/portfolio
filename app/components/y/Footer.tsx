@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowUpRight, Copy, Check, ArrowUp } from "lucide-react"
 import { useLanguage } from "@/app/hooks/useLanguage"
@@ -14,20 +14,31 @@ export default function Footer() {
   const { openShowcase } = useTimelineTheme()
   const vi = language === "vi"
   const [copied, setCopied] = useState(false)
-  const [showFloatingTop, setShowFloatingTop] = useState(false)
+  const [scrolledDown, setScrolledDown] = useState(false)
+  const [footerInView, setFooterInView] = useState(false)
+  const footerRef = useRef<HTMLElement>(null)
+  // Hidden near the top, and hidden once the footer is on screen — there it
+  // sat on top of the email / copy buttons on phones.
+  const showFloatingTop = scrolledDown && !footerInView
 
   // Floating Back to Top Button visibility listener
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 350) {
-        setShowFloatingTop(true)
-      } else {
-        setShowFloatingTop(false)
-      }
-    }
+    const handleScroll = () => setScrolledDown(window.scrollY > 350)
     window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    const footer = footerRef.current
+    const io = footer
+      ? new IntersectionObserver(([entry]) => setFooterInView(entry.isIntersecting), {
+          rootMargin: "0px 0px -15% 0px",
+        })
+      : null
+    if (footer && io) io.observe(footer)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      io?.disconnect()
+    }
   }, [])
 
   const handleCopyEmail = (e: React.MouseEvent) => {
@@ -45,7 +56,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="relative z-10 overflow-hidden border-t border-[#ff8c00]/30 bg-[#050302] text-[#f4ecd8]">
+      <footer ref={footerRef} className="relative z-10 overflow-hidden border-t border-[#ff8c00]/30 bg-[#050302] text-[#f4ecd8]">
         {/* Cinematic Loki Hand Background Artwork - Covers full footer from top-right down to the bottom */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none">
           <Image
@@ -179,6 +190,8 @@ export default function Footer() {
         data-cursor
         onClick={scrollToTop}
         aria-label="Back to top"
+        tabIndex={showFloatingTop ? 0 : -1}
+        aria-hidden={!showFloatingTop}
         className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#ff8c00]/60 bg-[#0e0a05]/90 text-xs font-mono text-[#ffd700] shadow-[0_0_25px_rgba(255,140,0,0.35)] backdrop-blur-md transition-all duration-300 hover:border-[#ffd700] hover:bg-[#1a0f06] hover:scale-105 active:scale-95 ${
           showFloatingTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
         }`}

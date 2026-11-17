@@ -394,6 +394,66 @@
   transform-style: preserve-3d;
 }
 
+/* Name above the stream band, pitch + CTAs below it. Rows are viewport-based
+   because the stream is (it is drawn at 52% of the viewport height). */
+.hero-scene {
+  align-items: stretch;
+}
+
+.hero-inner {
+  display: grid;
+  min-height: 100svh;
+  grid-template-rows: 41svh 21svh auto;
+}
+
+.hero-top {
+  align-self: end;
+  padding-top: 5.5rem; /* clears the fixed nav */
+}
+
+.hero-bottom {
+  grid-row: 3;
+  padding-bottom: 2.5rem;
+}
+
+.hero-bottom .t-lede {
+  text-shadow: 0 2px 12px hsl(var(--tl-void) / 0.9);
+}
+
+/* On phones the third band has no room left for the scroll hint. */
+@media (max-width: 767px) and (max-height: 760px) {
+  .hero-scroll {
+    display: none;
+  }
+}
+
+/* Short viewports (landscape phones): not enough height for two bands, so
+   fall back to one centred column with a scrim behind the copy. */
+@media (max-height: 560px) {
+  .hero-inner {
+    grid-template-rows: auto auto;
+    align-content: center;
+  }
+
+  .hero-top {
+    padding-top: 6rem;
+  }
+
+  .hero-bottom {
+    grid-row: 2;
+    margin-top: 1.75rem;
+    position: relative;
+  }
+
+  .hero-bottom::before {
+    content: "";
+    position: absolute;
+    inset: -1.5rem -2rem;
+    z-index: -1;
+    background: radial-gradient(ellipse at 30% 50%, hsl(var(--tl-void) / 0.85), hsl(var(--tl-void) / 0) 75%);
+  }
+}
+
 /* Nav sits on the dark scene on the landing page, so it flips to light-on-dark. */
 .on-dark .pill {
   border-color: hsl(40 30% 94% / 0.45);
@@ -489,12 +549,20 @@
   );
 }
 
+/* The stack sits on a panel: 21 small chips over the stream's brightest band
+   were unreadable with only the soft radial scrim. TemPad-style frame. */
 .warp-grid {
-  margin-top: 3rem;
+  margin-top: 2.25rem;
   display: grid;
   gap: 2.5rem 2rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  transform-style: preserve-3d;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid hsl(var(--tl-glow) / 0.28);
+  border-radius: 1.25rem;
+  background: hsl(var(--tl-void) / 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 40px hsl(var(--tl-glow) / 0.08), inset 0 1px 0 hsl(40 30% 94% / 0.06);
 }
 
 @media (min-width: 1100px) {
@@ -530,7 +598,7 @@
   padding: 0.4rem 0.85rem;
   border: 1px solid hsl(40 30% 94% / 0.28);
   border-radius: var(--radius);
-  background: hsl(var(--tl-void) / 0.45);
+  background: hsl(var(--tl-void) / 0.6);
   color: hsl(40 30% 94%);
   font-size: 0.8rem;
   font-weight: 600;
