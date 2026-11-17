@@ -147,9 +147,10 @@ export default function Footer() {
 
           {/* Huge Statement Signature Name Display - Preserving Vietnamese diacritics */}
           <div className="pt-16 md:pt-24 pb-4 overflow-visible">
-            <h1 className="block text-4xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9.5rem] font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-[#ffd700] to-[#ff9900] select-none pt-6 pb-2 !leading-[1.12] drop-shadow-[0_8px_40px_rgba(0,0,0,0.95)] overflow-visible">
+            {/* Not an h1: the page already has one (the hero). This is a sign-off. */}
+            <p className="block text-4xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9.5rem] font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-[#ffd700] to-[#ff9900] select-none pt-6 pb-2 !leading-[1.12] drop-shadow-[0_8px_40px_rgba(0,0,0,0.95)] overflow-visible">
               {t.name}
-            </h1>
+            </p>
           </div>
         </div>
       </footer>

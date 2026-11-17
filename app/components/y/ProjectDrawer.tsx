@@ -133,28 +133,34 @@ export default function ProjectDrawer({
           so its own overflow can scroll natively. */}
       <div ref={panel} className="drawer-panel no-scrollbar" data-lenis-prevent>
         <div className="drawer-inner">
-          <div className="flex items-start justify-between gap-6">
-            <span className="t-display text-[clamp(2.5rem,6vw,4rem)] leading-none text-muted-foreground/35">
-              {String(index + 1).padStart(2, "0")}
+          {/* TemPad status bar */}
+          <div className="drawer-status">
+            <span>
+              TEMPAD // {vi ? "HỒ SƠ" : "FILE"} {String(index + 1).padStart(2, "0")}
             </span>
             <button type="button" onClick={close} className="drawer-close" aria-label={vi ? "Đóng" : "Close"}>
-              <X size={18} />
+              ESC <X size={14} aria-hidden />
             </button>
           </div>
 
-          <div ref={stage} className="frame mt-6 aspect-[16/10]">
+          <div ref={stage} className="frame drawer-shot mt-5 aspect-[16/10]">
             <ShotImage
               key={shots[shot]}
               src={shots[shot]}
               alt={project.title}
               fill
               sizes="(max-width: 768px) 92vw, 44rem"
-              className="object-cover"
+              className="object-cover object-top"
             />
+            {shots.length > 1 && (
+              <span className="drawer-shot-tag" aria-hidden>
+                {vi ? "ẢNH" : "SHOT"} {String(shot + 1).padStart(2, "0")} / {String(shots.length).padStart(2, "0")}
+              </span>
+            )}
           </div>
 
           {shots.length > 1 && (
-            <div className="mt-3 flex gap-3">
+            <div className="drawer-thumbs">
               {shots.map((src, i) => (
                 <button
                   key={src}
@@ -163,87 +169,72 @@ export default function ProjectDrawer({
                   onClick={() => setShot(i)}
                   aria-label={`${vi ? "Ảnh" : "Image"} ${i + 1}`}
                   aria-current={i === shot}
-                  className={`frame relative aspect-[16/10] w-24 shrink-0 transition-opacity duration-300 ${
-                    i === shot ? "opacity-100" : "opacity-45 hover:opacity-80"
-                  }`}
+                  className={`frame drawer-thumb ${i === shot ? "is-active" : ""}`}
                 >
-                  <ShotImage src={src} alt="" fill sizes="6rem" className="object-cover" />
+                  <ShotImage src={src} alt="" fill sizes="7rem" className="object-cover object-top" />
                 </button>
               ))}
             </div>
           )}
 
-          <h2 className="t-display t-big mt-8">{headline.trim()}</h2>
-          {subline && <p className="t-label mt-3 text-muted-foreground">{subline}</p>}
+          <h2 className="t-display drawer-title">{headline.trim()}</h2>
+          {subline && <p className="drawer-subline">{subline}</p>}
 
-          <p className="mt-6 leading-relaxed text-muted-foreground">
-            {project.longDescription ?? project.description}
-          </p>
+          <p className="drawer-body">{project.longDescription ?? project.description}</p>
 
           {project.highlights && project.highlights.length > 0 && (
-            <div className="mt-9">
-              <span className="t-label text-muted-foreground">{t.projectDetail.highlights}</span>
-              <ul className="mt-5 flex flex-col gap-4">
-                {project.highlights.slice(0, 3).map((h) => (
-                  <li key={h.title} className="border-t-[1.5px] border-foreground/[0.14] pt-3">
-                    <h3 className="font-medium">{h.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                      {h.description ?? h.desc}
-                    </p>
+            <section className="drawer-section">
+              <h3 className="drawer-label">&gt; {t.projectDetail.highlights}</h3>
+              <ol className="drawer-highlights">
+                {project.highlights.slice(0, 3).map((h, i) => (
+                  <li key={h.title}>
+                    <span className="drawer-hl-num" aria-hidden>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <h4 className="drawer-hl-title">{h.title}</h4>
+                      <p className="drawer-hl-desc">{h.description ?? h.desc}</p>
+                    </div>
                   </li>
                 ))}
-              </ul>
-            </div>
+              </ol>
+            </section>
           )}
 
           {project.impact && project.impact.length > 0 && (
-            <div className="mt-9">
-              <span className="t-label text-muted-foreground">{t.projectDetail.impact}</span>
-              <ul className="mt-4 flex flex-col gap-2">
+            <section className="drawer-section">
+              <h3 className="drawer-label">&gt; {t.projectDetail.impact}</h3>
+              <ul className="drawer-impact">
                 {project.impact.map((item) => (
-                  <li key={item} className="text-sm leading-relaxed text-muted-foreground">
-                    {item}
-                  </li>
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </div>
+            </section>
           )}
 
-          <div className="mt-9">
-            <span className="t-label text-muted-foreground">{t.projectActions.techStack}</span>
-            <div className="mt-4 flex flex-wrap gap-2">
+          <section className="drawer-section">
+            <h3 className="drawer-label">&gt; {t.projectActions.techStack}</h3>
+            <ul className="drawer-tech">
               {project.tech.map((tech) => (
-                <span key={tech} className="pill">
+                <li key={tech} className="warp-chip">
                   {tech}
-                </span>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
 
           {(hasLink(project.link) || hasLink(project.github)) && (
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="drawer-actions">
               {hasLink(project.link) && (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  data-cursor
-                  className="pill pill-solid"
-                >
+                <a href={project.link} target="_blank" rel="noreferrer" data-cursor className="drawer-btn is-solid">
                   {t.projectActions.visit}
-                  <ExternalLink size={15} />
+                  <ExternalLink size={14} aria-hidden />
                 </a>
               )}
               {hasLink(project.github) && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  data-cursor
-                  className="pill"
-                >
+                <a href={project.github} target="_blank" rel="noreferrer" data-cursor className="drawer-btn">
                   {t.projectActions.github}
-                  <Github size={15} />
+                  <Github size={14} aria-hidden />
                 </a>
               )}
             </div>
