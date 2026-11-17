@@ -1,35 +1,19 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { gsap, ScrollTrigger } from "@/lib/gsap"
+import { useRef } from "react"
+import { gsap } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import { useTimelineTheme } from "@/app/context/TimelineThemeContext"
-import { INTRO_DONE } from "./Loader"
+import { useAppReady } from "@/app/hooks/useAppReady"
 
 const EMAIL = "nguyenminhhuy01234@gmail.com"
-
-function useIntroDone() {
-  const [done, setDone] = useState(false)
-
-  useEffect(() => {
-    if ((window as unknown as { __yIntroDone?: boolean }).__yIntroDone) {
-      setDone(true)
-      return
-    }
-    const on = () => setDone(true)
-    window.addEventListener(INTRO_DONE, on)
-    return () => window.removeEventListener(INTRO_DONE, on)
-  }, [])
-
-  return done
-}
 
 export default function Hero() {
   const { t } = useLanguage()
   const s = t.site
   const root = useRef<HTMLElement>(null)
-  const introDone = useIntroDone()
+  const introDone = useAppReady()
   const { setTheme, openShowcase } = useTimelineTheme()
 
   useIsomorphicLayoutEffect(() => {

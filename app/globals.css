@@ -226,6 +226,39 @@
   }
 }
 
+/* Loading state for screenshots (see ShotImage). */
+.frame-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    hsl(var(--foreground) / 0.08) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: frame-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes frame-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+
+.shot-img {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.shot-img.is-loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame-shimmer { animation: none; }
+  .shot-img { transition: none; }
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -598,7 +631,7 @@
 }
 
 .showcase-art {
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
 }
 
 .showcase-card:hover .showcase-art,

@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import Image from "next/image"
+import ShotImage from "./ShotImage"
 import { X, ExternalLink, Github } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
@@ -143,7 +143,7 @@ export default function ProjectDrawer({
           </div>
 
           <div ref={stage} className="frame mt-6 aspect-[16/10]">
-            <Image
+            <ShotImage
               key={shots[shot]}
               src={shots[shot]}
               alt={project.title}
@@ -167,7 +167,7 @@ export default function ProjectDrawer({
                     i === shot ? "opacity-100" : "opacity-45 hover:opacity-80"
                   }`}
                 >
-                  <Image src={src} alt="" fill sizes="6rem" className="object-cover" />
+                  <ShotImage src={src} alt="" fill sizes="6rem" className="object-cover" />
                 </button>
               ))}
             </div>

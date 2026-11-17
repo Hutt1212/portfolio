@@ -3,16 +3,30 @@
 import React, { useRef, useState } from "react"
 import { gsap } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
+import { markAppReady } from "@/lib/app-ready"
+import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
 
-export const INTRO_DONE = "y:intro-done"
 const SEEN_KEY = "tva:tempad-seen"
 
-function announce() {
-  if (typeof window !== "undefined") {
-    ;(window as unknown as { __yIntroDone?: boolean }).__yIntroDone = true
-    window.dispatchEvent(new Event(INTRO_DONE))
+/** Storage can throw (private mode, blocked site data) — never let it break the intro. */
+function readSeen() {
+  try {
+    return sessionStorage.getItem(SEEN_KEY) === "1"
+  } catch {
+    return false
   }
 }
+
+function writeSeen() {
+  try {
+    sessionStorage.setItem(SEEN_KEY, "1")
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Wheel / touch input is swallowed while the curtain is down, so the page cannot drift underneath it. */
+const block = (e: Event) => e.preventDefault()
 
 export default function Loader() {
   const root = useRef<HTMLDivElement>(null)
@@ -29,17 +43,33 @@ export default function Loader() {
     const el = root.current
     if (!el) return
 
-    const seen = sessionStorage.getItem(SEEN_KEY) === "1"
+    const seen = readSeen()
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     if (reduced) {
-      announce()
+      markAppReady()
       setVisible(false)
       return
     }
 
-    sessionStorage.setItem(SEEN_KEY, "1")
-    document.body.style.overflow = "hidden"
+    writeSeen()
+
+    // The intro always lands on the hero: drop any restored scroll position and
+    // freeze scrolling (Lenis included) until the curtain lifts.
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual"
+    window.scrollTo(0, 0)
+    lockScroll()
+    window.addEventListener("wheel", block, { passive: false })
+    window.addEventListener("touchmove", block, { passive: false })
+
+    let released = false
+    const release = () => {
+      if (released) return
+      released = true
+      window.removeEventListener("wheel", block)
+      window.removeEventListener("touchmove", block)
+      unlockScroll()
+    }
 
     const logs = [
       "INITIALIZING TEMPORAL DRIVE...",
@@ -50,13 +80,12 @@ export default function Loader() {
     ]
 
     const finish = () => {
-      document.body.style.overflow = ""
-      announce()
+      release()
+      markAppReady()
       setVisible(false)
     }
 
-    // Safety failsafe
-    const safety = window.setTimeout(finish, seen ? 1800 : 3000)
+    let safety = 0
 
     const counter = { val: 0 }
     const duration = seen ? 0.7 : 1.3
@@ -81,6 +110,7 @@ export default function Loader() {
           }
           if (barRef.current) {
             barRef.current.style.width = `${v}%`
+            barRef.current.parentElement?.setAttribute("aria-valuenow", String(v))
           }
           if (logRef.current) {
             const stepIdx = Math.min(logs.length - 1, Math.floor((v / 100) * logs.length))
@@ -133,8 +163,11 @@ export default function Loader() {
         )
         // Disappear the TemPad UI behind the golden flash
         .set(padRef.current, { autoAlpha: 0 })
-        // Announce Hero ready underneath
-        .call(() => announce())
+        // Hand over to the Hero underneath and give scrolling back
+        .call(() => {
+          release()
+          markAppReady()
+        })
         // Step 4: Golden Timedoor light veil smoothly dissolves, revealing the Sacred Timeline!
         .to(flashRef.current, {
           autoAlpha: 0,
@@ -150,11 +183,17 @@ export default function Loader() {
           },
           "-=0.4"
         )
+
+      // Failsafe in case the timeline never completes (e.g. the tab starts in
+      // the background and rAF is paused). It is derived from the real length
+      // of the timeline — a fixed guess used to fire mid-flash and cut the
+      // portal off abruptly on return visits.
+      safety = window.setTimeout(finish, tl.duration() * 1000 + 1500)
     }, el)
 
     return () => {
       window.clearTimeout(safety)
-      document.body.style.overflow = ""
+      release()
       ctx.revert()
     }
   }, [])
@@ -164,24 +203,40 @@ export default function Loader() {
   return (
     <div
       ref={root}
+      role="status"
+      aria-live="polite"
+      aria-label="Loading"
       className="fixed inset-0 z-[999] flex items-center justify-center bg-[#070402] px-4 select-none font-mono text-[#ffd700] overflow-hidden"
     >
       {/* Background CRT Scanlines */}
-      <div className="absolute inset-0 crt-scanlines opacity-90 pointer-events-none z-10" />
+      <div aria-hidden className="absolute inset-0 crt-scanlines opacity-90 pointer-events-none z-10" />
 
       {/* Retro TVA Ambient Grid */}
-      <div className="absolute inset-0 tva-bg-grid opacity-40 pointer-events-none z-0" />
+      <div aria-hidden className="absolute inset-0 tva-bg-grid opacity-40 pointer-events-none z-0" />
 
       {/* Iconic TVA Timedoor Portal (Expands to engulf the screen) */}
       <div
         ref={doorRef}
-        className="absolute w-72 h-[34rem] rounded-2xl pointer-events-none opacity-0 z-40 bg-gradient-to-b from-[#ffffff] via-[#ffb700] to-[#ff7700] shadow-[0_0_120px_#ff8c00,0_0_220px_#ffd700,inset_0_0_60px_#ffffff]"
+        aria-hidden
+        className="absolute w-72 h-[34rem] max-h-[80svh] pointer-events-none opacity-0 z-40"
         style={{ transformOrigin: "center center" }}
-      />
+      >
+        {/* Halo as a gradient, not a box-shadow: Chrome clips very large blurred
+            shadows on a scaled layer, which showed up as a hard rectangle. */}
+        <div
+          className="absolute -inset-40"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,215,0,0.7), rgba(255,140,0,0.35) 45%, rgba(255,140,0,0) 100%)",
+          }}
+        />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-[#ffffff] via-[#ffb700] to-[#ff7700] shadow-[inset_0_0_60px_#ffffff]" />
+      </div>
 
       {/* Fullscreen Golden Temporal Energy Veil (Ensures 100% seamless full-screen coverage) */}
       <div
         ref={flashRef}
+        aria-hidden
         className="fixed inset-0 pointer-events-none opacity-0 z-50 bg-gradient-to-b from-[#ffe79a] via-[#ff9900] to-[#ffd700] shadow-[inset_0_0_100px_#ffffff]"
       />
 
@@ -211,10 +266,17 @@ export default function Loader() {
           </div>
 
           {/* Glowing Energy Bar */}
-          <div className="w-full h-2.5 rounded-full bg-[#1a0f05] border border-[#ff8c00]/40 overflow-hidden p-0.5">
+          <div
+            role="progressbar"
+            aria-label="Loading"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={0}
+            className="w-full h-2.5 rounded-full bg-[#1a0f05] border border-[#ff8c00]/40 overflow-hidden p-0.5"
+          >
             <div
               ref={barRef}
-              className="h-full rounded-full bg-gradient-to-r from-[#ff6a00] via-[#ffb700] to-[#ffd700] shadow-[0_0_12px_#ff8c00] transition-all duration-75"
+              className="h-full rounded-full bg-gradient-to-r from-[#ff6a00] via-[#ffb700] to-[#ffd700] shadow-[0_0_12px_#ff8c00]"
               style={{ width: "0%" }}
             />
           </div>
