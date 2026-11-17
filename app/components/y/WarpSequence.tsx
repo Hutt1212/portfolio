@@ -56,6 +56,18 @@ export default function WarpSequence({ beats, label }: Props) {
       const stepDuration = 1.0
       const totalSteps = beatEls.length
 
+      // The stream's theme is derived from where the playhead is, in either
+      // direction. It used to be a `tl.call` at each beat, but a timeline
+      // callback fires again when scrubbing backwards past it — so scrolling
+      // up out of the contact beat left its red theme on the skills beat.
+      let lastBeat = -1
+      const syncTheme = (progress: number) => {
+        const beat = Math.min(totalSteps - 1, Math.floor(progress * totalSteps))
+        if (beat === lastBeat) return
+        lastBeat = beat
+        setTheme(BEAT_THEMES[beat] || "multiverse")
+      }
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: el,
@@ -65,16 +77,16 @@ export default function WarpSequence({ beats, label }: Props) {
           scrub: 0.4,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onLeaveBack: () => setTheme("sacred"), // Return to Sacred Gold when at Hero
+          onUpdate: (self) => syncTheme(self.progress),
+          onLeaveBack: () => {
+            lastBeat = -1
+            setTheme("sacred") // Return to Sacred Gold when at Hero
+          },
         },
       })
 
       beatEls.forEach((beat, i) => {
         const at = i * stepDuration
-        const beatTheme = BEAT_THEMES[i] || "multiverse"
-
-        // Trigger background theme morph at each beat
-        tl.call(() => setTheme(beatTheme), [], at)
 
         // Smooth 2D Scale + Fade + Glide
         tl.fromTo(
@@ -137,19 +149,41 @@ export default function WarpSequence({ beats, label }: Props) {
                   {beat.title}
                 </span>
 
-                <div className="warp-grid">
-                  {beat.groups.map((g) => (
-                    <div key={g.label} className="warp-group">
-                      <span className="warp-group-label">{g.label}</span>
-                      <ul className="warp-chips">
-                        {g.items.map((item) => (
-                          <li key={item} className="warp-chip">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                {/* The stack on a TemPad screen: status bar, one menu bar per
+                    group, modules as chips. */}
+                <div className="skillpad">
+                  <div className="skillpad-status" aria-hidden>
+                    <span>TEMPAD // TOOLS</span>
+                    <span className="skillpad-status-right">
+                      <span>
+                        {String(beat.groups.reduce((n, g) => n + g.items.length, 0)).padStart(2, "0")} MODULES
+                      </span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/tempad/playing.png" alt="" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/tempad/bt4.png" alt="" className="skillpad-battery" />
+                    </span>
+                  </div>
+
+                  <div className="warp-grid">
+                    {beat.groups.map((g, gi) => (
+                      <div key={g.label} className="warp-group">
+                        <span className="warp-group-label">
+                          <span className="warp-group-num">{String(gi + 1).padStart(2, "0")}</span>
+                          <span>{g.label}</span>
+                        </span>
+                        <ul className="warp-chips">
+                          {g.items.map((item) => (
+                            <li key={item} className="warp-chip">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="tempad-scan" aria-hidden />
                 </div>
               </div>
             )

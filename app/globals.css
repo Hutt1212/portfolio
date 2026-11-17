@@ -564,20 +564,64 @@
   );
 }
 
-/* The stack sits on a panel: 21 small chips over the stream's brightest band
-   were unreadable with only the soft radial scrim. TemPad-style frame. */
-.warp-grid {
+/* The stack sits on a TemPad screen: 21 small chips over the stream's
+   brightest band were unreadable with only the soft radial scrim.
+   The grid is drawn in CSS rather than with the theme's wallpaper image: the
+   panel is far wider than the image's 4:3, and stretching it turned the
+   squares into bars. Colours follow the TVA Classic theme config. */
+.skillpad {
+  position: relative;
+  overflow: hidden;
   margin-top: 2.25rem;
+  padding: clamp(1rem, 2.6vw, 2rem) clamp(1rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid #f8861e;
+  border-radius: 0.9rem;
+  /* Opaque: a backdrop blur over the animated stream would be recomputed every frame. */
+  background-color: #050302;
+  background-image:
+    linear-gradient(rgba(248, 134, 30, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(248, 134, 30, 0.13) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+  background-position: -1px -1px;
+  box-shadow: inset 0 0 50px rgba(248, 134, 30, 0.3), 0 0 40px rgba(248, 134, 30, 0.14);
+  color: #f8861e;
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-weight: 300;
+  text-align: left;
+  text-shadow: 0 0 6px rgba(248, 134, 30, 0.45);
+}
+
+.skillpad-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: clamp(1rem, 2.2vw, 1.75rem);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+}
+
+.skillpad-status-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.skillpad-status img {
+  height: 0.9rem;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+.skillpad-status .skillpad-battery {
+  height: 0.8rem;
+}
+
+.warp-grid {
+  position: relative;
   display: grid;
-  gap: 2.5rem 2rem;
+  gap: 1.75rem 1.5rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  border: 1px solid hsl(var(--tl-glow) / 0.28);
-  border-radius: 1.25rem;
-  /* Opaque enough to read without backdrop-filter: a blur over the animated
-     stream would be recomputed on every frame. */
-  background: hsl(var(--tl-void) / 0.86);
-  box-shadow: 0 0 40px hsl(var(--tl-glow) / 0.08), inset 0 1px 0 hsl(40 30% 94% / 0.06);
 }
 
 @media (min-width: 1100px) {
@@ -586,44 +630,84 @@
   }
 }
 
+/* Each group spans two rows of the panel grid via subgrid, so every heading
+   bar in a row gets the same height even when one label wraps — otherwise the
+   chips under a two-line heading start lower than their neighbours. */
 .warp-group {
   transform-style: preserve-3d;
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  align-content: start;
 }
 
+/* Group heading = the theme's selected-item bar: solid orange, black text. */
 .warp-group-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.65rem;
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 14px rgba(248, 134, 30, 0.4);
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: hsl(var(--tl-dim));
-  opacity: 0.75;
+}
+
+.warp-group-num {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .warp-group-label {
+    letter-spacing: 0.1em;
+    text-align: left;
+    line-height: 1.35;
+  }
+
+  .skillpad-status {
+    letter-spacing: 0.12em;
+  }
 }
 
 .warp-chips {
-  margin-top: 0.9rem;
+  margin-top: 0.85rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
+  gap: 0.45rem;
+  justify-content: flex-start;
+  /* The subgrid row is as tall as the longest group; without these the
+     wrapped lines stretch to fill it and every chip grows tall. */
+  align-self: start;
+  align-content: flex-start;
   transform-style: preserve-3d;
 }
 
 .warp-chip {
-  padding: 0.4rem 0.85rem;
-  border: 1px solid hsl(40 30% 94% / 0.28);
-  border-radius: var(--radius);
-  background: hsl(var(--tl-void) / 0.6);
-  color: hsl(40 30% 94%);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(248, 134, 30, 0.45);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #f8861e;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
   white-space: nowrap;
+  /* Hard switch like the device's menu, no fade. */
+  transition: background-color 0.15s steps(2), color 0.15s steps(2);
   /* Deliberately no `will-change`: there are 21 of these, and a standing hint
      holds 21 compositor layers alive for the whole page, not just while the
      beat plays. GSAP's force3D promotes them for the duration of the tween,
      which is the part that actually needs a layer. */
   backface-visibility: hidden;
+}
+
+.warp-chip:hover {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
 }
 
 /* No pin, no depth: the beats become an ordinary stacked section that reveals
