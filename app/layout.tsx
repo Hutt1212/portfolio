@@ -8,6 +8,7 @@ import Loader from "./components/y/Loader"
 import Cursor from "./components/y/Cursor"
 import Nav from "./components/y/Nav"
 import Footer from "./components/y/Footer"
+import TempadHud from "./components/y/TempadHud"
 import { Analytics } from "@vercel/analytics/next"
 import type { Metadata, Viewport } from "next"
 import type React from "react"
@@ -63,6 +64,7 @@ export default function RootLayout({
               <Nav />
               <main className="relative">{children}</main>
               <Footer />
+              <TempadHud />
             </SmoothScroll>
           </TimelineThemeProvider>
         </LanguageProvider>

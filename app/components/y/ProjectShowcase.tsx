@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import ShotImage from "./ShotImage"
-import { X } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
@@ -31,11 +30,16 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
   const { t, language } = useLanguage()
   const vi = language === "vi"
   const root = useRef<HTMLDivElement>(null)
-  const grid = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const [selected, setSelected] = useState<number | null>(null)
+  const [active, setActive] = useState(0)
   const closing = useRef(false)
 
   const projects: DrawerProject[] = t.portfolio.projects
+  const current = projects[active]
+  const [headline, ...rest] = current.title.split("–")
+  const subline = rest.join("–").trim()
+  const total = String(projects.length).padStart(2, "0")
 
   const close = () => {
     if (closing.current) return
@@ -49,19 +53,41 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
   useIsomorphicLayoutEffect(() => {
     lockScroll()
 
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // fromTo, not from: `from` animates towards whatever it measures as the
-      // current value, so a mis-measure leaves the cards stuck at autoAlpha 0.
-      // The end state here is stated outright and cannot be inferred wrong.
+    // Warm the cache so hovering through the list swaps the preview instantly.
+    projects.forEach((p) => {
+      const img = new window.Image()
+      img.src = p.image
+    })
+
+    // Focus the first file so the keyboard works straight away. It has to wait
+    // until the dialog is visible: GSAP holds it at visibility:hidden while
+    // its opacity is 0, and a hidden element cannot take focus.
+    const focusFirst = () =>
+      listRef.current?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true })
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      focusFirst()
+    } else {
+      // fromTo, not from: the end state is stated outright and cannot be
+      // inferred wrong from a mid-animation measurement.
       gsap
         .timeline()
-        .fromTo(root.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 })
+        .fromTo(root.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 })
+        // The device "switches on": a CRT line that opens into the panel.
         .fromTo(
-          ".showcase-card",
-          { y: 40, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, stagger: 0.09, duration: 0.7 },
-          0.1
+          ".casefile-screen",
+          { scaleY: 0.015, scaleX: 0.7, filter: "brightness(2.6)" },
+          { scaleY: 1, scaleX: 1, filter: "brightness(1)", duration: 0.55, ease: "expo.out" },
+          0.05
         )
+        .fromTo(
+          ".casefile-row, .casefile-reveal",
+          { autoAlpha: 0, x: -10 },
+          { autoAlpha: 1, x: 0, stagger: 0.06, duration: 0.3, ease: "steps(3)" },
+          0.35
+        )
+        // After the rows themselves have been revealed (they start hidden too).
+        .call(focusFirst)
     }
 
     return () => unlockScroll()
@@ -69,13 +95,40 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // While the drawer is open it owns Escape; this layer only closes when
-      // it is the top one.
-      if (e.key === "Escape" && selected === null) close()
+      // While the drawer is open it owns the keyboard; this layer only reacts
+      // when it is the top one.
+      if (selected !== null) return
+      if (e.key === "Escape") return close()
+
+      // ↑ / ↓ walk the menu like the device's wheel, wherever focus is; focus
+      // follows the highlight so Enter opens it.
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault()
+        const next = (active + (e.key === "ArrowDown" ? 1 : -1) + projects.length) % projects.length
+        setActive(next)
+        listRef.current?.querySelectorAll<HTMLButtonElement>("button")[next]?.focus({ preventScroll: true })
+      }
     }
     document.addEventListener("keydown", onKey)
     return () => document.removeEventListener("keydown", onKey)
   })
+
+  /**
+   * Touch has no hover: the first tap previews a file, the second opens it.
+   * Whether the row was already highlighted is read at pointerdown — by the
+   * time `click` fires, the tap's own focus event has highlighted it.
+   */
+  const wasActive = useRef(false)
+  const touch = useRef(false)
+  const onRowPointerDown = (e: React.PointerEvent, i: number) => {
+    touch.current = e.pointerType !== "mouse"
+    wasActive.current = i === active
+  }
+  const onRowClick = (i: number) => {
+    setActive(i)
+    if (touch.current && !wasActive.current) return
+    setSelected(i)
+  }
 
   return (
     <>
@@ -90,67 +143,123 @@ function ShowcaseContent({ onClose }: { onClose: () => void }) {
 
         {/* See ProjectDrawer: a stopped Lenis blocks wheel events everywhere, so
             any overlay that scrolls itself has to opt out. */}
-        <div
-          ref={grid}
-          data-lenis-prevent
-          className={`showcase-stage ${selected !== null ? "is-dimmed" : ""}`}
-        >
-          <div className="shell flex items-start justify-between gap-6">
-            <div>
-              <span className="t-label text-[hsl(var(--tl-glow))]">{t.site.selected}</span>
-              <h2 className="t-display t-huge mt-3">{t.portfolio.title}</h2>
-              <p className="mt-4 max-w-[46ch] text-[hsl(var(--tl-dim))]">
-                {vi ? "Chọn một dự án để xem chi tiết." : "Pick a project to see the detail."}
-              </p>
+        <div data-lenis-prevent className={`showcase-stage ${selected !== null ? "is-dimmed" : ""}`}>
+          <div className="tempad casefile">
+            <div className="tempad-shell">
+              <div className="tempad-bezel">
+                <div className="casefile-screen" style={{ backgroundImage: "url(/tempad/screen.png)" }}>
+                  {/* Status bar */}
+                  <div className="casefile-status">
+                    <span>
+                      <span className="casefile-brand">TEMPAD // </span>
+                      {vi ? "HỒ SƠ DỰ ÁN" : "CASE FILES"}
+                    </span>
+                    <span className="casefile-status-icons">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/tempad/playing.png" alt="" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/tempad/bluetooth.png" alt="" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/tempad/bt4.png" alt="" className="casefile-battery" />
+                      <button type="button" onClick={close} className="casefile-close" aria-label={vi ? "Đóng" : "Close"}>
+                        ESC ✕
+                      </button>
+                    </span>
+                  </div>
+
+                  {/* Menu */}
+                  <div className="casefile-menu">
+                    <div className="casefile-title casefile-reveal">
+                      &gt; {vi ? "CHỌN MỘT DÒNG THỜI GIAN" : "SELECT A TIMELINE"}
+                    </div>
+
+                    <ul ref={listRef} className="casefile-list" aria-label={t.portfolio.title}>
+                      {projects.map((project, i) => (
+                        <li key={project.id}>
+                          <button
+                            type="button"
+                            data-cursor
+                            aria-haspopup="dialog"
+                            aria-current={i === active ? "true" : undefined}
+                            onPointerEnter={(e) => e.pointerType === "mouse" && setActive(i)}
+                            onPointerDown={(e) => onRowPointerDown(e, i)}
+                            onFocus={() => setActive(i)}
+                            onClick={() => onRowClick(i)}
+                            className={`casefile-row ${i === active ? "is-active" : ""}`}
+                          >
+                            <span className="casefile-row-num">{String(i + 1).padStart(2, "0")}</span>
+                            <span className="casefile-row-label">{project.title.split("–")[0].trim()}</span>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/tempad/arrow.png" alt="" className="casefile-arrow" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <dl className="casefile-meta casefile-reveal" aria-live="polite">
+                      <div>
+                        <dt>{vi ? "HỒ SƠ" : "FILE"}</dt>
+                        <dd>{headline.trim()}</dd>
+                      </div>
+                      {subline && (
+                        <div>
+                          <dt>{vi ? "MÔ TẢ" : "BRIEF"}</dt>
+                          <dd>{subline}</dd>
+                        </div>
+                      )}
+                      <div>
+                        <dt>STACK</dt>
+                        <dd>{current.tech.slice(0, 4).join(" · ")}</dd>
+                      </div>
+                      <div className="casefile-log">
+                        <dt>LOG</dt>
+                        <dd>{current.description}</dd>
+                      </div>
+                    </dl>
+                  </div>
+
+                  {/* Preview */}
+                  <button
+                    type="button"
+                    data-cursor
+                    tabIndex={-1}
+                    onClick={() => setSelected(active)}
+                    className="casefile-preview casefile-reveal"
+                    aria-label={`${vi ? "Mở" : "Open"} ${headline.trim()}`}
+                  >
+                    <span className="frame casefile-frame">
+                      <ShotImage
+                        key={current.image}
+                        src={current.image}
+                        alt={current.title}
+                        fill
+                        sizes="(max-width: 768px) 90vw, 560px"
+                        className="casefile-art object-cover object-top"
+                      />
+                    </span>
+                    <span className="casefile-tag">
+                      {vi ? "HỒ SƠ" : "FILE"} {String(active + 1).padStart(2, "0")} / {total} · {vi ? "MỞ" : "OPEN"} ▸
+                    </span>
+                  </button>
+
+                  <div className="casefile-keys" aria-hidden>
+                    ▲▼ {vi ? "CHỌN" : "SELECT"} &nbsp; ENTER {vi ? "MỞ" : "OPEN"} &nbsp; ESC {vi ? "THOÁT" : "BACK"}
+                  </div>
+                  <div className="casefile-sector" aria-hidden>
+                    <span>/EARTH-616</span>
+                    <span>SACRED TIMELINE</span>
+                  </div>
+
+                  <div aria-hidden className="tempad-scan" />
+                </div>
+              </div>
+
+              <div className="tempad-foot" aria-hidden>
+                <span className="tempad-led" />
+                <span>TVA · TEMPAD</span>
+                <span className="tempad-grille" />
+              </div>
             </div>
-
-            <button
-              type="button"
-              onClick={close}
-              className="showcase-close"
-              aria-label={vi ? "Đóng" : "Close"}
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <div className="showcase-grid no-scrollbar">
-            {projects.map((project, i) => {
-              const headline = project.title.split("–")[0].trim()
-
-              return (
-                <button
-                  key={project.id}
-                  type="button"
-                  data-cursor
-                  onClick={() => setSelected(i)}
-                  aria-haspopup="dialog"
-                  className="showcase-card"
-                >
-                  <span className="frame block aspect-[16/10]">
-                    <ShotImage
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 768px) 78vw, 30vw"
-                      className="showcase-art object-cover"
-                    />
-                  </span>
-
-                  <span className="mt-5 flex items-end justify-between gap-4">
-                    <span className="min-w-0 text-left">
-                      <span className="t-display t-mid truncate-safe block">{headline}</span>
-                      <span className="t-label mt-2 block text-[hsl(var(--tl-dim))]">
-                        {project.tech.slice(0, 3).join(" · ")}
-                      </span>
-                    </span>
-                    <span className="t-display text-[2.25rem] leading-none text-[hsl(var(--tl-dim))]/25">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </span>
-                </button>
-              )
-            })}
           </div>
         </div>
       </div>
