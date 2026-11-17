@@ -60,7 +60,7 @@ export default function Nav() {
         <Link
           href="/"
           data-cursor
-          className="pill pill-solid !px-4 !py-2.5 truncate-safe"
+          className="pill pill-solid nav-name !px-4 !py-2.5"
           aria-label={t.name}
         >
           {t.name}
@@ -90,7 +90,7 @@ export default function Nav() {
           <a
             href={`mailto:${EMAIL}`}
             data-cursor
-            className="pill pill-solid hidden !py-2.5 sm:inline-flex"
+            className="pill pill-solid nav-contact !py-2.5"
           >
             {t.nav.contact}
           </a>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
 import { useAppReady } from "@/app/hooks/useAppReady"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import { useTimelineTheme, type TimelineThemeKey } from "@/app/context/TimelineThemeContext"
@@ -96,6 +97,11 @@ export default function TempadHud() {
 
   const sector = SECTORS[inFooter ? "footer" : activeTheme] ?? SECTORS.sacred
   const vi = language === "vi"
+
+  // The HUD reads the landing page's timeline; elsewhere (the 404 screen) it
+  // would report a sector the visitor is not in.
+  const pathname = usePathname()
+  if (pathname !== "/") return null
 
   return (
     <nav aria-label="TemPad" className={`tempad-hud ${atTop ? "is-top" : ""} ${ready ? "is-on" : ""}`}>
