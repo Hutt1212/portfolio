@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
-import { ArrowUpRight, Copy, Check, ArrowUp } from "lucide-react"
+import { ArrowUpRight, Copy, Check } from "lucide-react"
 import { useLanguage } from "@/app/hooks/useLanguage"
 import { useTimelineTheme } from "@/app/context/TimelineThemeContext"
 
@@ -14,33 +14,6 @@ export default function Footer() {
   const { openShowcase } = useTimelineTheme()
   const vi = language === "vi"
   const [copied, setCopied] = useState(false)
-  const [scrolledDown, setScrolledDown] = useState(false)
-  const [footerInView, setFooterInView] = useState(false)
-  const footerRef = useRef<HTMLElement>(null)
-  // Hidden near the top, and hidden once the footer is on screen — there it
-  // sat on top of the email / copy buttons on phones.
-  const showFloatingTop = scrolledDown && !footerInView
-
-  // Floating Back to Top Button visibility listener
-  useEffect(() => {
-    const handleScroll = () => setScrolledDown(window.scrollY > 350)
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
-
-    const footer = footerRef.current
-    const io = footer
-      ? new IntersectionObserver(([entry]) => setFooterInView(entry.isIntersecting), {
-          rootMargin: "0px 0px -15% 0px",
-        })
-      : null
-    if (footer && io) io.observe(footer)
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-      io?.disconnect()
-    }
-  }, [])
-
   const handleCopyEmail = (e: React.MouseEvent) => {
     e.preventDefault()
     if (navigator.clipboard) {
@@ -50,20 +23,17 @@ export default function Footer() {
     }
   }
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
 
   return (
     <>
-      <footer ref={footerRef} className="relative z-10 overflow-hidden border-t border-[#ff8c00]/30 bg-[#050302] text-[#f4ecd8]">
+      <footer className="relative z-10 overflow-hidden border-t border-[#ff8c00]/30 bg-[#050302] text-[#f4ecd8]">
         {/* Cinematic Loki Hand Background Artwork - Covers full footer from top-right down to the bottom */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none">
           <Image
             src="/footer.jpg"
             alt="God Loki Weaving the Sacred Timeline"
             fill
-            priority
+            loading="lazy"
             sizes="100vw"
             className="object-cover object-[78%_28%] md:object-[82%_22%] scale-[1.1] md:scale-100 opacity-90 md:opacity-95 brightness-115 contrast-125 mix-blend-screen transition-transform duration-1000 ease-out"
           />
@@ -76,7 +46,7 @@ export default function Footer() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_88%,rgba(255,140,0,0.12),transparent_60%)]" />
         </div>
 
-        <div className="shell relative z-10 pt-20 pb-10 md:pt-28 md:pb-12">
+        <div className="shell relative z-10 pt-20 pb-24 md:pt-28 md:pb-24">
           {/* Top Call To Action with Enlarged Heroic Heading */}
           <div className="max-w-4xl space-y-5">
             <h2 className="t-display text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] font-black tracking-tight text-white !leading-[1.08] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
@@ -183,22 +153,6 @@ export default function Footer() {
           </div>
         </div>
       </footer>
-
-      {/* Floating Dynamic "Back To Top" Button (Follows the viewport) */}
-      <button
-        type="button"
-        data-cursor
-        onClick={scrollToTop}
-        aria-label="Back to top"
-        tabIndex={showFloatingTop ? 0 : -1}
-        aria-hidden={!showFloatingTop}
-        className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#ff8c00]/60 bg-[#0e0a05]/90 text-xs font-mono text-[#ffd700] shadow-[0_0_25px_rgba(255,140,0,0.35)] backdrop-blur-md transition-all duration-300 hover:border-[#ffd700] hover:bg-[#1a0f06] hover:scale-105 active:scale-95 ${
-          showFloatingTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
-      >
-        <span>{vi ? "Đầu trang" : "Back to top"}</span>
-        <ArrowUp size={14} className="text-[#ff8c00]" />
-      </button>
     </>
   )
 }

@@ -33,3 +33,9 @@ export function unlockScroll() {
   document.body.style.paddingRight = ""
   instance?.start()
 }
+
+/** Smooth scroll to the top through Lenis when it is driving the page. */
+export function scrollToTop() {
+  if (instance) instance.scrollTo(0, { duration: 1.4 })
+  else window.scrollTo({ top: 0, behavior: "smooth" })
+}

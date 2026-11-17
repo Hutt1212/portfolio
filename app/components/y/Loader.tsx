@@ -11,7 +11,7 @@ const SEEN_KEY = "tva:tempad-seen"
 /** Boot steps, shown as menu rows on the TemPad screen. The highlight walks down them. */
 const STEPS = ["SCAN TIMELINE", "LOCK COORDINATES", "CHARGE TIMEDOOR", "OPEN PORTAL"]
 
-/** Theme tokens taken from the TVA Classic theme config (styles/TVA Classic/config.json). */
+/** Theme tokens from the TVA Classic theme config (see public/tempad/CREDITS.md). */
 const ORANGE = "#f8861e"
 const TRACK = "#29231e"
 
@@ -87,7 +87,9 @@ export default function Loader() {
 
     let safety = 0
     const counter = { val: 0 }
-    const duration = seen ? 0.8 : 1.6
+    // First visit: ~3s on the TemPad (power-on beat + boot + confirm blink) so
+    // the screen can actually be read. Return visits in the same session: ~1s.
+    const duration = seen ? 0.9 : 2.5
     const rows = Array.from(listRef.current?.children ?? []) as HTMLElement[]
     let lastStep = -1
     let lastCell = -1

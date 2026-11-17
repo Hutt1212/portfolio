@@ -313,6 +313,18 @@
   overflow: hidden;
 }
 
+.ts-core-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 52%,
+    hsl(var(--tl-glow) / 0.12) 0%,
+    hsl(var(--tl-glow) / 0.035) 16%,
+    hsl(var(--tl-glow) / 0) 32vmax
+  );
+}
+
 .ts-canvas-fixed canvas,
 .ts-canvas-contained canvas {
   display: block;
@@ -330,8 +342,10 @@
   position: absolute;
   inset: -12%;
   pointer-events: none;
-  opacity: 0.13;
-  mix-blend-mode: overlay;
+  /* Plain alpha instead of mix-blend-mode: overlay. A blend over a canvas that
+     changes every frame has to be recomposited every frame, across 150% of
+     the viewport; at this opacity the two look the same. */
+  opacity: 0.05;
   will-change: transform;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
   animation: ts-grain 0.9s steps(4) infinite;
@@ -481,7 +495,8 @@
 
 .on-dark .nav-group {
   border-color: hsl(40 30% 94% / 0.35);
-  background: hsl(var(--tl-void) / 0.5);
+  /* No backdrop blur: it sits over the animated stream and would re-blur every frame. */
+  background: hsl(var(--tl-void) / 0.72);
 }
 
 .on-dark .t-label,
@@ -549,20 +564,64 @@
   );
 }
 
-/* The stack sits on a panel: 21 small chips over the stream's brightest band
-   were unreadable with only the soft radial scrim. TemPad-style frame. */
-.warp-grid {
+/* The stack sits on a TemPad screen: 21 small chips over the stream's
+   brightest band were unreadable with only the soft radial scrim.
+   The grid is drawn in CSS rather than with the theme's wallpaper image: the
+   panel is far wider than the image's 4:3, and stretching it turned the
+   squares into bars. Colours follow the TVA Classic theme config. */
+.skillpad {
+  position: relative;
+  overflow: hidden;
   margin-top: 2.25rem;
+  padding: clamp(1rem, 2.6vw, 2rem) clamp(1rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid #f8861e;
+  border-radius: 0.9rem;
+  /* Opaque: a backdrop blur over the animated stream would be recomputed every frame. */
+  background-color: #050302;
+  background-image:
+    linear-gradient(rgba(248, 134, 30, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(248, 134, 30, 0.13) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+  background-position: -1px -1px;
+  box-shadow: inset 0 0 50px rgba(248, 134, 30, 0.3), 0 0 40px rgba(248, 134, 30, 0.14);
+  color: #f8861e;
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-weight: 300;
+  text-align: left;
+  text-shadow: 0 0 6px rgba(248, 134, 30, 0.45);
+}
+
+.skillpad-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: clamp(1rem, 2.2vw, 1.75rem);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+}
+
+.skillpad-status-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.skillpad-status img {
+  height: 0.9rem;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+.skillpad-status .skillpad-battery {
+  height: 0.8rem;
+}
+
+.warp-grid {
+  position: relative;
   display: grid;
-  gap: 2.5rem 2rem;
+  gap: 1.75rem 1.5rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  border: 1px solid hsl(var(--tl-glow) / 0.28);
-  border-radius: 1.25rem;
-  background: hsl(var(--tl-void) / 0.78);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 40px hsl(var(--tl-glow) / 0.08), inset 0 1px 0 hsl(40 30% 94% / 0.06);
 }
 
 @media (min-width: 1100px) {
@@ -571,44 +630,84 @@
   }
 }
 
+/* Each group spans two rows of the panel grid via subgrid, so every heading
+   bar in a row gets the same height even when one label wraps — otherwise the
+   chips under a two-line heading start lower than their neighbours. */
 .warp-group {
   transform-style: preserve-3d;
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  align-content: start;
 }
 
+/* Group heading = the theme's selected-item bar: solid orange, black text. */
 .warp-group-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.65rem;
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 14px rgba(248, 134, 30, 0.4);
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: hsl(var(--tl-dim));
-  opacity: 0.75;
+}
+
+.warp-group-num {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .warp-group-label {
+    letter-spacing: 0.1em;
+    text-align: left;
+    line-height: 1.35;
+  }
+
+  .skillpad-status {
+    letter-spacing: 0.12em;
+  }
 }
 
 .warp-chips {
-  margin-top: 0.9rem;
+  margin-top: 0.85rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
+  gap: 0.45rem;
+  justify-content: flex-start;
+  /* The subgrid row is as tall as the longest group; without these the
+     wrapped lines stretch to fill it and every chip grows tall. */
+  align-self: start;
+  align-content: flex-start;
   transform-style: preserve-3d;
 }
 
 .warp-chip {
-  padding: 0.4rem 0.85rem;
-  border: 1px solid hsl(40 30% 94% / 0.28);
-  border-radius: var(--radius);
-  background: hsl(var(--tl-void) / 0.6);
-  color: hsl(40 30% 94%);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(248, 134, 30, 0.45);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #f8861e;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
   white-space: nowrap;
+  /* Hard switch like the device's menu, no fade. */
+  transition: background-color 0.15s steps(2), color 0.15s steps(2);
   /* Deliberately no `will-change`: there are 21 of these, and a standing hint
      holds 21 compositor layers alive for the whole page, not just while the
      beat plays. GSAP's force3D promotes them for the duration of the tween,
      which is the part that actually needs a layer. */
   backface-visibility: hidden;
+}
+
+.warp-chip:hover {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
 }
 
 /* No pin, no depth: the beats become an ordinary stacked section that reveals
@@ -678,59 +777,336 @@
   pointer-events: none;
 }
 
-.showcase-grid {
-  display: flex;
-  /* As a flex item of the column stage it would otherwise be shrinkable, and a
-     tight viewport could squash the row of cards down to nothing. */
+/* ── Case-file browser: the project chooser as a TemPad screen ──── */
+.showcase-stage {
+  align-items: center;
+  padding-inline: 1rem;
+}
+
+.casefile {
+  /* Fits both the width and the height of the viewport on desktop. */
+  width: min(1060px, 100%, calc((100svh - 9rem) * 1.62));
   flex: 0 0 auto;
-  gap: 1.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-inline: var(--gutter);
-  padding-block: 0.5rem;
 }
 
-.showcase-card {
-  flex: 0 0 auto;
-  width: min(28rem, 78vw);
-  scroll-snap-align: center;
-  cursor: pointer;
-  text-align: left;
-}
-
-.showcase-art {
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-}
-
-.showcase-card:hover .showcase-art,
-.showcase-card:focus-visible .showcase-art {
-  transform: scale(1.05);
-}
-
-.showcase-close {
+.casefile-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  container-type: inline-size;
+  background-color: #000;
+  background-size: 100% 100%;
+  color: #f8861e;
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px rgba(248, 134, 30, 0.45);
+  transform-origin: center;
   display: grid;
-  place-items: center;
-  height: 2.75rem;
-  width: 2.75rem;
-  flex-shrink: 0;
-  border: 1.5px solid hsl(40 30% 94% / 0.45);
-  border-radius: 999px;
-  transition:
-    background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 1rem;
+  padding: 1rem 1rem 1.25rem;
+  grid-template-areas:
+    "status"
+    "menu"
+    "preview";
 }
 
-.showcase-close:hover,
-.showcase-close:focus-visible {
-  background: hsl(40 30% 94%);
-  color: hsl(var(--tl-void));
+.casefile-status {
+  grid-area: status;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
 }
 
-@media (min-width: 1024px) {
-  /* Three projects fit the viewport, so centre them instead of leaving a rail
-     that looks like it has been cut off. */
-  .showcase-grid {
-    justify-content: center;
+.casefile-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.casefile-status-icons img {
+  width: auto;
+  height: 0.9rem;
+  image-rendering: pixelated;
+}
+
+.casefile-status-icons .casefile-battery {
+  height: 0.8rem;
+}
+
+.casefile-close {
+  margin-left: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid rgba(248, 134, 30, 0.5);
+  color: inherit;
+  letter-spacing: 0.16em;
+}
+
+.casefile-close:hover,
+.casefile-close:focus-visible {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+}
+
+.casefile-menu {
+  grid-area: menu;
+  min-width: 0;
+}
+
+.casefile-title {
+  margin-bottom: 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  opacity: 0.75;
+}
+
+.casefile-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0 0.7rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-align: left;
+  color: inherit;
+  text-transform: uppercase;
+}
+
+.casefile-row-num {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.casefile-row-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.casefile-arrow {
+  height: 1.05rem;
+  width: auto;
+  image-rendering: pixelated;
+  opacity: 0.5;
+}
+
+/* The theme's selection bar: solid orange, black text — a hard switch, no fade. */
+.casefile-row.is-active {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 14px rgba(248, 134, 30, 0.55);
+}
+
+.casefile-row.is-active .casefile-arrow {
+  filter: brightness(0);
+  opacity: 1;
+}
+
+.casefile-row:focus-visible {
+  outline: 2px solid #ffd7a8;
+  outline-offset: 2px;
+}
+
+.casefile-meta {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(248, 134, 30, 0.3);
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.casefile-meta > div {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0.6rem;
+}
+
+.casefile-meta dt {
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+}
+
+.casefile-meta dd {
+  color: #ffd7a8;
+  text-shadow: none;
+}
+
+.casefile-preview {
+  grid-area: preview;
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(248, 134, 30, 0.6);
+  box-shadow: 0 0 24px rgba(248, 134, 30, 0.22);
+}
+
+.casefile-frame {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: 0;
+}
+
+/* Screenshots pick up the screen's tint and scanlines; full colour on hover. */
+.casefile-art {
+  filter: sepia(0.35) saturate(1.1) contrast(1.05);
+  transition: filter 0.4s ease, opacity 0.5s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.casefile-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.22) 50%) 0 0 / 100% 3px;
+}
+
+.casefile-preview:hover .casefile-art {
+  filter: none;
+  transform: scale(1.03);
+}
+
+.casefile-tag {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0.35rem 0.7rem;
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+}
+
+.casefile-keys,
+.casefile-sector,
+.casefile-brand {
+  display: none;
+}
+
+.casefile-log dd {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .casefile-brand {
+    display: inline;
+  }
+}
+
+/* Desktop: a 16:9 screen, menu left, preview right — sized off the screen width. */
+@media (min-width: 768px) {
+  /* Percentages here, not cqw: container units used on the container itself
+     resolve against the next container up (here: the viewport). Padding and
+     gap percentages are taken from the screen's width, so they track it. */
+  .casefile-screen {
+    aspect-ratio: 16 / 9;
+    padding: 2.4% 3%;
+    gap: 0 4%;
+    grid-template-columns: 37% minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "status status"
+      "menu preview"
+      "keys sector";
+  }
+
+  .casefile-status {
+    font-size: 1.45cqw;
+    margin-bottom: 2.4cqw;
+  }
+
+  .casefile-status-icons img {
+    height: 1.8cqw;
+  }
+
+  .casefile-status-icons .casefile-battery {
+    height: 1.6cqw;
+  }
+
+  .casefile-close {
+    font-size: 1.2cqw;
+  }
+
+  .casefile-title {
+    font-size: 1.45cqw;
+    margin-bottom: 1.4cqw;
+  }
+
+  .casefile-row {
+    min-height: 4.6cqw;
+    padding: 0 1.2cqw;
+    gap: 1.4cqw;
+    font-size: 2.2cqw;
+  }
+
+  .casefile-row-num {
+    font-size: 1.4cqw;
+  }
+
+  .casefile-arrow {
+    height: 2.2cqw;
+  }
+
+  .casefile-meta {
+    margin-top: 2.2cqw;
+    padding-top: 1.6cqw;
+    gap: 0.8cqw;
+    font-size: 1.4cqw;
+  }
+
+  .casefile-meta > div {
+    grid-template-columns: 8cqw 1fr;
+    gap: 1cqw;
+  }
+
+  /* The preview fills the whole middle row instead of leaving it half empty. */
+  .casefile-preview {
+    align-self: stretch;
+    min-height: 0;
+  }
+
+  .casefile-frame {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
+  .casefile-tag {
+    font-size: 1.35cqw;
+    padding: 0.6cqw 1.2cqw;
+  }
+
+  .casefile-keys {
+    grid-area: keys;
+    display: block;
+    align-self: end;
+    font-size: 1.25cqw;
+    letter-spacing: 0.18em;
+    opacity: 0.7;
+  }
+
+  .casefile-sector {
+    grid-area: sector;
+    display: grid;
+    justify-items: end;
+    align-self: end;
+    font-size: 1.45cqw;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
   }
 }
 
@@ -1406,4 +1782,134 @@
   height: 0.6rem;
   background: repeating-linear-gradient(90deg, rgba(248, 134, 30, 0.35) 0 2px, transparent 2px 6px);
   border-radius: 2px;
+}
+
+/* ── TemPad HUD (persistent, bottom of the viewport) ───────── */
+.tempad-hud {
+  position: fixed;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.5rem 0.6rem 0.5rem 0.75rem;
+  border: 1px solid rgba(248, 134, 30, 0.45);
+  border-radius: 0.65rem;
+  background: rgba(8, 5, 3, 0.9);
+  box-shadow: 0 0 30px rgba(248, 134, 30, 0.16), inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+  font-family: var(--font-tempad), var(--font-mono), ui-monospace, monospace;
+  font-weight: 300;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  color: #f8861e;
+  text-shadow: 0 0 6px rgba(248, 134, 30, 0.45);
+  white-space: nowrap;
+  /* Hidden under the preloader; rises in once the curtain lifts. */
+  opacity: 0;
+  transform: translate(-50%, 140%);
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tempad-hud.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+  transition-delay: 0.6s;
+}
+
+/* Phones: the hero's own CTAs sit where the HUD would, so it waits for the
+   first scroll before rising in. */
+@media (max-width: 640px) {
+  .tempad-hud.is-on.is-top {
+    opacity: 0;
+    transform: translate(-50%, 140%);
+    pointer-events: none;
+    transition-delay: 0s;
+  }
+}
+
+.tempad-hud-icon {
+  width: 1rem;
+  height: 1rem;
+  image-rendering: pixelated;
+}
+
+.tempad-hud-sep {
+  width: 1px;
+  height: 1.1rem;
+  background: rgba(248, 134, 30, 0.3);
+}
+
+/* The theme's selected-item bar. */
+.tempad-hud-sector {
+  padding: 0.3rem 0.55rem;
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+}
+
+.tempad-hud-short {
+  display: none;
+}
+
+.tempad-hud-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tempad-hud-battery {
+  width: 1.35rem;
+  height: 0.9rem;
+  image-rendering: pixelated;
+}
+
+.tempad-hud-top {
+  padding: 0.3rem 0.45rem;
+  letter-spacing: inherit;
+  color: inherit;
+  transition: background-color 0.2s steps(2), color 0.2s steps(2);
+}
+
+.tempad-hud-top:hover,
+.tempad-hud-top:focus-visible {
+  background: #f8861e;
+  color: #000;
+  text-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .tempad-hud {
+    gap: 0.6rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .tempad-hud-brand,
+  .tempad-hud-long,
+  .tempad-hud-top-label {
+    display: none;
+  }
+
+  .tempad-hud-short {
+    display: inline;
+  }
+
+  .tempad-hud-brand + .tempad-hud-sep {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tempad-hud,
+  .tempad-hud.is-on {
+    transition: opacity 0.3s ease;
+  }
 }
