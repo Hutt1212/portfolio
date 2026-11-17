@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react"
 import { gsap, ScrollTrigger } from "@/lib/gsap"
 import { useIsomorphicLayoutEffect } from "@/app/hooks/useIsomorphicLayoutEffect"
 import { useTimelineTheme, TIMELINE_THEMES, type TimelineThemeKey } from "@/app/context/TimelineThemeContext"
+import { getAppReady, subscribeAppReady } from "@/lib/app-ready"
 
 type Props = {
   /** "fixed" fills the viewport behind a whole page; "contained" fills its section. */
@@ -16,8 +17,18 @@ type Props = {
   overrideTheme?: TimelineThemeKey
 }
 
-const STRAND_COUNT = 60
-const PARTICLE_COUNT = 35
+/**
+ * Two quality tiers. The stream is ambient motion, so on phones and low-core
+ * machines it runs fewer strands, coarser segments and a 30fps cap — the
+ * difference is hard to see, the CPU saving is not.
+ */
+const QUALITY = {
+  high: { strands: 48, step: 10, particles: 30, stars: 80, fps: 60, scale: 1 },
+  // Low tier also renders at 70% resolution and lets CSS upscale it: the
+  // strands are soft glows, so the loss is hard to see, and it nearly halves
+  // the pixels filled per frame.
+  low: { strands: 30, step: 14, particles: 18, stars: 50, fps: 30, scale: 0.7 },
+}
 
 function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace("#", "")
@@ -63,6 +74,14 @@ export default function TimeStream({
     themeKeyRef.current = currentThemeKey
   }, [currentThemeKey])
 
+  // While the project overlay is open the stream is hidden behind a blurred
+  // backdrop; animating it would make the browser re-blur every frame.
+  const { isOpenShowcase } = useTimelineTheme()
+  const pausedRef = useRef(isOpenShowcase)
+  useEffect(() => {
+    pausedRef.current = isOpenShowcase
+  }, [isOpenShowcase])
+
   useIsomorphicLayoutEffect(() => {
     if (!canvasRef.current || !holderRef.current) return
 
@@ -73,6 +92,23 @@ export default function TimeStream({
     const ctx: CanvasRenderingContext2D = raw
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const lowPower =
+      window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency ?? 8) <= 4
+    let Q = lowPower ? QUALITY.low : QUALITY.high
+
+    // Theme colours parsed once, not five hex parses per frame.
+    const themeRgb = Object.fromEntries(
+      Object.entries(TIMELINE_THEMES).map(([key, cfg]) => [
+        key,
+        {
+          main: hexToRgb(cfg.mainColor),
+          glow: hexToRgb(cfg.glowColor),
+          core: hexToRgb(cfg.coreColor),
+          void: hexToRgb(cfg.voidColor),
+          particle: hexToRgb(cfg.particleColor),
+        },
+      ])
+    ) as Record<TimelineThemeKey, Record<"main" | "glow" | "core" | "void" | "particle", [number, number, number]>>
 
     let w = 0
     let h = 0
@@ -122,13 +158,14 @@ export default function TimeStream({
         ctx.beginPath()
 
         const centerY = h * 0.52 + scrollPanY
-        const step = 8
+        const step = Q.step
         const treeF = themeState.treeFactor
         const amp = themeState.amplitude * scrollZoom
         const speed = themeState.speedMultiplier
         const turb = themeState.waveTurbulence
 
-        for (let x = 0; x <= w; x += step) {
+        // One segment past the edge, so a coarse step never stops short of it.
+        for (let x = 0; x <= w + step; x += step) {
           const progress = x / w
 
           // 1. Cable Braided Wave Math
@@ -158,15 +195,22 @@ export default function TimeStream({
           }
         }
 
-        ctx.strokeStyle = this.isCoreHighlight ? coreStyle : mainStyle
-        ctx.lineWidth = this.isCoreHighlight ? this.thickness + 1.2 : this.thickness
-        ctx.globalAlpha = this.isCoreHighlight ? 0.9 * intensity : this.alpha * intensity
-
         if (this.isCoreHighlight) {
-          ctx.shadowColor = glowStyle
-          ctx.shadowBlur = 10
+          // Glow as a wide, faint under-stroke of the same path. This replaces
+          // `shadowBlur`, which the canvas blurs on the CPU for every stroke on
+          // every frame and was the single most expensive call in the loop.
+          ctx.strokeStyle = glowStyle
+          ctx.lineWidth = this.thickness + 7
+          ctx.globalAlpha = 0.16 * intensity
+          ctx.stroke()
+
+          ctx.strokeStyle = coreStyle
+          ctx.lineWidth = this.thickness + 1.2
+          ctx.globalAlpha = 0.9 * intensity
         } else {
-          ctx.shadowBlur = 0
+          ctx.strokeStyle = mainStyle
+          ctx.lineWidth = this.thickness
+          ctx.globalAlpha = this.alpha * intensity
         }
 
         ctx.stroke()
@@ -209,14 +253,19 @@ export default function TimeStream({
 
     function rebuildScene() {
       const rect = holder.getBoundingClientRect()
-      w = canvas.width = Math.max(1, rect.width)
-      h = canvas.height = Math.max(1, variant === "fixed" ? window.innerHeight : rect.height)
+      // w / h stay in CSS pixels; the backing store is scaled by Q.scale and
+      // the context transform maps drawing coordinates onto it.
+      w = Math.max(1, rect.width)
+      h = Math.max(1, variant === "fixed" ? window.innerHeight : rect.height)
+      canvas.width = Math.round(w * Q.scale)
+      canvas.height = Math.round(h * Q.scale)
       canvas.style.width = `${w}px`
       canvas.style.height = `${h}px`
+      ctx.setTransform(Q.scale, 0, 0, Q.scale, 0, 0)
 
-      fibers = Array.from({ length: STRAND_COUNT }, (_, i) => new FiberStrand(i, STRAND_COUNT))
-      particles = Array.from({ length: PARTICLE_COUNT }, () => new ChronoParticle())
-      stars = Array.from({ length: 80 }, () => ({
+      fibers = Array.from({ length: Q.strands }, (_, i) => new FiberStrand(i, Q.strands))
+      particles = Array.from({ length: Q.particles }, () => new ChronoParticle())
+      stars = Array.from({ length: Q.stars }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
         r: 0.4 + Math.pow(Math.random(), 3) * 1.4,
@@ -224,6 +273,7 @@ export default function TimeStream({
     }
 
     rebuildScene()
+    canvas.dataset.tier = Q === QUALITY.low ? "low" : "high"
 
     // Scroll scrub driver
     const scrollState = { zoom: 1, panY: 0 }
@@ -242,11 +292,63 @@ export default function TimeStream({
       })
     }
 
-    // Render loop
-    let startTime = Date.now()
-    const render = () => {
+    // When nothing would be seen, skip the frame entirely:
+    //  - under the preloader (one frame is still drawn so the reveal is not black),
+    //  - behind the project overlay,
+    //  - once the stream's section has scrolled out of view (the footer).
+    let onScreen = true
+    const io = new IntersectionObserver(([entry]) => (onScreen = entry.isIntersecting))
+    io.observe(scrollTriggerRef?.current ?? holder)
+
+    let drewOnce = false
+    let wake = getAppReady()
+    const unsubscribeReady = subscribeAppReady(() => (wake = true))
+
+    // Render loop. `time` only advances on frames that are drawn, so a paused
+    // stream resumes where it stopped instead of jumping.
+    let time = 0
+    let acc = 0
+    let frameMs = 1000 / Q.fps
+
+    // Adaptive fallback: if the machine cannot hold ~45fps on the high tier
+    // (judged on the ticker's own frame gaps while drawing), drop to the low
+    // tier once. Checked over a window so one slow frame does not trigger it.
+    // The first seconds after the reveal (hero entrance, fonts, images
+    // decoding) are always heavy, so they are not counted.
+    let slowFrames = 0
+    let sampled = 0
+    let graceMs = 2500
+    const watchBudget = (deltaMs: number) => {
+      if (Q === QUALITY.low) return
+      if (graceMs > 0) {
+        graceMs -= deltaMs
+        return
+      }
+      sampled++
+      if (deltaMs > 22) slowFrames++
+      if (sampled < 90) return
+      if (slowFrames / sampled > 0.5) {
+        Q = QUALITY.low
+        frameMs = 1000 / Q.fps
+        rebuildScene()
+        canvas.dataset.tier = "low"
+      }
+      sampled = 0
+      slowFrames = 0
+    }
+    const render = (_t: number, deltaMs: number) => {
       if (!ctx) return
-      const time = Date.now() - startTime
+      if (drewOnce && (!wake || pausedRef.current || !onScreen)) return
+
+      watchBudget(deltaMs)
+
+      // 30fps cap on the low tier: accumulate ticker time, draw every other frame.
+      acc += deltaMs
+      if (drewOnce && acc < frameMs - 2) return
+      const step = Math.min(acc, 50)
+      acc = 0
+      time += step
+      drewOnce = true
 
       const targetKey = themeKeyRef.current
       const targetConfig = TIMELINE_THEMES[targetKey] || TIMELINE_THEMES.sacred
@@ -255,13 +357,14 @@ export default function TimeStream({
         previousThemeKey = targetKey
       }
 
-      // Continuous Smooth Lerp
-      const lerpSpeed = 0.045
-      const targetMain = hexToRgb(targetConfig.mainColor)
-      const targetGlow = hexToRgb(targetConfig.glowColor)
-      const targetCore = hexToRgb(targetConfig.coreColor)
-      const targetVoid = hexToRgb(targetConfig.voidColor)
-      const targetParticle = hexToRgb(targetConfig.particleColor)
+      // Continuous Smooth Lerp (scaled so the 30fps tier eases at the same speed)
+      const lerpSpeed = 1 - Math.pow(1 - 0.045, step / 16.67)
+      const target = themeRgb[targetKey] || themeRgb.sacred
+      const targetMain = target.main
+      const targetGlow = target.glow
+      const targetCore = target.core
+      const targetVoid = target.void
+      const targetParticle = target.particle
       const targetTree = targetConfig.isTree ? 1.0 : 0.0
 
       themeState.mainRGB = lerpRgb(themeState.mainRGB, targetMain, lerpSpeed)
@@ -333,22 +436,9 @@ export default function TimeStream({
       })
       ctx.fill()
 
-      // 4. Central Timeline Soft Core Glow
-      const glowRadius = Math.max(w, h) * 0.32
-      const coreGlow = ctx.createRadialGradient(
-        w * 0.5,
-        h * 0.52 + scrollState.panY,
-        0,
-        w * 0.5,
-        h * 0.52 + scrollState.panY,
-        glowRadius
-      )
-      coreGlow.addColorStop(0, `rgba(${gr},${gg},${gb},${0.12 * intensity})`)
-      coreGlow.addColorStop(0.5, `rgba(${mr},${mg},${mb},${0.03 * intensity})`)
-      coreGlow.addColorStop(1, "rgba(0,0,0,0)")
-      ctx.fillStyle = coreGlow
+      // 4. The soft core glow used to be a full-canvas radial gradient filled
+      //    every frame; it is now a static CSS layer (.ts-core-glow).
       ctx.globalAlpha = 1
-      ctx.fillRect(0, 0, w, h)
     }
 
     gsap.ticker.add(render)
@@ -365,6 +455,8 @@ export default function TimeStream({
 
     return () => {
       gsap.ticker.remove(render)
+      io.disconnect()
+      unsubscribeReady()
       window.removeEventListener("resize", onResize)
       window.clearTimeout(resizeTimer)
       st?.kill()
@@ -378,6 +470,9 @@ export default function TimeStream({
     >
       {/* Fast 60-120fps Native Canvas Engine */}
       <canvas ref={canvasRef} aria-hidden className="block" />
+
+      {/* Core glow, composited by the GPU instead of repainted per frame */}
+      <div aria-hidden className="ts-core-glow" />
 
       {/* Pure CSS Hardware-Accelerated TVA Grid & Vignette Overlay */}
       <div className="fixed inset-0 tva-bg-grid tva-vignette pointer-events-none z-0 opacity-80" />

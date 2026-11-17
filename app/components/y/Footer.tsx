@@ -63,7 +63,7 @@ export default function Footer() {
             src="/footer.jpg"
             alt="God Loki Weaving the Sacred Timeline"
             fill
-            priority
+            loading="lazy"
             sizes="100vw"
             className="object-cover object-[78%_28%] md:object-[82%_22%] scale-[1.1] md:scale-100 opacity-90 md:opacity-95 brightness-115 contrast-125 mix-blend-screen transition-transform duration-1000 ease-out"
           />
@@ -192,7 +192,7 @@ export default function Footer() {
         aria-label="Back to top"
         tabIndex={showFloatingTop ? 0 : -1}
         aria-hidden={!showFloatingTop}
-        className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#ff8c00]/60 bg-[#0e0a05]/90 text-xs font-mono text-[#ffd700] shadow-[0_0_25px_rgba(255,140,0,0.35)] backdrop-blur-md transition-all duration-300 hover:border-[#ffd700] hover:bg-[#1a0f06] hover:scale-105 active:scale-95 ${
+        className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#ff8c00]/60 bg-[#0e0a05]/90 text-xs font-mono text-[#ffd700] shadow-[0_0_25px_rgba(255,140,0,0.35)] transition-all duration-300 hover:border-[#ffd700] hover:bg-[#1a0f06] hover:scale-105 active:scale-95 ${
           showFloatingTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >

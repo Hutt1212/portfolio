@@ -66,7 +66,7 @@ export default function Nav() {
           {t.name}
         </Link>
 
-        <div className="nav-group hidden items-center gap-1 rounded-full border-[1.5px] border-foreground bg-background/80 p-1 backdrop-blur md:flex">
+        <div className="nav-group hidden items-center gap-1 rounded-full border-[1.5px] border-foreground bg-background/80 p-1 md:flex">
           <button
             type="button"
             data-cursor
